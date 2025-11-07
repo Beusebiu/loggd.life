@@ -2847,6 +2847,272 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Card Enter Animations */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.checkin-card-enter {
+  animation: fadeSlideUp 0.5s ease forwards;
+}
+
+/* Stagger animation for multiple cards */
+.checkin-card-enter:nth-child(1) { animation-delay: 0s; }
+.checkin-card-enter:nth-child(2) { animation-delay: 0.05s; }
+.checkin-card-enter:nth-child(3) { animation-delay: 0.1s; }
+.checkin-card-enter:nth-child(4) { animation-delay: 0.15s; }
+.checkin-card-enter:nth-child(5) { animation-delay: 0.2s; }
+
+/* Modal Animations */
+.modal-enter-active {
+  transition: all 0.3s ease;
+}
+
+.modal-leave-active {
+  transition: all 0.2s ease;
+}
+
+.modal-enter-from {
+  opacity: 0;
+}
+
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-content-enter-active {
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.modal-content-leave-active {
+  transition: all 0.2s ease;
+}
+
+.modal-content-enter-from {
+  transform: translateY(50px) scale(0.95);
+  opacity: 0;
+}
+
+.modal-content-leave-to {
+  transform: translateY(30px) scale(0.98);
+  opacity: 0;
+}
+
+/* Button Interactions */
+@keyframes buttonPress {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.btn-press {
+  animation: buttonPress 0.2s ease;
+}
+
+/* Save Success Animation */
+@keyframes saveSuccess {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+.save-success {
+  animation: saveSuccess 0.6s ease;
+}
+
+/* Delete Confirmation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.shake-animate {
+  animation: shake 0.3s ease;
+}
+
+/* Field Focus Animation */
+@keyframes fieldFocus {
+  from {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+  }
+  to {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* Sidebar Hover Effects */
+.sidebar-item {
+  transition: all 0.2s ease;
+}
+
+.sidebar-item:hover {
+  transform: translateX(2px);
+}
+
+/* Content Fade Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Badge/Tag Animations */
+@keyframes badgePop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.badge-pop {
+  animation: badgePop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Loading Skeleton Animation */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.skeleton-loader {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Hover Scale Effects */
+.hover-scale {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-scale:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Animations */
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.icon-bounce {
+  animation: iconBounce 0.5s ease;
+}
+
+/* Progress Bar Animation */
+@keyframes progressFill {
+  from { width: 0%; }
+}
+
+.progress-animate {
+  animation: progressFill 1s ease-out forwards;
+}
+
+/* Quick Action Button Pulse */
+@keyframes quickActionPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+}
+
+.quick-action-pulse {
+  animation: quickActionPulse 2s infinite;
+}
+
+/* Version Badge Animation */
+@keyframes versionSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.version-slide {
+  animation: versionSlide 0.3s ease;
+}
+
+/* Template Icon Rotate on Hover */
+.template-icon {
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.template-icon:hover {
+  transform: rotate(10deg) scale(1.1);
+}
+
+/* Smooth Transitions for All Interactive Elements */
+button, a, input, textarea, select {
+  transition: all 0.2s ease;
+}
+
+/* Card Hover Effect */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Success Checkmark Animation */
+@keyframes checkmarkDraw {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.checkmark-animate {
+  stroke-dasharray: 100;
+  animation: checkmarkDraw 0.6s ease forwards;
+}
+
+/* Emoji Picker Slide Up */
+@keyframes emojiSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.emoji-picker-enter {
+  animation: emojiSlideUp 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
 /* Modal Animations */
 .modal-enter-active {
   transition: all 0.3s ease;
