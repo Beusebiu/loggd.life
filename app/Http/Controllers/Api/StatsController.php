@@ -26,6 +26,77 @@ class StatsController extends Controller
     }
 
     /**
+     * Get daily activity intensity for the last 90 days.
+     * Returns an array of dates with activity intensity scores (0-5).
+     */
+    public function dailyActivity(Request $request)
+    {
+        $user = $request->user();
+        $days = $request->input('days', 90);
+
+        $startDate = now()->subDays($days - 1)->startOfDay();
+        $endDate = now()->endOfDay();
+
+        // Get all habit checks in the date range
+        $habitChecks = $user->habitChecks()
+            ->where('checked', true)
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->get()
+            ->groupBy(fn($check) => Carbon::parse($check->date)->toDateString());
+
+        // Get all entries in the date range
+        $entries = $user->entries()
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->get()
+            ->groupBy(fn($entry) => Carbon::parse($entry->date)->toDateString());
+
+        // Get all check-ins in the date range
+        $checkIns = $user->checkIns()
+            ->whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->get()
+            ->groupBy(fn($checkIn) => Carbon::parse($checkIn->date)->toDateString());
+
+        // Build daily activity data
+        $dailyActivity = [];
+        $current = $startDate->copy();
+
+        while ($current <= $endDate) {
+            $dateStr = $current->toDateString();
+
+            // Count activities for this day
+            $habitCheckCount = $habitChecks->get($dateStr)?->count() ?? 0;
+            $entryCount = $entries->get($dateStr)?->count() ?? 0;
+            $checkInCount = $checkIns->get($dateStr)?->count() ?? 0;
+
+            // Calculate total activity count
+            $totalActivity = $habitCheckCount + $entryCount + ($checkInCount * 2); // Check-ins weighted more
+
+            // Map to intensity level (0-5)
+            $intensity = match(true) {
+                $totalActivity === 0 => 0,
+                $totalActivity <= 2 => 1,
+                $totalActivity <= 4 => 2,
+                $totalActivity <= 7 => 3,
+                $totalActivity <= 10 => 4,
+                default => 5,
+            };
+
+            $dailyActivity[$dateStr] = [
+                'date' => $dateStr,
+                'intensity' => $intensity,
+                'habit_checks' => $habitCheckCount,
+                'entries' => $entryCount,
+                'check_ins' => $checkInCount,
+                'total' => $totalActivity,
+            ];
+
+            $current->addDay();
+        }
+
+        return response()->json($dailyActivity);
+    }
+
+    /**
      * Get overview statistics.
      */
     private function getOverview($user)

@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-white to-gray-50">
-    <AppNav />
-    <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header with Stats -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-black mb-4">Timeline</h1>
+  <AppLayout>
+    <div class="max-w-7xl mx-auto">
+      <!-- Page Header -->
+      <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 py-3">
+        <h2 class="text-xl font-bold text-black">Timeline</h2>
+      </div>
 
+      <div class="px-4 sm:px-6 lg:px-8 py-8">
         <!-- Stats Cards -->
         <div v-if="stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
@@ -28,7 +28,7 @@
         </div>
 
         <!-- Date Range Selector -->
-        <div class="flex gap-4 items-center">
+        <div class="flex gap-4 items-center mb-6">
           <div class="flex gap-2">
             <button
               v-for="range in dateRanges"
@@ -43,7 +43,6 @@
             </button>
           </div>
         </div>
-      </div>
 
       <!-- Timeline Feed -->
       <div v-if="timelineItems.length > 0" class="space-y-6">
@@ -138,12 +137,13 @@
           </a>
         </div>
       </div>
-    </main>
-  </div>
+      </div>
+    </div>
+  </AppLayout>
 </template>
 
 <script setup>
-import AppNav from '../Components/AppNav.vue';
+import AppLayout from '../Layouts/AppLayout.vue';
 import { ref, onMounted, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 

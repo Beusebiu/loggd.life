@@ -1,11 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <AppNav current-page="habits" />
-
-    <main class="max-w-7xl mx-auto px-4 py-6">
-      <!-- Header with Quick Add -->
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-gray-900">Habits</h1>
+  <AppLayout>
+    <div class="max-w-7xl mx-auto">
+      <!-- Page Header -->
+      <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-black">Habits</h2>
         <button
           @click="showCreateModal = true"
           class="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
@@ -13,6 +11,8 @@
           + New Habit
         </button>
       </div>
+
+      <div class="px-4 sm:px-6 lg:px-8 py-8">
 
       <!-- Loading State -->
       <LoadingSpinner v-if="loading" />
@@ -157,7 +157,7 @@
         </div>
         </div>
       </Transition>
-    </main>
+      </div>
 
     <!-- Create/Edit Modal -->
     <Transition name="modal">
@@ -241,6 +241,23 @@
             </label>
             <p class="mt-1 ml-8 text-xs text-gray-500">
               Enable this to track multiple completions per day with timestamps
+            </p>
+          </div>
+
+          <!-- Public/Private Toggle -->
+          <div>
+            <label class="flex items-center cursor-pointer">
+              <input
+                v-model="habitForm.is_public"
+                type="checkbox"
+                class="w-5 h-5 text-black border-gray-300 rounded focus:ring-2 focus:ring-black"
+              />
+              <span class="ml-3 text-sm font-medium text-gray-700">
+                Make habit public
+              </span>
+            </label>
+            <p class="mt-1 ml-8 text-xs text-gray-500">
+              Public habits can be viewed by others. Private habits are only visible to you.
             </p>
           </div>
         </div>
@@ -420,18 +437,33 @@
       class="fixed inset-0 z-40"
       @click="showEmojiPicker = false"
     ></div>
-  </div>
+    </div>
+
+    <!-- Celebration Notification -->
+    <CelebrationNotification
+      :show="showCelebration"
+      :emoji="celebrationData.emoji"
+      :title="celebrationData.title"
+      :message="celebrationData.message"
+      @close="closeCelebration"
+    />
+  </AppLayout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import axios from 'axios';
-import AppNav from '../Components/AppNav.vue';
+import AppLayout from '../Layouts/AppLayout.vue';
 import HabitCard from '../Components/habits/HabitCard.vue';
 import LoadingSpinner from '../Components/ui/LoadingSpinner.vue';
 import EmptyState from '../Components/ui/EmptyState.vue';
+import CelebrationNotification from '../Components/CelebrationNotification.vue';
 import { formatStartDate, formatDayName, formatDateFull, formatTooltipDate, formatTime, isToday, isFutureDate } from '../utils/dates.js';
+import { useCelebration } from '../composables/useCelebration';
 import 'emoji-picker-element';
+
+// Celebration notification composable
+const { showCelebration, celebrationData, closeCelebration, checkForAchievements, fetchPendingAchievements } = useCelebration();
 
 const loading = ref(true);
 const habits = ref([]);
@@ -450,6 +482,7 @@ const habitForm = ref({
   color: '#10B981',
   description: '',
   allow_multiple_checks: false,
+  is_public: true,
 });
 
 const noteModal = ref({
@@ -915,6 +948,9 @@ const toggleCheck = async (habitId, date) => {
           animatingStreaks.value[habitId] = false;
         }, 500);
       }
+
+      // Check for any new achievements from the backend
+      await checkForAchievements();
     } else {
       // Just refresh stats
       await fetchHabitStats(habitId);
@@ -967,6 +1003,7 @@ const openEditModal = (habit) => {
     color: habit.color || '#10B981',
     description: habit.description || '',
     allow_multiple_checks: habit.allow_multiple_checks || false,
+    is_public: habit.is_public ?? true,
   };
 };
 
@@ -979,6 +1016,7 @@ const closeModal = () => {
     color: '#10B981',
     description: '',
     allow_multiple_checks: false,
+    is_public: true,
   };
 };
 
@@ -1133,6 +1171,7 @@ const formatDateWithMonth = (dateStr, habitId = null) => {
 
 onMounted(() => {
   fetchHabits();
+  fetchPendingAchievements(); // Check for any pending celebrations
 });
 </script>
 

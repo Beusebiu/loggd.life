@@ -1,107 +1,133 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-white to-gray-50">
-    <AppNav />
+  <AppLayout>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Page Header -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+          <h1 class="text-2xl font-bold text-gray-900">Check-ins</h1>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="flex gap-6">
-        <!-- Sidebar -->
-        <aside class="w-64 flex-shrink-0">
-          <div class="bg-white rounded-2xl border border-gray-200 shadow-lg sticky top-8 overflow-hidden">
-            <!-- Overview -->
-            <nav class="py-2 border-b border-gray-200">
-              <button
-                @click="showOverview"
-                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2"
-                :class="selectedTemplate === null
-                  ? 'bg-gray-100 text-gray-900 font-medium border-r-2 border-gray-500'
-                  : 'text-gray-700 hover:bg-gray-50'"
-              >
-                <span>📊</span>
+          <!-- Manage Button -->
+          <button
+            @click="openTemplateManager"
+            class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all flex items-center gap-2"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Manage
+          </button>
+        </div>
+
+        <!-- Segmented Control Header -->
+        <div class="bg-white rounded-xl border border-gray-200 p-1.5 shadow-sm">
+          <!-- Primary Category Navigation -->
+          <div class="flex gap-1">
+            <button
+              @click="showOverview"
+              :class="[
+                'flex-1 px-4 py-2.5 text-sm font-semibold rounded-lg transition-all',
+                !selectedCategory
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              ]"
+            >
+              <div class="flex items-center justify-center gap-2">
+                <span class="text-base">📊</span>
                 <span>Overview</span>
-              </button>
-            </nav>
+              </div>
+            </button>
 
-            <!-- Vision Section -->
-            <div class="p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-gray-200">
-              <h3 class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                🎯 My Vision
-              </h3>
-            </div>
-            <nav class="py-2">
-              <button
-                v-for="template in visionTemplates"
-                :key="template.id"
-                @click="selectTemplate(template)"
-                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2"
-                :class="selectedTemplate?.id === template.id
-                  ? 'bg-purple-50 text-purple-700 font-medium border-r-2 border-purple-500'
-                  : 'text-gray-700 hover:bg-gray-50'"
-              >
-                <span>{{ template.icon }}</span>
-                <span class="truncate">{{ template.name }}</span>
-              </button>
-            </nav>
+            <button
+              v-if="visionTemplates.length > 0"
+              @click="handleCategoryClick('vision')"
+              :class="[
+                'flex-1 px-4 py-2.5 text-sm font-semibold rounded-lg transition-all',
+                selectedCategory === 'vision'
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              ]"
+            >
+              <div class="flex items-center justify-center gap-2">
+                <span class="text-base">🎯</span>
+                <span>Vision</span>
+              </div>
+            </button>
 
-            <!-- Goals Section -->
-            <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-y border-gray-200">
-              <h3 class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                🎯 Goals
-              </h3>
-            </div>
-            <nav class="py-2">
-              <button
-                v-for="template in goalTemplates"
-                :key="template.id"
-                @click="selectTemplate(template)"
-                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2"
-                :class="selectedTemplate?.id === template.id
-                  ? 'bg-green-50 text-green-700 font-medium border-r-2 border-green-500'
-                  : 'text-gray-700 hover:bg-gray-50'"
-              >
-                <span>{{ template.icon }}</span>
-                <span class="truncate">{{ template.name }}</span>
-              </button>
-            </nav>
+            <button
+              v-if="goalTemplates.length > 0"
+              @click="handleCategoryClick('goal')"
+              :class="[
+                'flex-1 px-4 py-2.5 text-sm font-semibold rounded-lg transition-all',
+                selectedCategory === 'goal'
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              ]"
+            >
+              <div class="flex items-center justify-center gap-2">
+                <span class="text-base">🎯</span>
+                <span>Goals</span>
+              </div>
+            </button>
 
-            <!-- Reviews Section -->
-            <div class="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-y border-gray-200">
-              <h3 class="text-sm font-bold text-gray-900 flex items-center gap-2">
-                📊 Reviews
-              </h3>
-            </div>
-            <nav class="py-2">
-              <button
-                v-for="template in reviewTemplates"
-                :key="template.id"
-                @click="selectTemplate(template)"
-                class="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center gap-2"
-                :class="selectedTemplate?.id === template.id
-                  ? 'bg-blue-50 text-blue-700 font-medium border-r-2 border-blue-500'
-                  : 'text-gray-700 hover:bg-gray-50'"
-              >
-                <span>{{ template.icon }}</span>
-                <span class="truncate">{{ template.name }}</span>
-              </button>
-            </nav>
-
-            <!-- Manage Templates (subtle footer) -->
-            <div class="mt-auto p-4 border-t border-gray-200">
-              <button
-                @click="openTemplateManager"
-                class="w-full text-xs text-gray-500 hover:text-gray-700 transition-colors flex items-center justify-center gap-1.5 py-2"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                <span>Manage Templates</span>
-              </button>
-            </div>
+            <button
+              v-if="reviewTemplates.length > 0"
+              @click="handleCategoryClick('review')"
+              :class="[
+                'flex-1 px-4 py-2.5 text-sm font-semibold rounded-lg transition-all',
+                selectedCategory === 'review'
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-md'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              ]"
+            >
+              <div class="flex items-center justify-center gap-2">
+                <span class="text-base">📊</span>
+                <span>Review</span>
+              </div>
+            </button>
           </div>
-        </aside>
+        </div>
 
+        <!-- Secondary Template Pills (shown when category is selected) -->
+        <div v-if="selectedCategory && getCurrentCategoryTemplates.length > 0" class="mt-3">
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="template in getCurrentCategoryTemplates"
+              :key="template.id"
+              @click="selectTemplate(template)"
+              :class="[
+                'px-4 py-2 text-sm font-medium rounded-lg transition-all border-2',
+                selectedTemplate?.id === template.id
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-600 shadow-md'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-green-300 hover:bg-green-50'
+              ]"
+            >
+              <span class="mr-1.5">{{ template.icon }}</span>
+              {{ template.name }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Stats (shown on Overview) -->
+        <div v-if="!selectedCategory && dashboardData" class="mt-4 grid grid-cols-3 gap-3">
+          <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg px-4 py-3 border border-green-200">
+            <div class="text-xs font-medium text-gray-600 mb-1">Active Habits</div>
+            <div class="text-2xl font-bold text-gray-900">{{ dashboardData.active_habits || 0 }}</div>
+          </div>
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg px-4 py-3 border border-blue-200">
+            <div class="text-xs font-medium text-gray-600 mb-1">Recent Entries</div>
+            <div class="text-2xl font-bold text-gray-900">{{ dashboardData.recent_entries?.length || 0 }}</div>
+          </div>
+          <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg px-4 py-3 border border-purple-200">
+            <div class="text-xs font-medium text-gray-600 mb-1">Check-ins</div>
+            <div class="text-2xl font-bold text-gray-900">{{ dashboardData.total_check_ins || 0 }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Area -->
         <!-- Main Content -->
-        <div class="flex-1 min-w-0">
+        <div class="w-full">
           <!-- Header -->
           <div v-if="selectedTemplate" class="mb-6">
             <div class="flex items-center justify-between">
@@ -867,7 +893,6 @@
           </div>
         </div>
       </div>
-    </main>
 
     <!-- Template Manager Modal -->
     <Transition name="modal">
@@ -1840,16 +1865,18 @@
       class="fixed inset-0 z-40"
       @click="showEmojiPicker = false"
     ></div>
-  </div>
+  </AppLayout>
 </template>
 
 <script setup>
-import AppNav from '../Components/AppNav.vue';
+import AppLayout from '../Layouts/AppLayout.vue';
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import 'emoji-picker-element';
 
 const templates = ref({});
 const selectedTemplate = ref(null);
+const selectedTemplateId = ref(''); // For dropdown selection
+const selectedCategory = ref(null); // Track selected category for horizontal nav
 const checkIns = ref([]);
 const currentCheckIn = ref(null);
 const versions = ref([]);
@@ -2106,6 +2133,15 @@ const fetchDashboard = async () => {
 
 const selectTemplate = async (template) => {
   selectedTemplate.value = template;
+  selectedTemplateId.value = template.id.toString();
+  // Auto-detect category from template
+  if (visionTemplates.value.find(t => t.id === template.id)) {
+    selectedCategory.value = 'vision';
+  } else if (goalTemplates.value.find(t => t.id === template.id)) {
+    selectedCategory.value = 'goal';
+  } else if (reviewTemplates.value.find(t => t.id === template.id)) {
+    selectedCategory.value = 'review';
+  }
   showVersionHistory.value = false;
   await fetchCheckIns();
 
@@ -2151,7 +2187,52 @@ const getFirstFieldPreview = (checkIn) => {
 
 const showOverview = async () => {
   selectedTemplate.value = null;
+  selectedTemplateId.value = '';
+  selectedCategory.value = null;
+  showVersionHistory.value = false;
   await fetchDashboard(); // Refresh dashboard data when returning to overview
+};
+
+const selectCategory = (category) => {
+  selectedCategory.value = category;
+  selectedTemplate.value = null; // Clear template when switching categories
+};
+
+const handleCategoryClick = (category) => {
+  selectedCategory.value = category;
+  selectedTemplate.value = null;
+  selectedTemplateId.value = '';
+
+  // Auto-select first template if there's only one in the category
+  const categoryTemplates = templates.value[category] || [];
+  if (categoryTemplates.length === 1) {
+    selectTemplate(categoryTemplates[0]);
+  }
+};
+
+const getCurrentCategoryTemplates = computed(() => {
+  if (!selectedCategory.value) return [];
+  return templates.value[selectedCategory.value] || [];
+});
+
+// Handle dropdown selection change
+const handleTemplateChange = () => {
+  if (!selectedTemplateId.value) {
+    showOverview();
+    return;
+  }
+
+  // Find the template by ID from all templates
+  const allTemplates = [
+    ...visionTemplates.value,
+    ...goalTemplates.value,
+    ...reviewTemplates.value
+  ];
+
+  const template = allTemplates.find(t => t.id === parseInt(selectedTemplateId.value));
+  if (template) {
+    selectTemplate(template);
+  }
 };
 
 const toggleContextEntry = (entryId) => {
@@ -3173,5 +3254,15 @@ button, a, input, textarea, select {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Hide scrollbar while keeping scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
 }
 </style>

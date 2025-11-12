@@ -50,6 +50,25 @@ class SettingsController extends Controller
     }
 
     /**
+     * Update user notification preferences.
+     */
+    public function updateNotifications(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'notification_style' => 'required|in:polite,raw',
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Notification preferences updated successfully',
+            'user' => $user,
+        ]);
+    }
+
+    /**
      * Update user password.
      */
     public function updatePassword(Request $request)
@@ -62,7 +81,7 @@ class SettingsController extends Controller
         $user = $request->user();
 
         // Verify current password
-        if (!Hash::check($validated['current_password'], $user->password)) {
+        if (! Hash::check($validated['current_password'], $user->password)) {
             return response()->json([
                 'message' => 'Current password is incorrect',
                 'errors' => ['current_password' => ['The current password is incorrect']],
@@ -87,7 +106,7 @@ class SettingsController extends Controller
         $user = $request->user();
 
         $validated = $request->validate([
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
         ]);
 
         $user->update($validated);

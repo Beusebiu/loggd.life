@@ -1,14 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-white to-gray-50">
-    <AppNav />
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-black mb-2">Statistics & Insights</h1>
-        <p class="text-gray-600">Track your progress and analyze your patterns</p>
+  <AppLayout>
+    <div class="max-w-7xl mx-auto">
+      <!-- Page Header -->
+      <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 py-3">
+        <h2 class="text-xl font-bold text-black">Statistics & Insights</h2>
       </div>
 
+      <div class="px-4 sm:px-6 lg:px-8 py-8">
       <div v-if="stats" class="space-y-8">
         <!-- Overview Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
@@ -176,20 +174,22 @@
         <div class="text-4xl mb-4">📊</div>
         <p class="text-gray-600">Loading statistics...</p>
       </div>
-    </main>
-  </div>
+      </div>
+    </div>
+  </AppLayout>
 </template>
 
 <script setup>
-import AppNav from '../Components/AppNav.vue';
+import AppLayout from '../Layouts/AppLayout.vue';
 import { ref, onMounted } from 'vue';
 import { router } from '@inertiajs/vue3';
+import axios from 'axios';
 
 const stats = ref(null);
 
 const fetchStats = async () => {
   try {
-    const response = await window.axios.get('/api/stats');
+    const response = await axios.get('/api/stats');
     stats.value = response.data;
   } catch (error) {
     console.error('Error fetching stats:', error);

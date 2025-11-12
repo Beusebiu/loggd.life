@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Habit;
 use App\Models\HabitCheck;
+use App\Services\AchievementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class HabitController extends Controller
 {
+    public function __construct(protected AchievementService $achievementService) {}
+
     /**
      * Display a listing of the user's habits.
      * GET /api/habits
@@ -49,6 +52,7 @@ class HabitController extends Controller
             'color' => 'nullable|string|max:7',
             'start_date' => 'required|date',
             'allow_multiple_checks' => 'nullable|boolean',
+            'is_public' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -88,6 +92,7 @@ class HabitController extends Controller
             'color' => 'nullable|string|max:7',
             'start_date' => 'sometimes|date',
             'allow_multiple_checks' => 'nullable|boolean',
+            'is_public' => 'nullable|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -189,6 +194,9 @@ class HabitController extends Controller
                 'checked_at' => now(),
             ]);
 
+            // Trigger achievement for multi-check habits too
+            $this->triggerHabitAchievement($habit);
+
             return response()->json($check);
         }
 
@@ -199,11 +207,17 @@ class HabitController extends Controller
 
         if ($check) {
             // Toggle the check
+            $wasChecked = $check->checked;
             $check->update([
-                'checked' => !$check->checked,
+                'checked' => ! $check->checked,
                 'checked_at' => now(),
                 'note' => $request->note ?? $check->note,
             ]);
+
+            // Trigger achievement if newly checked
+            if (! $wasChecked && $check->checked) {
+                $this->triggerHabitAchievement($habit);
+            }
         } else {
             // Create new check
             $check = HabitCheck::create([
@@ -214,6 +228,9 @@ class HabitController extends Controller
                 'note' => $request->note,
                 'checked_at' => now(),
             ]);
+
+            // Trigger achievement for new completion
+            $this->triggerHabitAchievement($habit);
         }
 
         return response()->json($check);
@@ -266,17 +283,17 @@ class HabitController extends Controller
         // Calculate current streak
         $currentStreak = 0;
         $today = now()->toDateString();
-        $yesterday = date('Y-m-d', strtotime($today . ' -1 day'));
+        $yesterday = date('Y-m-d', strtotime($today.' -1 day'));
 
         // Start from today if checked, otherwise start from yesterday (streak still active)
         $checkDate = in_array($today, $uniqueDates) ? $today : $yesterday;
 
         while (true) {
-            if (!in_array($checkDate, $uniqueDates)) {
+            if (! in_array($checkDate, $uniqueDates)) {
                 break;
             }
             $currentStreak++;
-            $checkDate = date('Y-m-d', strtotime($checkDate . ' -1 day'));
+            $checkDate = date('Y-m-d', strtotime($checkDate.' -1 day'));
         }
 
         // Calculate longest streak
@@ -377,5 +394,42 @@ class HabitController extends Controller
         $check->delete();
 
         return response()->json(['message' => 'Check deleted successfully']);
+    }
+
+    /**
+     * Trigger achievement for habit completion with current streak.
+     */
+    protected function triggerHabitAchievement(Habit $habit): void
+    {
+        // Calculate current streak
+        $uniqueDates = $habit->checks()
+            ->where('checked', true)
+            ->selectRaw('DISTINCT date')
+            ->orderBy('date', 'asc')
+            ->pluck('date')
+            ->map(function ($date) {
+                return $date instanceof \Carbon\Carbon ? $date->toDateString() : $date;
+            })
+            ->toArray();
+
+        $currentStreak = 0;
+        $today = now()->toDateString();
+        $yesterday = date('Y-m-d', strtotime($today.' -1 day'));
+        $checkDate = in_array($today, $uniqueDates) ? $today : $yesterday;
+
+        while (true) {
+            if (! in_array($checkDate, $uniqueDates)) {
+                break;
+            }
+            $currentStreak++;
+            $checkDate = date('Y-m-d', strtotime($checkDate.' -1 day'));
+        }
+
+        // Trigger the achievement
+        $this->achievementService->triggerHabitCompletion(
+            auth()->user(),
+            $habit,
+            $currentStreak
+        );
     }
 }

@@ -19,12 +19,14 @@ class Habit extends Model
         'start_date',
         'status',
         'allow_multiple_checks',
+        'is_public',
     ];
 
     protected $casts = [
         'custom_days' => 'array',
         'start_date' => 'date',
         'allow_multiple_checks' => 'boolean',
+        'is_public' => 'boolean',
     ];
 
     /**
@@ -57,5 +59,21 @@ class Habit extends Model
     public function scopeArchived($query)
     {
         return $query->where('status', 'archived');
+    }
+
+    /**
+     * Scope a query to only include public habits.
+     */
+    public function scopePublic($query)
+    {
+        return $query->where('is_public', true);
+    }
+
+    /**
+     * Scope a query to only include private habits.
+     */
+    public function scopePrivate($query)
+    {
+        return $query->where('is_public', false);
     }
 }

@@ -163,6 +163,8 @@
             v-if="!habit.allow_multiple_checks"
             @click="!isFutureDate(date) && $emit('toggle-check', { habitId: habit.id, date })"
             @contextmenu.prevent="!isFutureDate(date) && $emit('open-note', { habitId: habit.id, date })"
+            @mouseenter="!isFutureDate(date) && $emit('show-tooltip', { event: $event, habitId: habit.id, date })"
+            @mouseleave="$emit('hide-tooltip')"
             :disabled="isFutureDate(date)"
             class="relative w-10 h-10 rounded-lg border-2 transition-all"
             :class="[
@@ -193,6 +195,8 @@
             v-else
             @click="!isFutureDate(date) && $emit('open-multi-check', { habit, date })"
             @contextmenu.prevent="!isFutureDate(date) && $emit('open-note', { habitId: habit.id, date })"
+            @mouseenter="!isFutureDate(date) && $emit('show-tooltip', { event: $event, habitId: habit.id, date })"
+            @mouseleave="$emit('hide-tooltip')"
             :disabled="isFutureDate(date)"
             class="relative w-10 h-10 rounded-lg border-2 transition-all flex items-center justify-center"
             :class="[

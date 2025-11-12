@@ -1,14 +1,12 @@
 <template>
-  <div class="min-h-screen bg-white">
-    <AppNav current-page="entries" />
-
-    <!-- Main Content -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32">
-      <!-- Page Title -->
-      <div class="mb-6">
-        <h2 class="text-2xl font-semibold text-black">Entries</h2>
-        <p class="text-sm text-gray-600 mt-1">Capture your thoughts, achievements, and moments</p>
+  <AppLayout>
+    <div class="max-w-7xl mx-auto">
+      <!-- Page Header -->
+      <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 py-3">
+        <h2 class="text-xl font-bold text-black">Entries</h2>
       </div>
+
+      <div class="px-4 sm:px-6 lg:px-8 py-8 pb-32">
 
       <!-- Entries List -->
       <div v-if="entries.length > 0" class="space-y-6">
@@ -35,7 +33,7 @@
         <p class="text-gray-500 mb-2">No entries yet</p>
         <p class="text-sm text-gray-400">Use the quick capture below to create your first entry</p>
       </div>
-    </main>
+      </div>
 
     <!-- Quick Capture - Sticky Bottom -->
     <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg">
@@ -78,14 +76,15 @@
         </form>
       </div>
     </div>
-  </div>
+    </div>
+  </AppLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { router } from '@inertiajs/vue3';
-import AppNav from '../Components/AppNav.vue';
+import AppLayout from '../Layouts/AppLayout.vue';
 
 const entries = ref([]);
 const categories = ref([]);

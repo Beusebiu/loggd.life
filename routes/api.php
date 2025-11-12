@@ -1,13 +1,14 @@
 <?php
 
+use App\Http\Controllers\Api\AchievementController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\HabitController;
-use App\Http\Controllers\Api\EntryController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CheckInController;
-use App\Http\Controllers\Api\TimelineController;
-use App\Http\Controllers\Api\StatsController;
+use App\Http\Controllers\Api\EntryController;
+use App\Http\Controllers\Api\HabitController;
 use App\Http\Controllers\Api\SettingsController;
+use App\Http\Controllers\Api\StatsController;
+use App\Http\Controllers\Api\TimelineController;
 use Illuminate\Support\Facades\Route;
 
 // Public authentication routes
@@ -66,10 +67,17 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
 
     // Stats (analytics and insights)
     Route::get('/stats', [StatsController::class, 'index']);
+    Route::get('/stats/daily-activity', [StatsController::class, 'dailyActivity']);
 
     // Settings
     Route::patch('/settings/profile', [SettingsController::class, 'updateProfile']);
     Route::patch('/settings/privacy', [SettingsController::class, 'updatePrivacy']);
+    Route::patch('/settings/notifications', [SettingsController::class, 'updateNotifications']);
     Route::patch('/settings/password', [SettingsController::class, 'updatePassword']);
     Route::patch('/settings/email', [SettingsController::class, 'updateEmail']);
+
+    // Achievements
+    Route::get('/achievements/pending', [AchievementController::class, 'pending']);
+    Route::get('/achievements/all', [AchievementController::class, 'all']); // Debug endpoint
+    Route::post('/achievements/{id}/mark-shown', [AchievementController::class, 'markShown']);
 });
