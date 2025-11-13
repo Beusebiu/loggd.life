@@ -420,31 +420,6 @@
           </div>
         </div>
 
-        <!-- Compact Recent Wins -->
-        <div v-if="recentWins && recentWins.length > 0" class="bg-white rounded-lg p-4 border border-gray-200">
-          <h2 class="text-base font-bold text-gray-900 flex items-center gap-2 mb-3">
-            <span>✨</span>
-            Recent Wins
-          </h2>
-
-          <div class="space-y-2">
-            <div
-              v-for="win in recentWins.slice(0, 5)"
-              :key="win.title + win.date"
-              class="flex items-center gap-3 p-2 border border-amber-200 rounded-lg bg-amber-50"
-            >
-              <span class="text-xl">{{ win.icon }}</span>
-              <div class="flex-1 min-w-0">
-                <h3 class="text-xs font-semibold text-gray-900 truncate">{{ win.title }}</h3>
-                <p v-if="win.description" class="text-xs text-gray-600 truncate">{{ win.description }}</p>
-              </div>
-              <div class="text-xs text-gray-500 whitespace-nowrap">
-                {{ formatRelativeDate(win.date) }}
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Visitor CTA -->
         <div v-if="!$page.props.auth.user" class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg p-6 text-center text-white">
           <div class="text-3xl mb-2">🚀</div>
@@ -500,7 +475,6 @@ const props = defineProps({
   stats: Object,
   publicHabits: Array,
   publicGoals: Array,
-  recentWins: Array,
   activityData: Array,
   visionSnippet: [Array, Object],
   milestones: Array,
@@ -668,18 +642,6 @@ const formatTooltipDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString + 'T00:00:00');
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
-
-const formatRelativeDate = (dateString) => {
-  const date = new Date(dateString + 'T00:00:00');
-  const now = new Date();
-  const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays}d ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
-  return `${Math.floor(diffDays / 30)}mo ago`;
 };
 
 // Format object keys for display (e.g., "bucket_list" -> "Bucket List")

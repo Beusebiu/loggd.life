@@ -409,6 +409,7 @@ import AppLayout from '../Layouts/AppLayout.vue';
 import JourneyNav from '../Components/journey/JourneyNav.vue';
 import TextareaWithEmoji from '../Components/TextareaWithEmoji.vue';
 import { ref, computed, onMounted } from 'vue';
+import { formatDateShort, formatTimeHorizon } from '../utils/dateFormatters';
 
 const getMonday = (date) => {
   const d = new Date(date);
@@ -563,21 +564,6 @@ const navigateWeek = (weeks) => {
   current.setDate(current.getDate() + (weeks * 7));
   weekStart.value = getMonday(current).toISOString().split('T')[0];
   loadReview();
-};
-
-const formatDateShort = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-};
-
-const formatTimeHorizon = (horizon) => {
-  const labels = {
-    '3_year': '3-Year',
-    'yearly': 'Yearly',
-    'quarterly': 'Quarterly',
-    'monthly': 'Monthly',
-  };
-  return labels[horizon] || horizon;
 };
 
 onMounted(() => {

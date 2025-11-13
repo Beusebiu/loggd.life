@@ -143,6 +143,8 @@
 
 <script setup>
 import { computed } from 'vue';
+import { formatMetricValue, truncate } from '../../utils/formatters';
+import { formatDate } from '../../utils/dateFormatters';
 
 const props = defineProps({
   goal: {
@@ -191,32 +193,11 @@ const recentMilestones = computed(() => {
   return (props.goal.milestones || []).slice(0, 3);
 });
 
+// Wrapper for formatMetric to include unit from goal
 const formatMetric = (value) => {
   if (value === null || value === undefined) return '-';
-
   const unit = props.goal.metric_unit || '';
-  const num = parseFloat(value);
-
-  // Format with commas for large numbers
-  const formatted = num.toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
-
-  return `${unit}${formatted}`;
-};
-
-const formatDate = (date) => {
-  if (!date) return '';
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    year: 'numeric',
-  });
-};
-
-const truncate = (text, length) => {
-  if (!text) return '';
-  return text.length > length ? text.substring(0, length) + '...' : text;
+  return formatMetricValue(value, unit);
 };
 
 const lifeAreaIcon = (area) => {

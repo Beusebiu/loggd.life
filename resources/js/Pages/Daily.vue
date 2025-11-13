@@ -402,6 +402,7 @@ import JourneyNav from '../Components/journey/JourneyNav.vue';
 import TextareaWithEmoji from '../Components/TextareaWithEmoji.vue';
 import { usePage } from '@inertiajs/vue3';
 import { ref, computed, onMounted, watch } from 'vue';
+import { formatDateShort, formatRelative, formatTimeHorizon } from '../utils/dateFormatters';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -643,34 +644,6 @@ const navigateDate = (days) => {
   selectedDate.value = current.toISOString().split('T')[0];
   loadCheckIn();
   loadHabitChecks();
-};
-
-const formatDateShort = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-};
-
-const formatRelative = (dateString) => {
-  const date = new Date(dateString);
-  const todayDate = new Date();
-  const diffTime = todayDate.getTime() - date.getTime();
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-  return `${Math.floor(diffDays / 30)} months ago`;
-};
-
-const formatTimeHorizon = (horizon) => {
-  const labels = {
-    '3_year': '3-Year',
-    'yearly': 'Yearly',
-    'quarterly': 'Quarterly',
-    'monthly': 'Monthly',
-  };
-  return labels[horizon] || horizon;
 };
 
 onMounted(() => {

@@ -226,6 +226,7 @@ import GoalCard from '../Components/journey/GoalCard.vue';
 import CreateGoalModal from '../Components/journey/CreateGoalModal.vue';
 import GoalDetailModal from '../Components/journey/GoalDetailModal.vue';
 import { ref, computed, onMounted } from 'vue';
+import { formatMetricValue } from '../utils/formatters';
 
 const goals = ref({});
 const showCreateModal = ref(false);
@@ -356,14 +357,6 @@ const submitJournalUpdate = async () => {
   } finally {
     updatingJournal.value = false;
   }
-};
-
-const formatMetricValue = (value) => {
-  if (value === null || value === undefined) return '0';
-  return parseFloat(value).toLocaleString('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
 };
 
 onMounted(() => {

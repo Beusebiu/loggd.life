@@ -627,6 +627,7 @@ import JourneyNav from '../Components/journey/JourneyNav.vue';
 import VisionSection from '../Components/journey/VisionSection.vue';
 import TextareaWithEmoji from '../Components/TextareaWithEmoji.vue';
 import { ref, computed, onMounted, watch } from 'vue';
+import { formatTimeHorizon, formatDateFull } from '../utils/dateFormatters';
 
 const vision = ref({
   eulogy_method: null,
@@ -836,13 +837,8 @@ const viewSnapshot = (snapshot) => {
   showHistoryModal.value = false;
 };
 
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-};
+// Alias formatDateFull as formatDate for template usage
+const formatDate = formatDateFull;
 
 // Dismiss snapshot info banner
 const dismissSnapshotInfo = () => {
@@ -866,16 +862,6 @@ const getGoalsForArea = (lifeArea) => {
     goal.life_area === lifeArea &&
     (goal.status === 'active' || goal.status === 'completed')
   ).slice(0, 5); // Limit to 5 goals per area for clean UI
-};
-
-const formatTimeHorizon = (horizon) => {
-  const horizonMap = {
-    '3_year': '3-Year',
-    'yearly': 'Yearly',
-    'quarterly': 'Quarterly',
-    'monthly': 'Monthly',
-  };
-  return horizonMap[horizon] || horizon;
 };
 
 // Watch for history modal opening to fetch snapshots
