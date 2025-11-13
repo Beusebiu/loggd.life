@@ -100,4 +100,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(HabitCheck::class);
     }
+
+    /**
+     * Get the user's goals.
+     */
+    public function goals()
+    {
+        return $this->hasMany(Goal::class);
+    }
+
+    /**
+     * Get the user's daily check-ins.
+     */
+    public function dailyCheckIns()
+    {
+        return $this->hasMany(DailyCheckIn::class);
+    }
 }

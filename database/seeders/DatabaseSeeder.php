@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
                     continue;
                 }
 
-                if ($habitData['frequency'] === 'custom' && isset($habitData['custom_days']) && !in_array($dayOfWeek, $habitData['custom_days'])) {
+                if ($habitData['frequency'] === 'custom' && isset($habitData['custom_days']) && ! in_array($dayOfWeek, $habitData['custom_days'])) {
                     continue;
                 }
 
@@ -105,142 +105,8 @@ class DatabaseSeeder extends Seeder
         // Seed Journey data (Vision, Goals, Weekly Reviews, Daily Check-ins)
         $this->call(JourneySeeder::class);
 
-        // Create 20-30 additional users with varied data
-        $this->seedAdditionalUsers();
-    }
-
-    private function seedAdditionalUsers(): void
-    {
-        $this->command->info('Seeding additional users...');
-
-        $userCount = rand(20, 30);
-
-        $firstNames = ['Alex', 'Sam', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Avery', 'Quinn', 'Blake', 'Jamie', 'Drew', 'Sage', 'River', 'Dakota', 'Skylar', 'Rowan', 'Phoenix', 'Cameron', 'Dylan', 'Logan', 'Emerson', 'Parker', 'Reese', 'Charlie', 'Peyton', 'Finley', 'Hayden', 'Kendall', 'Jessie'];
-        $lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Walker', 'Hall', 'Allen', 'Young', 'King', 'Wright', 'Scott', 'Green', 'Baker'];
-
-        for ($i = 1; $i <= $userCount; $i++) {
-            $firstName = $firstNames[array_rand($firstNames)];
-            $lastName = $lastNames[array_rand($lastNames)];
-            $username = strtolower($firstName . $lastName . rand(100, 999));
-            $email = $username . '@example.com';
-
-            $user = User::create([
-                'name' => $firstName . ' ' . $lastName,
-                'username' => $username,
-                'email' => $email,
-                'password' => bcrypt('password123'),
-                'email_verified_at' => now(),
-                'bio' => $this->getRandomBio(),
-                'profile_public' => rand(1, 10) > 3, // 70% public
-                'timezone' => $this->getRandomTimezone(),
-            ]);
-
-            // Create 2-5 habits for each user
-            $this->createHabitsForUser($user, rand(2, 5));
-
-            if ($i % 5 === 0) {
-                $this->command->info("Created {$i}/{$userCount} users...");
-            }
-        }
-
-        $this->command->info("Created {$userCount} additional users!");
-    }
-
-    private function getRandomBio(): ?string
-    {
-        $bios = [
-            'Personal growth enthusiast. Tracking my journey one day at a time.',
-            'Building better habits daily. Software developer by day, athlete by night.',
-            'On a mission to become the best version of myself.',
-            'Productivity nerd. Love tracking progress and hitting goals.',
-            'Fitness junkie and bookworm. Always learning, always growing.',
-            'Entrepreneur building in public. Documenting the journey.',
-            'Habit tracker. Goal setter. Dream chaser.',
-            'Student of life. Believer in continuous improvement.',
-            'Making progress every single day, no matter how small.',
-            'Former procrastinator, now accountability advocate.',
-            null, // Some users have no bio
-            null,
-        ];
-
-        return $bios[array_rand($bios)];
-    }
-
-    private function getRandomTimezone(): string
-    {
-        $timezones = [
-            'America/New_York',
-            'America/Chicago',
-            'America/Denver',
-            'America/Los_Angeles',
-            'Europe/London',
-            'Europe/Paris',
-            'Europe/Berlin',
-            'Asia/Tokyo',
-            'Asia/Singapore',
-            'Australia/Sydney',
-            'UTC',
-        ];
-
-        return $timezones[array_rand($timezones)];
-    }
-
-    private function createHabitsForUser(User $user, int $count): void
-    {
-        $habitPool = [
-            ['name' => 'Morning Workout', 'emoji' => '🏋️', 'description' => '30 minutes of exercise', 'frequency' => 'daily', 'color' => '#10B981'],
-            ['name' => 'Read Books', 'emoji' => '📖', 'description' => 'Read for 20 minutes', 'frequency' => 'daily', 'color' => '#F59E0B'],
-            ['name' => 'Meditation', 'emoji' => '🧘', 'description' => '10 minutes of mindfulness', 'frequency' => 'daily', 'color' => '#8B5CF6'],
-            ['name' => 'Learn Coding', 'emoji' => '💻', 'description' => 'Practice for 1 hour', 'frequency' => 'weekdays', 'color' => '#3B82F6'],
-            ['name' => 'Journal', 'emoji' => '📝', 'description' => 'Write in journal', 'frequency' => 'daily', 'color' => '#EC4899'],
-            ['name' => 'Cold Shower', 'emoji' => '🚿', 'description' => 'Cold water therapy', 'frequency' => 'daily', 'color' => '#06B6D4'],
-            ['name' => 'Walk', 'emoji' => '🚶', 'description' => '15 minute walk', 'frequency' => 'daily', 'color' => '#22C55E'],
-            ['name' => 'Drink Water', 'emoji' => '💧', 'description' => '2L daily', 'frequency' => 'daily', 'color' => '#0EA5E9'],
-            ['name' => 'No Social Media', 'emoji' => '📵', 'description' => 'Avoid before noon', 'frequency' => 'weekdays', 'color' => '#EF4444'],
-        ];
-
-        shuffle($habitPool);
-        $selectedHabits = array_slice($habitPool, 0, $count);
-
-        foreach ($selectedHabits as $habitData) {
-            $startDays = rand(10, 60);
-
-            $habit = Habit::create([
-                'user_id' => $user->id,
-                'name' => $habitData['name'],
-                'emoji' => $habitData['emoji'],
-                'description' => $habitData['description'],
-                'frequency' => $habitData['frequency'],
-                'color' => $habitData['color'],
-                'start_date' => now()->subDays($startDays),
-                'status' => 'active',
-                'is_public' => rand(1, 10) > 5, // 50% public
-            ]);
-
-            // Create some habit checks (sparse data)
-            for ($i = $startDays; $i >= 0; $i--) {
-                $currentDate = now()->subDays($i);
-                $dayOfWeek = $currentDate->dayOfWeek;
-
-                // Skip based on frequency
-                if ($habitData['frequency'] === 'weekdays' && ($dayOfWeek === 0 || $dayOfWeek === 6)) {
-                    continue;
-                }
-
-                // Lower completion rate for variety (60-80%)
-                $shouldComplete = rand(1, 100) <= rand(60, 80);
-
-                if ($shouldComplete) {
-                    HabitCheck::create([
-                        'habit_id' => $habit->id,
-                        'user_id' => $user->id,
-                        'date' => $currentDate->toDateString(),
-                        'checked' => true,
-                        'checked_at' => $currentDate->addHours(rand(6, 22)),
-                    ]);
-                }
-            }
-        }
+        // Create 50 comprehensive test profiles with everything
+        $this->call(ComprehensiveProfileSeeder::class);
     }
 
     private function getRandomNote($habitName): ?string

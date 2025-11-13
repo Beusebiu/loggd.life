@@ -201,7 +201,7 @@ My mission is to..."
               <div v-if="getGoalsForArea(area.key).length > 0" class="mt-3 pt-3 border-t border-gray-200">
                 <div class="flex items-center justify-between mb-2">
                   <p class="text-xs font-semibold text-gray-700">🎯 Active goals in this area:</p>
-                  <a href="/journey/goals" class="text-xs text-green-600 hover:underline">View all</a>
+                  <a :href="`/@${$page.props.auth.user.username}/journey/goals`" class="text-xs text-green-600 hover:underline">View all</a>
                 </div>
                 <div class="space-y-2">
                   <div

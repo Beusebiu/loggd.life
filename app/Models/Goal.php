@@ -127,6 +127,7 @@ class Goal extends Model
             }
 
             $this->save();
+
             return;
         }
 
@@ -134,6 +135,7 @@ class Goal extends Model
         if ($this->tracking_type === 'metric') {
             $this->progress_percentage = $this->getMetricProgressPercentage();
             $this->save();
+
             return;
         }
 

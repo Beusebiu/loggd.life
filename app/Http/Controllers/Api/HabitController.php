@@ -280,23 +280,38 @@ class HabitController extends Controller
             })
             ->toArray();
 
-        // Calculate current streak
+        // Calculate current streak (respecting frequency)
         $currentStreak = 0;
-        $today = now()->toDateString();
-        $yesterday = date('Y-m-d', strtotime($today.' -1 day'));
+        $today = now();
+        $checkDate = $today->copy();
 
-        // Start from today if checked, otherwise start from yesterday (streak still active)
-        $checkDate = in_array($today, $uniqueDates) ? $today : $yesterday;
-
-        while (true) {
-            if (! in_array($checkDate, $uniqueDates)) {
-                break;
-            }
-            $currentStreak++;
-            $checkDate = date('Y-m-d', strtotime($checkDate.' -1 day'));
+        // Start from yesterday if today doesn't have a check yet
+        if (! in_array($checkDate->toDateString(), $uniqueDates)) {
+            $checkDate->subDay();
         }
 
-        // Calculate longest streak
+        while (true) {
+            $dateString = $checkDate->toDateString();
+            $dayOfWeek = $checkDate->dayOfWeek;
+
+            // Check if this date should be tracked based on habit frequency
+            if ($this->shouldTrackDate($habit, $dayOfWeek)) {
+                if (! in_array($dateString, $uniqueDates)) {
+                    break; // Streak ends
+                }
+                $currentStreak++;
+            }
+
+            // Move to previous day
+            $checkDate->subDay();
+
+            // Safety: don't go back more than 1 year
+            if ($checkDate->diffInDays($today) > 365) {
+                break;
+            }
+        }
+
+        // Calculate longest streak (respecting frequency)
         $longestStreak = 0;
         $tempStreak = 0;
         $prevDate = null;
@@ -307,10 +322,14 @@ class HabitController extends Controller
             if ($prevDate === null) {
                 $tempStreak = 1;
             } else {
-                // Check if this date is exactly 1 day after the previous date
-                if ($prevDate->diffInDays($currentDate) === 1) {
+                // Calculate expected days between checks based on frequency
+                $daysBetween = $this->getExpectedDaysBetween($habit, $prevDate, $currentDate);
+
+                if ($daysBetween === 0) {
+                    // Dates are consecutive tracking days
                     $tempStreak++;
                 } else {
+                    // Streak broken
                     $longestStreak = max($longestStreak, $tempStreak);
                     $tempStreak = 1;
                 }
@@ -320,25 +339,25 @@ class HabitController extends Controller
         }
         $longestStreak = max($longestStreak, $tempStreak);
 
-        // Calculate total days since start
+        // Calculate total tracking days since start (respecting frequency)
         $startDate = \Carbon\Carbon::parse($habit->start_date)->startOfDay();
         $todayDate = now()->startOfDay();
-        $totalDays = $startDate->diffInDays($todayDate) + 1;
+        $totalTrackingDays = $this->countTrackingDays($habit, $startDate, $todayDate);
 
-        // Ensure totalDays is positive
-        if ($totalDays < 1) {
-            $totalDays = 1;
+        // Ensure totalTrackingDays is positive
+        if ($totalTrackingDays < 1) {
+            $totalTrackingDays = 1;
         }
 
         $completedDays = count($uniqueDates);
-        $completionRate = $totalDays > 0 ? round(($completedDays / $totalDays) * 100, 2) : 0;
+        $completionRate = $totalTrackingDays > 0 ? round(($completedDays / $totalTrackingDays) * 100, 2) : 0;
 
         return response()->json([
             'current_streak' => $currentStreak,
             'longest_streak' => $longestStreak,
             'total_completions' => $completedDays,
             'completion_rate' => $completionRate,
-            'total_days' => $totalDays,
+            'total_days' => $totalTrackingDays,
         ]);
     }
 
@@ -413,16 +432,33 @@ class HabitController extends Controller
             ->toArray();
 
         $currentStreak = 0;
-        $today = now()->toDateString();
-        $yesterday = date('Y-m-d', strtotime($today.' -1 day'));
-        $checkDate = in_array($today, $uniqueDates) ? $today : $yesterday;
+        $today = now();
+        $checkDate = $today->copy();
+
+        // Start from yesterday if today doesn't have a check yet
+        if (! in_array($checkDate->toDateString(), $uniqueDates)) {
+            $checkDate->subDay();
+        }
 
         while (true) {
-            if (! in_array($checkDate, $uniqueDates)) {
+            $dateString = $checkDate->toDateString();
+            $dayOfWeek = $checkDate->dayOfWeek;
+
+            // Check if this date should be tracked based on habit frequency
+            if ($this->shouldTrackDate($habit, $dayOfWeek)) {
+                if (! in_array($dateString, $uniqueDates)) {
+                    break; // Streak ends
+                }
+                $currentStreak++;
+            }
+
+            // Move to previous day
+            $checkDate->subDay();
+
+            // Safety: don't go back more than 1 year
+            if ($checkDate->diffInDays($today) > 365) {
                 break;
             }
-            $currentStreak++;
-            $checkDate = date('Y-m-d', strtotime($checkDate.' -1 day'));
         }
 
         // Trigger the achievement
@@ -431,5 +467,72 @@ class HabitController extends Controller
             $habit,
             $currentStreak
         );
+    }
+
+    /**
+     * Check if a date should be tracked based on habit frequency
+     */
+    private function shouldTrackDate($habit, int $dayOfWeek): bool
+    {
+        switch ($habit->frequency) {
+            case 'daily':
+                return true;
+
+            case 'weekdays':
+                // Monday = 1, Friday = 5
+                return $dayOfWeek >= 1 && $dayOfWeek <= 5;
+
+            case 'weekends':
+                // Saturday = 6, Sunday = 0
+                return $dayOfWeek === 0 || $dayOfWeek === 6;
+
+            case 'custom':
+                // Check if dayOfWeek is in custom_days array
+                if (! $habit->custom_days) {
+                    return true; // Default to true if custom_days not set
+                }
+
+                return in_array($dayOfWeek, $habit->custom_days);
+
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Check if two dates are consecutive tracking days (considering frequency)
+     * Returns 0 if consecutive, >0 if there are skipped tracking days
+     */
+    private function getExpectedDaysBetween($habit, $prevDate, $currentDate): int
+    {
+        $checkDate = $prevDate->copy()->addDay();
+        $skippedTrackingDays = 0;
+
+        while ($checkDate->lt($currentDate)) {
+            if ($this->shouldTrackDate($habit, $checkDate->dayOfWeek)) {
+                $skippedTrackingDays++;
+            }
+            $checkDate->addDay();
+        }
+
+        return $skippedTrackingDays;
+    }
+
+    /**
+     * Count total tracking days between two dates (respecting frequency)
+     */
+    private function countTrackingDays($habit, $startDate, $endDate): int
+    {
+        $checkDate = $startDate->copy();
+        $trackingDays = 0;
+
+        while ($checkDate->lte($endDate)) {
+            if ($this->shouldTrackDate($habit, $checkDate->dayOfWeek)) {
+                $trackingDays++;
+            }
+            $checkDate->addDay();
+        }
+
+        return $trackingDays;
     }
 }

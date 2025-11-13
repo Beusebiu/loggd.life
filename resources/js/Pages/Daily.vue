@@ -213,7 +213,7 @@
                 <h3 class="text-md font-bold text-gray-900 mb-3">🎯 Goal Work Today</h3>
                 <div class="bg-white rounded-lg border border-amber-200 p-4 space-y-4">
                   <div v-if="activeGoals.length === 0" class="text-sm text-gray-500 italic">
-                    No active quarterly/monthly goals. <a href="/journey/goals" class="text-green-600 hover:underline">Create one?</a>
+                    No active quarterly/monthly goals. <a :href="`/@${user.username}/journey/goals`" class="text-green-600 hover:underline">Create one?</a>
                   </div>
 
                   <div v-else>

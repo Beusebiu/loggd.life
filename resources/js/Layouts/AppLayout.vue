@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-black">LOGGD</h1>
           </div>
 
-          <!-- Navigation -->
+          <!-- Navigation (Logged In) -->
           <nav v-if="user" class="flex-1 space-y-1">
             <Link
               :href="`/@${user.username}`"
@@ -50,6 +50,51 @@
               <span class="text-lg">Journey</span>
             </Link>
           </nav>
+
+          <!-- Logged Out Content -->
+          <div v-else class="flex-1 flex flex-col px-3">
+            <div class="mb-6">
+              <p class="text-sm text-gray-600 leading-relaxed">
+                Track your habits, set goals, and build the life you want.
+              </p>
+            </div>
+
+            <div class="space-y-3 mb-6">
+              <Link
+                href="/register"
+                class="block w-full px-4 py-3 text-center font-semibold text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-full shadow-md hover:shadow-lg transition-all"
+              >
+                Sign Up Free
+              </Link>
+              <Link
+                href="/login"
+                class="block w-full px-4 py-3 text-center font-medium text-gray-700 border-2 border-gray-300 hover:border-green-500 hover:text-green-700 rounded-full transition-all"
+              >
+                Login
+              </Link>
+            </div>
+
+            <div class="flex-1"></div>
+
+            <div class="space-y-2 text-sm text-gray-600 mb-6">
+              <div class="flex items-center gap-2">
+                <span>✓</span>
+                <span>365-day habit tracking</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span>✓</span>
+                <span>Goal management</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span>✓</span>
+                <span>Daily & weekly check-ins</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span>✓</span>
+                <span>Shareable profiles</span>
+              </div>
+            </div>
+          </div>
 
           <!-- User Menu at Bottom -->
           <div v-if="user" class="mt-auto">

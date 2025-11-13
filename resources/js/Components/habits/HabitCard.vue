@@ -48,64 +48,12 @@
     </div>
 
     <!-- GitHub-style Progress Grid (Read-only) -->
-    <div class="px-4 py-4 bg-gray-50 relative">
-      <div class="mb-2 flex items-center justify-between">
-        <div class="text-xs font-medium text-gray-700">Last 365 days</div>
-        <div v-if="habit.allow_multiple_checks" class="flex items-center gap-2 text-[10px] text-gray-500">
-          <div class="flex items-center gap-1">
-            <div class="w-3 h-3 rounded-sm" :style="{ backgroundColor: habit.color || '#10B981', opacity: 0.55 }"></div>
-            <span>Less</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <div class="w-3 h-3 rounded-sm" :style="{ backgroundColor: habit.color || '#10B981' }"></div>
-            <span>More</span>
-          </div>
-        </div>
-        <div v-else class="flex items-center gap-2 text-[10px] text-gray-500">
-          <div class="flex items-center gap-1">
-            <div class="w-3 h-3 rounded-sm border border-gray-300" :style="{ backgroundColor: (habit.color || '#10B981') + '20' }"></div>
-            <span>Not done</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <div class="w-3 h-3 rounded-sm" :style="{ backgroundColor: habit.color || '#10B981' }"></div>
-            <span>Done</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Month Labels -->
-      <div class="flex gap-0.5 mb-1 overflow-x-auto" style="scrollbar-width: thin;">
-        <div
-          v-for="(monthLabel, labelIndex) in monthLabels"
-          :key="labelIndex"
-          class="text-[9px] text-gray-500"
-          :style="{ width: monthLabel.width }"
-        >
-          {{ monthLabel.name }}
-        </div>
-      </div>
-
-      <!-- Grid -->
-      <div class="flex gap-0.5 overflow-x-auto pb-1" style="scrollbar-width: thin;">
-        <!-- Week columns -->
-        <div
-          v-for="week in yearGrid"
-          :key="week.start"
-          class="flex flex-col gap-0.5"
-        >
-          <!-- Days Sunday-Saturday -->
-          <div
-            v-for="day in week.days"
-            :key="day.date || day.index"
-            class="w-3 h-3 rounded-sm cursor-pointer github-square"
-            :class="getSquareClass(habit, day)"
-            :style="getSquareStyle(habit, day)"
-            @mouseenter="day.date && $emit('show-tooltip', { event: $event, habitId: habit.id, date: day.date })"
-            @mouseleave="$emit('hide-tooltip')"
-          ></div>
-        </div>
-      </div>
-    </div>
+    <HabitYearGrid
+      :habit="habit"
+      :show-tooltip="true"
+      @show-tooltip="(event, day) => $emit('show-tooltip', { event, habitId: habit.id, date: day.date })"
+      @hide-tooltip="$emit('hide-tooltip')"
+    />
 
     <!-- Calendar Checkboxes (Navigable Week) -->
     <div class="px-4 py-3 border-t border-gray-100">
@@ -235,6 +183,8 @@
 </template>
 
 <script setup>
+import HabitYearGrid from './HabitYearGrid.vue';
+
 const props = defineProps({
   habit: {
     type: Object,
@@ -256,14 +206,6 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  monthLabels: {
-    type: Array,
-    required: true,
-  },
-  yearGrid: {
-    type: Array,
-    required: true,
-  },
   weekRange: {
     type: String,
     required: true,
@@ -278,14 +220,6 @@ const props = defineProps({
   },
   // Helper functions passed as props
   formatStartDate: {
-    type: Function,
-    required: true,
-  },
-  getSquareClass: {
-    type: Function,
-    required: true,
-  },
-  getSquareStyle: {
     type: Function,
     required: true,
   },

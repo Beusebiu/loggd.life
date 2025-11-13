@@ -20,21 +20,17 @@
       <!-- Active Habits -->
       <div v-else-if="activeHabits.length > 0" class="space-y-4">
         <HabitCard
-          v-for="(habit, index) in activeHabits"
+          v-for="(habit, index) in activeHabitsWithYearData"
           :key="habit.id"
           :habit="habit"
           :index="index"
           :stats="habitStats[habit.id]"
           :animating-streaks="animatingStreaks"
           :animating-checks="animatingChecks"
-          :month-labels="getMonthLabels()"
-          :year-grid="getFullYearGrid()"
           :week-range="getCurrentWeekRange(habit.id)"
           :week-offset="getWeekOffset(habit.id)"
           :week-days="getCurrentWeekDays(habit.id)"
           :format-start-date="formatStartDate"
-          :get-square-class="getSquareClass"
-          :get-square-style="getSquareStyle"
           :format-day-name="formatDayName"
           :is-future-date="isFutureDate"
           :is-checked="isChecked"
@@ -225,6 +221,68 @@
               placeholder="Why is this habit important?"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent resize-none"
             ></textarea>
+          </div>
+
+          <!-- Frequency -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Track on</label>
+            <div class="space-y-2">
+              <label class="flex items-center cursor-pointer">
+                <input
+                  v-model="habitForm.frequency"
+                  type="radio"
+                  value="daily"
+                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black"
+                />
+                <span class="ml-3 text-sm text-gray-700">Every day (including weekends)</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input
+                  v-model="habitForm.frequency"
+                  type="radio"
+                  value="weekdays"
+                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black"
+                />
+                <span class="ml-3 text-sm text-gray-700">Weekdays only (Mon-Fri)</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input
+                  v-model="habitForm.frequency"
+                  type="radio"
+                  value="weekends"
+                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black"
+                />
+                <span class="ml-3 text-sm text-gray-700">Weekends only (Sat-Sun)</span>
+              </label>
+              <label class="flex items-center cursor-pointer">
+                <input
+                  v-model="habitForm.frequency"
+                  type="radio"
+                  value="custom"
+                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black"
+                />
+                <span class="ml-3 text-sm text-gray-700">Custom days</span>
+              </label>
+            </div>
+
+            <!-- Custom Days Selector -->
+            <div v-if="habitForm.frequency === 'custom'" class="mt-3 pl-7">
+              <div class="flex flex-wrap gap-2">
+                <button
+                  v-for="(day, index) in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']"
+                  :key="index"
+                  @click="toggleCustomDay(index)"
+                  type="button"
+                  class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                  :class="habitForm.custom_days && habitForm.custom_days.includes(index)
+                    ? 'bg-black text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                >
+                  {{ day }}
+                </button>
+              </div>
+              <p class="mt-2 text-xs text-gray-500">Select which days to track this habit</p>
+            </div>
           </div>
 
           <!-- Allow Multiple Checks Per Day -->
@@ -481,6 +539,8 @@ const habitForm = ref({
   emoji: '✅',
   color: '#10B981',
   description: '',
+  frequency: 'daily',
+  custom_days: [],
   allow_multiple_checks: false,
   is_public: true,
 });
@@ -524,6 +584,64 @@ let pickerInstance = null;
 const habitColors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#EC4899', '#06B6D4', '#84CC16'];
 
 const activeHabits = computed(() => habits.value.filter(h => h.status === 'active'));
+
+// Add year_data to each habit for the HabitYearGrid component
+const activeHabitsWithYearData = computed(() => {
+  return activeHabits.value.map(habit => ({
+    ...habit,
+    year_data: buildYearDataForHabit(habit),
+  }));
+});
+
+// Check if a day should be tracked based on habit frequency
+const shouldTrackDay = (habit, dayOfWeek) => {
+  switch (habit.frequency) {
+    case 'daily':
+      return true;
+    case 'weekdays':
+      return dayOfWeek >= 1 && dayOfWeek <= 5; // Monday-Friday
+    case 'weekends':
+      return dayOfWeek === 0 || dayOfWeek === 6; // Saturday-Sunday
+    case 'custom':
+      return habit.custom_days ? habit.custom_days.includes(dayOfWeek) : true;
+    default:
+      return true;
+  }
+};
+
+// Build year_data array for a habit (365 days)
+const buildYearDataForHabit = (habit) => {
+  const yearData = [];
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 364);
+
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
+    const dateString = date.toISOString().split('T')[0];
+
+    // Check if this day should be tracked based on frequency
+    const dayOfWeek = date.getDay();
+    const tracked = shouldTrackDay(habit, dayOfWeek);
+
+    // Check if completed
+    const checkKey = `${habit.id}-${dateString}`;
+    const completed = checks.value[checkKey] || false;
+
+    // Get count for multi-check habits
+    const count = checks.value[`${checkKey}-count`] || (completed ? 1 : 0);
+
+    yearData.push({
+      date: dateString,
+      tracked,
+      completed,
+      count,
+    });
+  }
+
+  return yearData;
+};
 const archivedHabits = computed(() => habits.value.filter(h => h.status === 'archived'));
 
 // Fetch all habits and checks
@@ -589,42 +707,6 @@ const fetchHabitStats = async (habitId) => {
   } catch (error) {
     console.error('Error fetching habit stats:', error);
   }
-};
-
-// Generate full year grid (365 days, GitHub-style)
-const getFullYearGrid = () => {
-  const weeks = [];
-  const today = new Date();
-  const startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - 364);
-
-  // Adjust to previous Sunday
-  const dayOfWeek = startDate.getDay();
-  startDate.setDate(startDate.getDate() - dayOfWeek);
-
-  let currentDate = new Date(startDate);
-
-  while (currentDate <= today) {
-    const week = { start: currentDate.toISOString().split('T')[0], days: [] };
-
-    for (let i = 0; i < 7; i++) {
-      const dateStr = currentDate.toISOString().split('T')[0];
-      const oneYearAgo = new Date(today);
-      oneYearAgo.setDate(oneYearAgo.getDate() - 364);
-
-      if (currentDate >= oneYearAgo && currentDate <= today) {
-        week.days.push({ date: dateStr, index: i });
-      } else {
-        week.days.push({ date: null, index: i });
-      }
-
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    weeks.push(week);
-  }
-
-  return weeks;
 };
 
 // Helper to get week offset for a habit
@@ -743,45 +825,6 @@ const hideTooltip = () => {
   tooltip.value = { show: false, habitId: null, date: null, x: 0, y: 0, notes: [], loading: false };
 };
 
-// Generate month labels for the grid
-const getMonthLabels = () => {
-  const weeks = getFullYearGrid();
-  const labels = [];
-  let currentMonth = null;
-  let currentWidth = 0;
-
-  weeks.forEach((week, index) => {
-    const firstDay = week.days.find(d => d.date);
-    if (firstDay) {
-      const date = new Date(firstDay.date + 'T00:00:00');
-      const month = date.toLocaleDateString('en-US', { month: 'short' });
-
-      if (month !== currentMonth) {
-        if (currentMonth !== null && currentWidth > 0) {
-          labels.push({
-            name: currentMonth,
-            width: `${currentWidth * 13}px`, // 12px square + 2px gap
-          });
-        }
-        currentMonth = month;
-        currentWidth = 1;
-      } else {
-        currentWidth++;
-      }
-    }
-  });
-
-  // Add the last month
-  if (currentMonth !== null && currentWidth > 0) {
-    labels.push({
-      name: currentMonth,
-      width: `${currentWidth * 13}px`,
-    });
-  }
-
-  return labels;
-};
-
 const isChecked = (habitId, date) => {
   const key = `${habitId}-${date}`;
   return checks.value[key] === true;
@@ -877,32 +920,6 @@ const deleteMultiCheck = async (checkId) => {
   } catch (error) {
     console.error('Error deleting check:', error);
   }
-};
-
-const getSquareClass = (habit, day) => {
-  if (!day.date) return 'opacity-0';
-  return 'hover:ring-1 hover:ring-gray-600 hover:ring-offset-1';
-};
-
-const getSquareStyle = (habit, day) => {
-  if (!day.date) return { backgroundColor: 'transparent' };
-
-  const color = habit.color || '#10B981';
-  const checked = isChecked(habit.id, day.date);
-
-  // For multi-check habits, show intensity based on count
-  if (habit.allow_multiple_checks && checked) {
-    const count = getCheckCount(habit.id, day.date);
-    // Scale opacity from 0.4 to 1.0 based on count (1-5+ checks)
-    const intensity = Math.min(0.4 + (count * 0.15), 1.0);
-    return { backgroundColor: color, opacity: intensity };
-  }
-
-  if (checked) {
-    return { backgroundColor: color };
-  }
-
-  return { backgroundColor: color + '20' };
 };
 
 const getSquareTitle = (habit, date) => {
@@ -1002,6 +1019,8 @@ const openEditModal = (habit) => {
     emoji: habit.emoji || '✅',
     color: habit.color || '#10B981',
     description: habit.description || '',
+    frequency: habit.frequency || 'daily',
+    custom_days: habit.custom_days || [],
     allow_multiple_checks: habit.allow_multiple_checks || false,
     is_public: habit.is_public ?? true,
   };
@@ -1015,9 +1034,23 @@ const closeModal = () => {
     emoji: '✅',
     color: '#10B981',
     description: '',
+    frequency: 'daily',
+    custom_days: [],
     allow_multiple_checks: false,
     is_public: true,
   };
+};
+
+const toggleCustomDay = (dayIndex) => {
+  if (!habitForm.value.custom_days) {
+    habitForm.value.custom_days = [];
+  }
+  const index = habitForm.value.custom_days.indexOf(dayIndex);
+  if (index > -1) {
+    habitForm.value.custom_days.splice(index, 1);
+  } else {
+    habitForm.value.custom_days.push(dayIndex);
+  }
 };
 
 // Emoji Picker Functions
@@ -1097,15 +1130,17 @@ const saveHabit = async () => {
   if (!habitForm.value.name) return;
 
   try {
+    const habitData = {
+      ...habitForm.value,
+      // Only send custom_days if frequency is custom
+      custom_days: habitForm.value.frequency === 'custom' ? habitForm.value.custom_days : null,
+    };
+
     if (editingHabit.value) {
-      await axios.put(`/api/habits/${editingHabit.value.id}`, {
-        ...habitForm.value,
-        frequency: 'daily', // Default frequency for backend
-      });
+      await axios.put(`/api/habits/${editingHabit.value.id}`, habitData);
     } else {
       await axios.post('/api/habits', {
-        ...habitForm.value,
-        frequency: 'daily', // Default frequency for backend
+        ...habitData,
         start_date: new Date().toISOString().split('T')[0],
       });
     }
