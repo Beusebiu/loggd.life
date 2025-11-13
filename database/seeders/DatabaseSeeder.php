@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Habit;
 use App\Models\HabitCheck;
-use App\Models\Category;
-use App\Models\Entry;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -30,88 +28,59 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Create categories
-        $categories = [
-            ['name' => 'Work', 'color' => '#3B82F6', 'icon' => '💼'],
-            ['name' => 'Health', 'color' => '#10B981', 'icon' => '🏃'],
-            ['name' => 'Personal', 'color' => '#8B5CF6', 'icon' => '✨'],
-            ['name' => 'Learning', 'color' => '#F59E0B', 'icon' => '📚'],
-            ['name' => 'Gratitude', 'color' => '#EC4899', 'icon' => '🙏'],
+        // Create habits with more variety
+        $allHabits = [
+            ['name' => 'Morning Workout', 'emoji' => '🏋️', 'description' => '30 minutes of exercise', 'frequency' => 'daily', 'days' => 90, 'color' => '#10B981'],
+            ['name' => 'Read Books', 'emoji' => '📖', 'description' => 'Read for at least 20 minutes', 'frequency' => 'daily', 'days' => 60, 'color' => '#F59E0B'],
+            ['name' => 'Meditation', 'emoji' => '🧘', 'description' => '10 minutes of mindfulness', 'frequency' => 'daily', 'days' => 45, 'color' => '#8B5CF6'],
+            ['name' => 'Learn Coding', 'emoji' => '💻', 'description' => 'Practice coding for 1 hour', 'frequency' => 'weekdays', 'days' => 30, 'color' => '#3B82F6'],
+            ['name' => 'Journal', 'emoji' => '📝', 'description' => 'Write in journal', 'frequency' => 'daily', 'days' => 20, 'color' => '#EC4899'],
+            ['name' => 'Cold Shower', 'emoji' => '🚿', 'description' => 'Start the day with cold water', 'frequency' => 'daily', 'days' => 25, 'color' => '#06B6D4'],
+            ['name' => 'Drink Water', 'emoji' => '💧', 'description' => 'Drink 2L throughout the day', 'frequency' => 'daily', 'days' => 80, 'color' => '#0EA5E9'],
+            ['name' => 'Walk Outside', 'emoji' => '🚶', 'description' => '15 minute walk in nature', 'frequency' => 'daily', 'days' => 35, 'color' => '#22C55E'],
+            ['name' => 'No Social Media', 'emoji' => '📵', 'description' => 'Avoid social media before noon', 'frequency' => 'weekdays', 'days' => 15, 'color' => '#EF4444'],
+            ['name' => 'Meal Prep', 'emoji' => '🥗', 'description' => 'Prepare healthy meals', 'frequency' => 'weekends', 'days' => 40, 'color' => '#84CC16'],
+            ['name' => 'Call Family', 'emoji' => '📞', 'description' => 'Check in with loved ones', 'frequency' => 'custom', 'days' => 50, 'color' => '#F472B6', 'custom_days' => [0, 3]],
+            ['name' => 'Clean Workspace', 'emoji' => '🧹', 'description' => 'Tidy up desk and office', 'frequency' => 'weekends', 'days' => 60, 'color' => '#A78BFA'],
         ];
 
-        foreach ($categories as $categoryData) {
-            Category::firstOrCreate(
-                ['user_id' => $user->id, 'name' => $categoryData['name']],
-                $categoryData
-            );
-        }
-
-        $allCategories = $user->categories;
-
-        // Create habits
-        $habits = [
-            [
-                'name' => 'Morning Workout',
-                'emoji' => '🏋️',
-                'description' => '30 minutes of exercise',
-                'frequency' => 'daily',
-                'start_date' => now()->subDays(90),
-                'color' => '#10B981',
-            ],
-            [
-                'name' => 'Read Books',
-                'emoji' => '📖',
-                'description' => 'Read for at least 20 minutes',
-                'frequency' => 'daily',
-                'start_date' => now()->subDays(60),
-                'color' => '#F59E0B',
-            ],
-            [
-                'name' => 'Meditation',
-                'emoji' => '🧘',
-                'description' => '10 minutes of mindfulness',
-                'frequency' => 'daily',
-                'start_date' => now()->subDays(45),
-                'color' => '#8B5CF6',
-            ],
-            [
-                'name' => 'Learn Coding',
-                'emoji' => '💻',
-                'description' => 'Practice coding for 1 hour',
-                'frequency' => 'weekdays',
-                'start_date' => now()->subDays(30),
-                'color' => '#3B82F6',
-            ],
-            [
-                'name' => 'Journal',
-                'emoji' => '📝',
-                'description' => 'Write in journal',
-                'frequency' => 'daily',
-                'start_date' => now()->subDays(20),
-                'color' => '#EC4899',
-            ],
-        ];
+        // Randomly select 5-7 habits for variety
+        $selectedCount = rand(5, 7);
+        shuffle($allHabits);
+        $habits = array_slice($allHabits, 0, $selectedCount);
 
         foreach ($habits as $habitData) {
+            $startDays = $habitData['days'];
+            unset($habitData['days']);
+
             $habit = Habit::firstOrCreate(
                 ['user_id' => $user->id, 'name' => $habitData['name']],
-                $habitData
+                array_merge($habitData, ['start_date' => now()->subDays($startDays)])
             );
 
-            // Create habit checks for the past 90 days with realistic completion patterns
-            for ($i = 90; $i >= 0; $i--) {
-                $date = now()->subDays($i)->toDateString();
+            // Create habit checks with varied completion patterns
+            for ($i = $startDays; $i >= 0; $i--) {
+                $currentDate = now()->subDays($i);
+                $date = $currentDate->toDateString();
+                $dayOfWeek = $currentDate->dayOfWeek;
 
-                // Skip weekends for "weekdays" habits
-                if ($habitData['frequency'] === 'weekdays') {
-                    $dayOfWeek = now()->subDays($i)->dayOfWeek;
-                    if ($dayOfWeek === 0 || $dayOfWeek === 6) {
-                        continue;
-                    }
+                // Skip based on frequency
+                if ($habitData['frequency'] === 'weekdays' && ($dayOfWeek === 0 || $dayOfWeek === 6)) {
+                    continue;
                 }
 
-                // Create realistic completion patterns (80-90% completion rate)
-                $shouldComplete = rand(1, 100) <= 85;
+                if ($habitData['frequency'] === 'weekends' && $dayOfWeek !== 0 && $dayOfWeek !== 6) {
+                    continue;
+                }
+
+                if ($habitData['frequency'] === 'custom' && isset($habitData['custom_days']) && !in_array($dayOfWeek, $habitData['custom_days'])) {
+                    continue;
+                }
+
+                // Varied completion rates based on habit age (more consistent over time)
+                $daysActive = $startDays - $i;
+                $completionRate = min(90, 60 + ($daysActive / 2)); // Starts at 60%, grows to 90%
+                $shouldComplete = rand(1, 100) <= $completionRate;
 
                 if ($shouldComplete) {
                     HabitCheck::firstOrCreate(
@@ -122,91 +91,201 @@ class DatabaseSeeder extends Seeder
                         [
                             'user_id' => $user->id,
                             'checked' => true,
-                            'note' => $this->getRandomNote($habitData['name']),
-                            'checked_at' => now()->subDays($i)->addHours(rand(6, 22)),
+                            'note' => rand(1, 100) <= 30 ? $this->getRandomNote($habitData['name']) : null, // 30% have notes
+                            'checked_at' => $currentDate->addHours(rand(6, 22)),
                         ]
                     );
                 }
             }
         }
 
-        // Create entries for the past 60 days
-        $entryTemplates = [
-            ['category' => 'Work', 'content' => 'Completed the new feature deployment. Team was really happy with the results!'],
-            ['category' => 'Work', 'content' => 'Had a productive meeting with the product team. We aligned on Q1 priorities.'],
-            ['category' => 'Health', 'content' => 'Felt amazing after today\'s workout. Hit a new personal record!'],
-            ['category' => 'Health', 'content' => 'Meal prepped for the week. Feeling organized and healthy.'],
-            ['category' => 'Personal', 'content' => 'Spent quality time with family. These moments matter most.'],
-            ['category' => 'Personal', 'content' => 'Finally organized my workspace. Mental clarity follows physical clarity.'],
-            ['category' => 'Learning', 'content' => 'Finished Chapter 5 of the Laravel book. Architecture patterns are fascinating!'],
-            ['category' => 'Learning', 'content' => 'Watched a great tutorial on Vue composition API. Time to refactor!'],
-            ['category' => 'Gratitude', 'content' => 'Grateful for supportive friends who always have my back.'],
-            ['category' => 'Gratitude', 'content' => 'Thankful for good health and the ability to pursue my goals.'],
-        ];
+        $this->command->info('Database seeded successfully!');
+        $this->command->info('Login: test@loggd.life / password123');
 
-        for ($i = 60; $i >= 0; $i--) {
-            $date = now()->subDays($i);
+        // Seed Journey data (Vision, Goals, Weekly Reviews, Daily Check-ins)
+        $this->call(JourneySeeder::class);
 
-            // Create 1-3 entries per day (randomly)
-            $entriesPerDay = rand(0, 3);
+        // Create 20-30 additional users with varied data
+        $this->seedAdditionalUsers();
+    }
 
-            for ($j = 0; $j < $entriesPerDay; $j++) {
-                $template = $entryTemplates[array_rand($entryTemplates)];
-                $category = $allCategories->where('name', $template['category'])->first();
+    private function seedAdditionalUsers(): void
+    {
+        $this->command->info('Seeding additional users...');
 
-                Entry::create([
-                    'user_id' => $user->id,
-                    'category_id' => $category->id,
-                    'content' => $template['content'],
-                    'date' => $date->toDateString(),
-                    'is_public' => rand(1, 100) <= 30, // 30% public
-                    'created_at' => $date->addHours(rand(8, 22)),
-                    'updated_at' => $date->addHours(rand(8, 22)),
-                ]);
+        $userCount = rand(20, 30);
+
+        $firstNames = ['Alex', 'Sam', 'Jordan', 'Taylor', 'Casey', 'Morgan', 'Riley', 'Avery', 'Quinn', 'Blake', 'Jamie', 'Drew', 'Sage', 'River', 'Dakota', 'Skylar', 'Rowan', 'Phoenix', 'Cameron', 'Dylan', 'Logan', 'Emerson', 'Parker', 'Reese', 'Charlie', 'Peyton', 'Finley', 'Hayden', 'Kendall', 'Jessie'];
+        $lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Walker', 'Hall', 'Allen', 'Young', 'King', 'Wright', 'Scott', 'Green', 'Baker'];
+
+        for ($i = 1; $i <= $userCount; $i++) {
+            $firstName = $firstNames[array_rand($firstNames)];
+            $lastName = $lastNames[array_rand($lastNames)];
+            $username = strtolower($firstName . $lastName . rand(100, 999));
+            $email = $username . '@example.com';
+
+            $user = User::create([
+                'name' => $firstName . ' ' . $lastName,
+                'username' => $username,
+                'email' => $email,
+                'password' => bcrypt('password123'),
+                'email_verified_at' => now(),
+                'bio' => $this->getRandomBio(),
+                'profile_public' => rand(1, 10) > 3, // 70% public
+                'timezone' => $this->getRandomTimezone(),
+            ]);
+
+            // Create 2-5 habits for each user
+            $this->createHabitsForUser($user, rand(2, 5));
+
+            if ($i % 5 === 0) {
+                $this->command->info("Created {$i}/{$userCount} users...");
             }
         }
 
-        $this->command->info('Database seeded successfully!');
-        $this->command->info('Login: test@loggd.life / password123');
+        $this->command->info("Created {$userCount} additional users!");
+    }
+
+    private function getRandomBio(): ?string
+    {
+        $bios = [
+            'Personal growth enthusiast. Tracking my journey one day at a time.',
+            'Building better habits daily. Software developer by day, athlete by night.',
+            'On a mission to become the best version of myself.',
+            'Productivity nerd. Love tracking progress and hitting goals.',
+            'Fitness junkie and bookworm. Always learning, always growing.',
+            'Entrepreneur building in public. Documenting the journey.',
+            'Habit tracker. Goal setter. Dream chaser.',
+            'Student of life. Believer in continuous improvement.',
+            'Making progress every single day, no matter how small.',
+            'Former procrastinator, now accountability advocate.',
+            null, // Some users have no bio
+            null,
+        ];
+
+        return $bios[array_rand($bios)];
+    }
+
+    private function getRandomTimezone(): string
+    {
+        $timezones = [
+            'America/New_York',
+            'America/Chicago',
+            'America/Denver',
+            'America/Los_Angeles',
+            'Europe/London',
+            'Europe/Paris',
+            'Europe/Berlin',
+            'Asia/Tokyo',
+            'Asia/Singapore',
+            'Australia/Sydney',
+            'UTC',
+        ];
+
+        return $timezones[array_rand($timezones)];
+    }
+
+    private function createHabitsForUser(User $user, int $count): void
+    {
+        $habitPool = [
+            ['name' => 'Morning Workout', 'emoji' => '🏋️', 'description' => '30 minutes of exercise', 'frequency' => 'daily', 'color' => '#10B981'],
+            ['name' => 'Read Books', 'emoji' => '📖', 'description' => 'Read for 20 minutes', 'frequency' => 'daily', 'color' => '#F59E0B'],
+            ['name' => 'Meditation', 'emoji' => '🧘', 'description' => '10 minutes of mindfulness', 'frequency' => 'daily', 'color' => '#8B5CF6'],
+            ['name' => 'Learn Coding', 'emoji' => '💻', 'description' => 'Practice for 1 hour', 'frequency' => 'weekdays', 'color' => '#3B82F6'],
+            ['name' => 'Journal', 'emoji' => '📝', 'description' => 'Write in journal', 'frequency' => 'daily', 'color' => '#EC4899'],
+            ['name' => 'Cold Shower', 'emoji' => '🚿', 'description' => 'Cold water therapy', 'frequency' => 'daily', 'color' => '#06B6D4'],
+            ['name' => 'Walk', 'emoji' => '🚶', 'description' => '15 minute walk', 'frequency' => 'daily', 'color' => '#22C55E'],
+            ['name' => 'Drink Water', 'emoji' => '💧', 'description' => '2L daily', 'frequency' => 'daily', 'color' => '#0EA5E9'],
+            ['name' => 'No Social Media', 'emoji' => '📵', 'description' => 'Avoid before noon', 'frequency' => 'weekdays', 'color' => '#EF4444'],
+        ];
+
+        shuffle($habitPool);
+        $selectedHabits = array_slice($habitPool, 0, $count);
+
+        foreach ($selectedHabits as $habitData) {
+            $startDays = rand(10, 60);
+
+            $habit = Habit::create([
+                'user_id' => $user->id,
+                'name' => $habitData['name'],
+                'emoji' => $habitData['emoji'],
+                'description' => $habitData['description'],
+                'frequency' => $habitData['frequency'],
+                'color' => $habitData['color'],
+                'start_date' => now()->subDays($startDays),
+                'status' => 'active',
+                'is_public' => rand(1, 10) > 5, // 50% public
+            ]);
+
+            // Create some habit checks (sparse data)
+            for ($i = $startDays; $i >= 0; $i--) {
+                $currentDate = now()->subDays($i);
+                $dayOfWeek = $currentDate->dayOfWeek;
+
+                // Skip based on frequency
+                if ($habitData['frequency'] === 'weekdays' && ($dayOfWeek === 0 || $dayOfWeek === 6)) {
+                    continue;
+                }
+
+                // Lower completion rate for variety (60-80%)
+                $shouldComplete = rand(1, 100) <= rand(60, 80);
+
+                if ($shouldComplete) {
+                    HabitCheck::create([
+                        'habit_id' => $habit->id,
+                        'user_id' => $user->id,
+                        'date' => $currentDate->toDateString(),
+                        'checked' => true,
+                        'checked_at' => $currentDate->addHours(rand(6, 22)),
+                    ]);
+                }
+            }
+        }
     }
 
     private function getRandomNote($habitName): ?string
     {
         $notes = [
             'Morning Workout' => [
-                'Felt great today!',
-                'Tough but worth it',
-                '30 min cardio + weights',
-                'New PR on bench press!',
-                null,
+                'Felt great today!', 'Tough but worth it', '30 min cardio + weights', 'New PR!',
+                'Legs are sore but good sore', 'Quick HIIT session', 'Yoga and stretching',
             ],
             'Read Books' => [
-                'Really enjoying this book',
-                'Chapter 3 was insightful',
-                'Can\'t put this down',
-                '25 pages done',
-                null,
+                'Really enjoying this book', 'Chapter 3 was insightful', 'Can\'t put this down',
+                '25 pages done', 'Re-reading favorite parts', 'Finished another chapter',
             ],
             'Meditation' => [
-                'Very peaceful session',
-                'Mind was restless but pushed through',
-                'Feeling centered',
-                'Best session yet',
-                null,
+                'Very peaceful session', 'Mind was restless but pushed through', 'Feeling centered',
+                'Best session yet', 'Used Headspace app', '15 minutes of stillness', 'Breathing exercises',
             ],
             'Learn Coding' => [
-                'Learned about closures today',
-                'Built a small project',
-                'Finally understood async/await!',
-                'LeetCode practice',
-                null,
+                'Learned about closures today', 'Built a small project', 'Finally understood async/await!',
+                'LeetCode practice', 'Refactored old code', 'New algorithm learned', 'Tutorial completed',
             ],
             'Journal' => [
-                'Reflective morning',
-                'Wrote about goals',
-                'Processing recent events',
-                'Gratitude journaling',
-                null,
+                'Reflective morning', 'Wrote about goals', 'Processing recent events',
+                'Gratitude journaling', 'Brain dump session', 'Planning tomorrow', 'Weekly review',
+            ],
+            'Cold Shower' => [
+                'Energizing start!', 'Getting used to it', 'Tough but invigorating', '3 min cold blast',
+            ],
+            'Drink Water' => [
+                '2L done!', 'Staying hydrated', 'Almost there', 'Tracking with app',
+            ],
+            'Walk Outside' => [
+                'Beautiful weather', 'Needed the fresh air', '20 min nature walk', 'Cleared my head',
+            ],
+            'No Social Media' => [
+                'Stayed strong!', 'More focused morning', 'Resisted the urge', 'Productive without distractions',
+            ],
+            'Meal Prep' => [
+                'Lunches for the week ✓', 'Batch cooked', 'Healthy meals ready', 'Saved time and money',
+            ],
+            'Call Family' => [
+                'Great chat with mom', 'Caught up with sibling', 'Video call with parents', 'Quick check-in',
+            ],
+            'Clean Workspace' => [
+                'Desk organized', 'Feels much better', 'Minimalist setup', 'Fresh start',
             ],
         ];
 

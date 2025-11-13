@@ -10,8 +10,9 @@ use Inertia\Inertia;
 Route::get('/', function () {
     if (Auth::check()) {
         // Redirect to user's profile
-        return redirect('/@' . Auth::user()->username);
+        return redirect('/@'.Auth::user()->username);
     }
+
     return Inertia::render('Landing');
 })->name('home');
 
@@ -31,16 +32,18 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 // User profile routes (public or private based on settings)
 Route::get('/@{username}', [ProfileController::class, 'show'])->name('profile');
 Route::get('/@{username}/habits', [ProfileController::class, 'habits'])->middleware('auth')->name('profile.habits');
-Route::get('/@{username}/entries', [ProfileController::class, 'entries'])->name('profile.entries');
-Route::get('/@{username}/check-ins', function () {
-    return Inertia::render('CheckIns');
-})->middleware('auth')->name('profile.checkins');
-Route::get('/@{username}/timeline', function () {
-    return Inertia::render('Timeline');
-})->middleware('auth')->name('profile.timeline');
-Route::get('/@{username}/stats', function () {
-    return Inertia::render('Stats');
-})->middleware('auth')->name('profile.stats');
+Route::get('/@{username}/journey', function () {
+    return Inertia::render('Journey');
+})->middleware('auth')->name('profile.journey');
+Route::get('/@{username}/journey/goals', function () {
+    return Inertia::render('Goals');
+})->middleware('auth')->name('profile.journey.goals');
+Route::get('/@{username}/journey/daily', function () {
+    return Inertia::render('Daily');
+})->middleware('auth')->name('profile.journey.daily');
+Route::get('/@{username}/journey/weekly', function () {
+    return Inertia::render('Weekly');
+})->middleware('auth')->name('profile.journey.weekly');
 Route::get('/@{username}/settings', function () {
     return Inertia::render('Settings');
 })->middleware('auth')->name('profile.settings');

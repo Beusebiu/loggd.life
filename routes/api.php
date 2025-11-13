@@ -2,13 +2,12 @@
 
 use App\Http\Controllers\Api\AchievementController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\CheckInController;
-use App\Http\Controllers\Api\EntryController;
+use App\Http\Controllers\Api\DailyCheckInController;
+use App\Http\Controllers\Api\GoalController;
 use App\Http\Controllers\Api\HabitController;
 use App\Http\Controllers\Api\SettingsController;
-use App\Http\Controllers\Api\StatsController;
-use App\Http\Controllers\Api\TimelineController;
+use App\Http\Controllers\Api\VisionController;
+use App\Http\Controllers\Api\WeeklyReviewController;
 use Illuminate\Support\Facades\Route;
 
 // Public authentication routes
@@ -33,41 +32,58 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::get('/habit-checks', [HabitController::class, 'getAllChecks']);
     Route::delete('/habit-checks/{id}', [HabitController::class, 'deleteCheck']);
 
-    // Entries (daily logging)
-    Route::apiResource('entries', EntryController::class);
-    Route::patch('/entries/{id}/toggle-public', [EntryController::class, 'togglePublic']);
+    // Journey: Vision
+    Route::get('/journey/vision', [VisionController::class, 'show']);
+    Route::post('/journey/vision', [VisionController::class, 'store']);
+    Route::put('/journey/vision', [VisionController::class, 'update']);
+    Route::post('/journey/vision/toggle-section-privacy', [VisionController::class, 'toggleSectionPrivacy']);
 
-    // Categories
-    Route::apiResource('categories', CategoryController::class);
+    // Journey: Vision Snapshots
+    Route::post('/journey/vision/snapshots', [VisionController::class, 'createSnapshot']);
+    Route::get('/journey/vision/snapshots', [VisionController::class, 'getSnapshots']);
+    Route::get('/journey/vision/snapshots/{id}', [VisionController::class, 'getSnapshot']);
 
-    // Templates (for check-ins)
-    Route::get('/templates', [CheckInController::class, 'getTemplates']);
-    Route::get('/templates/{id}', [CheckInController::class, 'getTemplate']);
-    Route::get('/templates/{templateId}/check-ins', [CheckInController::class, 'getCheckInsByTemplate']);
-    Route::post('/templates/{templateId}/check-ins', [CheckInController::class, 'storeWithTemplate']);
-    Route::get('/templates/{templateId}/versions', [CheckInController::class, 'getVersions']);
+    // Journey: Goals
+    Route::get('/journey/goals', [GoalController::class, 'index']);
+    Route::post('/journey/goals', [GoalController::class, 'store']);
+    Route::get('/journey/goals/{id}', [GoalController::class, 'show']);
+    Route::put('/journey/goals/{id}', [GoalController::class, 'update']);
+    Route::delete('/journey/goals/{id}', [GoalController::class, 'destroy']);
+    Route::post('/journey/goals/{id}/complete', [GoalController::class, 'complete']);
+    Route::post('/journey/goals/{id}/celebrate', [GoalController::class, 'celebrate']);
 
-    // Template Management
-    Route::get('/templates-manage', [\App\Http\Controllers\Api\TemplateController::class, 'index']);
-    Route::post('/templates-manage', [\App\Http\Controllers\Api\TemplateController::class, 'store']);
-    Route::put('/templates-manage/{id}', [\App\Http\Controllers\Api\TemplateController::class, 'update']);
-    Route::delete('/templates-manage/{id}', [\App\Http\Controllers\Api\TemplateController::class, 'destroy']);
-    Route::patch('/templates-manage/{id}/toggle-visibility', [\App\Http\Controllers\Api\TemplateController::class, 'toggleVisibility']);
-    Route::patch('/templates-manage/{id}/reorder', [\App\Http\Controllers\Api\TemplateController::class, 'reorder']);
+    // Journey: Goal Updates (metric/evolution tracking)
+    Route::post('/journey/goals/{id}/updates', [GoalController::class, 'addUpdate']);
+    Route::get('/journey/goals/{id}/updates', [GoalController::class, 'getUpdates']);
 
-    // Check-ins (daily/weekly/monthly reviews)
-    Route::get('/check-ins/dashboard', [CheckInController::class, 'dashboard']);
-    Route::apiResource('check-ins', CheckInController::class);
-    Route::put('/check-ins/{id}', [CheckInController::class, 'updateCheckIn']);
-    Route::get('/check-ins/template/{type}', [CheckInController::class, 'getTemplateLegacy']);
+    // Journey: Goal Milestones
+    Route::post('/journey/goals/{goalId}/milestones', [GoalController::class, 'storeMilestone']);
+    Route::put('/journey/goals/{goalId}/milestones/{milestoneId}', [GoalController::class, 'updateMilestone']);
+    Route::delete('/journey/goals/{goalId}/milestones/{milestoneId}', [GoalController::class, 'destroyMilestone']);
 
-    // Timeline (unified activity feed)
-    Route::get('/timeline', [TimelineController::class, 'index']);
-    Route::get('/timeline/stats', [TimelineController::class, 'stats']);
+    // Journey: Goal Tasks
+    Route::post('/journey/goals/{goalId}/tasks', [GoalController::class, 'storeTask']);
+    Route::put('/journey/goals/{goalId}/tasks/{taskId}', [GoalController::class, 'updateTask']);
+    Route::post('/journey/goals/{goalId}/tasks/{taskId}/toggle', [GoalController::class, 'toggleTask']);
+    Route::delete('/journey/goals/{goalId}/tasks/{taskId}', [GoalController::class, 'destroyTask']);
 
-    // Stats (analytics and insights)
-    Route::get('/stats', [StatsController::class, 'index']);
-    Route::get('/stats/daily-activity', [StatsController::class, 'dailyActivity']);
+    // Journey: Goal Metrics
+    Route::post('/journey/goals/{goalId}/metrics', [GoalController::class, 'storeMetric']);
+    Route::put('/journey/goals/{goalId}/metrics/{metricId}', [GoalController::class, 'updateMetric']);
+    Route::delete('/journey/goals/{goalId}/metrics/{metricId}', [GoalController::class, 'destroyMetric']);
+
+    // Journey: Daily Check-ins
+    Route::get('/journey/daily', [DailyCheckInController::class, 'index']);
+    Route::get('/journey/daily/{date}', [DailyCheckInController::class, 'show']);
+    Route::post('/journey/daily', [DailyCheckInController::class, 'store']);
+    Route::put('/journey/daily/{id}', [DailyCheckInController::class, 'update']);
+    Route::get('/journey/daily/active-goals', [DailyCheckInController::class, 'getActiveGoals']);
+
+    // Journey: Weekly Reviews
+    Route::get('/journey/weekly', [WeeklyReviewController::class, 'index']);
+    Route::get('/journey/weekly/{weekStartDate}', [WeeklyReviewController::class, 'show']);
+    Route::post('/journey/weekly', [WeeklyReviewController::class, 'store']);
+    Route::put('/journey/weekly/{id}', [WeeklyReviewController::class, 'update']);
 
     // Settings
     Route::patch('/settings/profile', [SettingsController::class, 'updateProfile']);

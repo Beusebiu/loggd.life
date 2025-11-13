@@ -52,7 +52,6 @@ class ProfileController extends Controller
         $stats = [
             'totalHabits' => $user->habits()->count(),
             'activeHabits' => $user->habits()->where('status', 'active')->count(),
-            'totalEntries' => $user->entries()->count(),
             'totalChecks' => $user->habitChecks()->count(),
         ];
 
@@ -111,23 +110,5 @@ class ProfileController extends Controller
         }
 
         return Inertia::render('Habits');
-    }
-
-    /**
-     * Show the user's entries page
-     */
-    public function entries(Request $request, string $username)
-    {
-        $username = ltrim($username, '@');
-        $user = User::where('username', $username)->firstOrFail();
-        $isOwnProfile = $request->user() && $request->user()->id === $user->id;
-
-        if (!$isOwnProfile && !$user->profile_public) {
-            abort(403, 'This profile is private.');
-        }
-
-        return Inertia::render('Entries', [
-            'isOwnProfile' => $isOwnProfile,
-        ]);
     }
 }

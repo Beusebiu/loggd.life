@@ -38,55 +38,16 @@
             </Link>
 
             <Link
-              :href="`/@${user.username}/check-ins`"
+              :href="`/@${user.username}/journey`"
               class="flex items-center gap-4 px-4 py-3 rounded-full transition-colors group"
-              :class="isActive('check-ins')
+              :class="isActive('journey')
                 ? 'bg-gray-100 font-semibold'
                 : 'hover:bg-gray-100'"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
               </svg>
-              <span class="text-lg">Check-ins</span>
-            </Link>
-
-            <Link
-              :href="`/@${user.username}/entries`"
-              class="flex items-center gap-4 px-4 py-3 rounded-full transition-colors group"
-              :class="isActive('entries')
-                ? 'bg-gray-100 font-semibold'
-                : 'hover:bg-gray-100'"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-              </svg>
-              <span class="text-lg">Entries</span>
-            </Link>
-
-            <Link
-              :href="`/@${user.username}/timeline`"
-              class="flex items-center gap-4 px-4 py-3 rounded-full transition-colors group"
-              :class="isActive('timeline')
-                ? 'bg-gray-100 font-semibold'
-                : 'hover:bg-gray-100'"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <span class="text-lg">Timeline</span>
-            </Link>
-
-            <Link
-              :href="`/@${user.username}/stats`"
-              class="flex items-center gap-4 px-4 py-3 rounded-full transition-colors group"
-              :class="isActive('stats')
-                ? 'bg-gray-100 font-semibold'
-                : 'hover:bg-gray-100'"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-              </svg>
-              <span class="text-lg">Stats</span>
+              <span class="text-lg">Journey</span>
             </Link>
           </nav>
 
