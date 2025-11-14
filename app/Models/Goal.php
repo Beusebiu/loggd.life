@@ -36,7 +36,6 @@ class Goal extends Model
         'custom_fields',
         'is_public',
         'allow_comments',
-        'celebration_count',
         'vision_life_area',
         'order',
     ];
@@ -140,11 +139,6 @@ class Goal extends Model
         }
 
         // For evolution/active goals, progress is manually set
-    }
-
-    public function celebrate(): void
-    {
-        $this->increment('celebration_count');
     }
 
     public function getMetricProgressPercentage(): int

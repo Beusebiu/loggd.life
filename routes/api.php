@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\AchievementController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DailyCheckInController;
 use App\Http\Controllers\Api\GoalController;
@@ -50,7 +49,6 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::put('/journey/goals/{id}', [GoalController::class, 'update']);
     Route::delete('/journey/goals/{id}', [GoalController::class, 'destroy']);
     Route::post('/journey/goals/{id}/complete', [GoalController::class, 'complete']);
-    Route::post('/journey/goals/{id}/celebrate', [GoalController::class, 'celebrate']);
 
     // Journey: Goal Updates (metric/evolution tracking)
     Route::post('/journey/goals/{id}/updates', [GoalController::class, 'addUpdate']);
@@ -88,12 +86,6 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     // Settings
     Route::patch('/settings/profile', [SettingsController::class, 'updateProfile']);
     Route::patch('/settings/privacy', [SettingsController::class, 'updatePrivacy']);
-    Route::patch('/settings/notifications', [SettingsController::class, 'updateNotifications']);
     Route::patch('/settings/password', [SettingsController::class, 'updatePassword']);
     Route::patch('/settings/email', [SettingsController::class, 'updateEmail']);
-
-    // Achievements
-    Route::get('/achievements/pending', [AchievementController::class, 'pending']);
-    Route::get('/achievements/all', [AchievementController::class, 'all']); // Debug endpoint
-    Route::post('/achievements/{id}/mark-shown', [AchievementController::class, 'markShown']);
 });

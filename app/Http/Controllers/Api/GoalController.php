@@ -171,14 +171,6 @@ class GoalController extends Controller
         return response()->json($goal);
     }
 
-    public function celebrate(Request $request, $id)
-    {
-        $goal = Goal::where('user_id', $request->user()->id)->findOrFail($id);
-        $goal->celebrate();
-
-        return response()->json($goal);
-    }
-
     // GOAL UPDATE (for metric/evolution tracking)
     public function addUpdate(Request $request, $id)
     {

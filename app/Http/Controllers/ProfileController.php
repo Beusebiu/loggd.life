@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Achievement;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\User;
@@ -107,9 +106,6 @@ class ProfileController extends Controller
         // Calculate active streak (consecutive days with ANY activity)
         $activeStreak = $this->calculateActiveStreak($user);
 
-        // Achievements count
-        $achievements = Achievement::where('user_id', $user->id)->count();
-
         $stats = [
             'totalHabits' => $totalHabits,
             'activeHabits' => $activeHabits,
@@ -119,7 +115,6 @@ class ProfileController extends Controller
             'totalActiveDays' => $totalActiveDays,
             'consistency' => $consistency,
             'activeStreak' => $activeStreak,
-            'achievements' => $achievements,
         ];
 
         // Calculate current streaks for active habits
@@ -512,22 +507,6 @@ class ProfileController extends Controller
     private function getRecentWins(User $user, bool $isOwnProfile): array
     {
         $wins = [];
-
-        // Get recent achievements (last 30 days)
-        $achievements = Achievement::where('user_id', $user->id)
-            ->where('created_at', '>=', now()->subDays(30))
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        foreach ($achievements as $achievement) {
-            $wins[] = [
-                'type' => 'achievement',
-                'title' => $achievement->title,
-                'description' => $achievement->description,
-                'date' => $achievement->created_at->format('Y-m-d'),
-                'icon' => '🎉',
-            ];
-        }
 
         // Get recent completed goal milestones
         $completedMilestones = GoalMilestone::whereHas('goal', function ($q) use ($user) {

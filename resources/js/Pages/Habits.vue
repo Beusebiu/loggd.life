@@ -501,15 +501,6 @@
       @click="showEmojiPicker = false"
     ></div>
     </div>
-
-    <!-- Celebration Notification -->
-    <CelebrationNotification
-      :show="showCelebration"
-      :emoji="celebrationData.emoji"
-      :title="celebrationData.title"
-      :message="celebrationData.message"
-      @close="closeCelebration"
-    />
   </AppLayout>
 </template>
 
@@ -520,13 +511,8 @@ import AppLayout from '../Layouts/AppLayout.vue';
 import HabitCard from '../Components/habits/HabitCard.vue';
 import LoadingSpinner from '../Components/ui/LoadingSpinner.vue';
 import EmptyState from '../Components/ui/EmptyState.vue';
-import CelebrationNotification from '../Components/CelebrationNotification.vue';
 import { formatStartDate, formatDayName, formatDateFull, formatTooltipDate, formatTime, isToday, isFutureDate } from '../utils/dates.js';
-import { useCelebration } from '../composables/useCelebration';
 import 'emoji-picker-element';
-
-// Celebration notification composable
-const { showCelebration, celebrationData, closeCelebration, checkForAchievements, fetchPendingAchievements } = useCelebration();
 
 const loading = ref(true);
 const habits = ref([]);
@@ -1311,7 +1297,6 @@ const formatDateWithMonth = (dateStr, habitId = null) => {
 
 onMounted(() => {
   fetchHabits();
-  fetchPendingAchievements(); // Check for any pending celebrations
 });
 </script>
 

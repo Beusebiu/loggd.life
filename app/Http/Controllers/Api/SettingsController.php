@@ -50,25 +50,6 @@ class SettingsController extends Controller
     }
 
     /**
-     * Update user notification preferences.
-     */
-    public function updateNotifications(Request $request)
-    {
-        $user = $request->user();
-
-        $validated = $request->validate([
-            'notification_style' => 'required|in:polite,raw',
-        ]);
-
-        $user->update($validated);
-
-        return response()->json([
-            'message' => 'Notification preferences updated successfully',
-            'user' => $user,
-        ]);
-    }
-
-    /**
      * Update user password.
      */
     public function updatePassword(Request $request)

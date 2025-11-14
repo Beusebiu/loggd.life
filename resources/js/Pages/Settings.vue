@@ -110,61 +110,6 @@
             </form>
           </div>
 
-          <!-- Notification Preferences -->
-          <div class="bg-white rounded-xl p-5 border border-gray-200 hover:border-gray-300 transition-colors">
-            <div class="flex items-center gap-2 mb-4">
-              <span class="text-xl">🎉</span>
-              <h3 class="text-base font-bold text-gray-900">Celebrations</h3>
-            </div>
-            <div class="space-y-2">
-              <p class="text-xs text-gray-500 mb-3">
-                Choose your celebration style for habit completions and streaks
-              </p>
-
-              <!-- Polite Option -->
-              <label class="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50"
-                :class="notificationForm.notification_style === 'polite' ? 'border-green-500 bg-green-50' : 'border-gray-200'">
-                <input
-                  v-model="notificationForm.notification_style"
-                  @change="updateNotificationStyle"
-                  type="radio"
-                  value="polite"
-                  class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
-                />
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-lg">😊</span>
-                    <span class="text-sm font-semibold text-gray-900">Polite</span>
-                  </div>
-                  <p class="text-xs text-gray-600 mt-0.5">
-                    Professional and encouraging
-                  </p>
-                </div>
-              </label>
-
-              <!-- Raw Option -->
-              <label class="flex items-center gap-3 p-3 border-2 rounded-lg cursor-pointer transition-all hover:bg-gray-50"
-                :class="notificationForm.notification_style === 'raw' ? 'border-green-500 bg-green-50' : 'border-gray-200'">
-                <input
-                  v-model="notificationForm.notification_style"
-                  @change="updateNotificationStyle"
-                  type="radio"
-                  value="raw"
-                  class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500"
-                />
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-1.5">
-                    <span class="text-lg">🔥</span>
-                    <span class="text-sm font-semibold text-gray-900">Raw</span>
-                  </div>
-                  <p class="text-xs text-gray-600 mt-0.5">
-                    High-energy and unfiltered
-                  </p>
-                </div>
-              </label>
-            </div>
-          </div>
-
           <!-- Password Section - Full Width -->
           <div class="lg:col-span-2 bg-white rounded-xl p-5 border border-gray-200 hover:border-gray-300 transition-colors">
             <div class="flex items-center justify-between mb-4">
@@ -299,10 +244,6 @@ const emailForm = reactive({
   email: '',
 });
 
-const notificationForm = reactive({
-  notification_style: 'polite',
-});
-
 const passwordForm = reactive({
   current_password: '',
   password: '',
@@ -340,7 +281,6 @@ const loadUserData = async () => {
     profileForm.name = user.name;
     profileForm.bio = user.bio || '';
     emailForm.email = user.email;
-    notificationForm.notification_style = user.notification_style || 'polite';
   } catch (error) {
     console.error('Error loading user data:', error);
   }
@@ -373,16 +313,6 @@ const updateEmail = async () => {
     }
   } finally {
     savingEmail.value = false;
-  }
-};
-
-const updateNotificationStyle = async () => {
-  try {
-    await axios.patch('/api/settings/notifications', notificationForm);
-    showToast('Celebration style updated!');
-  } catch (error) {
-    console.error('Error updating notification style:', error);
-    showToast('Failed to update celebration style', 'error');
   }
 };
 

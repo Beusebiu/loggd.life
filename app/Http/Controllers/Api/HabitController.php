@@ -5,14 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Habit;
 use App\Models\HabitCheck;
-use App\Services\AchievementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class HabitController extends Controller
 {
-    public function __construct(protected AchievementService $achievementService) {}
-
     /**
      * Display a listing of the user's habits.
      * GET /api/habits
@@ -194,9 +191,6 @@ class HabitController extends Controller
                 'checked_at' => now(),
             ]);
 
-            // Trigger achievement for multi-check habits too
-            $this->triggerHabitAchievement($habit);
-
             return response()->json($check);
         }
 
@@ -213,11 +207,6 @@ class HabitController extends Controller
                 'checked_at' => now(),
                 'note' => $request->note ?? $check->note,
             ]);
-
-            // Trigger achievement if newly checked
-            if (! $wasChecked && $check->checked) {
-                $this->triggerHabitAchievement($habit);
-            }
         } else {
             // Create new check
             $check = HabitCheck::create([
@@ -228,9 +217,6 @@ class HabitController extends Controller
                 'note' => $request->note,
                 'checked_at' => now(),
             ]);
-
-            // Trigger achievement for new completion
-            $this->triggerHabitAchievement($habit);
         }
 
         return response()->json($check);
@@ -413,60 +399,6 @@ class HabitController extends Controller
         $check->delete();
 
         return response()->json(['message' => 'Check deleted successfully']);
-    }
-
-    /**
-     * Trigger achievement for habit completion with current streak.
-     */
-    protected function triggerHabitAchievement(Habit $habit): void
-    {
-        // Calculate current streak
-        $uniqueDates = $habit->checks()
-            ->where('checked', true)
-            ->selectRaw('DISTINCT date')
-            ->orderBy('date', 'asc')
-            ->pluck('date')
-            ->map(function ($date) {
-                return $date instanceof \Carbon\Carbon ? $date->toDateString() : $date;
-            })
-            ->toArray();
-
-        $currentStreak = 0;
-        $today = now();
-        $checkDate = $today->copy();
-
-        // Start from yesterday if today doesn't have a check yet
-        if (! in_array($checkDate->toDateString(), $uniqueDates)) {
-            $checkDate->subDay();
-        }
-
-        while (true) {
-            $dateString = $checkDate->toDateString();
-            $dayOfWeek = $checkDate->dayOfWeek;
-
-            // Check if this date should be tracked based on habit frequency
-            if ($this->shouldTrackDate($habit, $dayOfWeek)) {
-                if (! in_array($dateString, $uniqueDates)) {
-                    break; // Streak ends
-                }
-                $currentStreak++;
-            }
-
-            // Move to previous day
-            $checkDate->subDay();
-
-            // Safety: don't go back more than 1 year
-            if ($checkDate->diffInDays($today) > 365) {
-                break;
-            }
-        }
-
-        // Trigger the achievement
-        $this->achievementService->triggerHabitCompletion(
-            auth()->user(),
-            $habit,
-            $currentStreak
-        );
     }
 
     /**

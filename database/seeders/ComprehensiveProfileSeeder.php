@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\ActivityType;
-use App\Models\Achievement;
 use App\Models\DailyCheckIn;
 use App\Models\Goal;
 use App\Models\GoalMilestone;
@@ -83,9 +82,6 @@ class ComprehensiveProfileSeeder extends Seeder
             if (fake()->boolean(80)) {
                 $this->createVision($user);
             }
-
-            // Create achievements (1-5 per user)
-            $this->createAchievements($user, rand(1, 5));
 
             // Create gamification data (random activity levels)
             $this->createGamificationData($user);
@@ -347,30 +343,6 @@ class ComprehensiveProfileSeeder extends Seeder
                 ],
                 'overall_rating' => rand(1, 5),
                 'notes' => fake()->boolean(50) ? fake()->paragraph(2) : null,
-            ]);
-        }
-    }
-
-    private function createAchievements(User $user, int $count): void
-    {
-        $achievementTypes = [
-            ['type' => 'streak_7', 'metadata' => ['streak_count' => 7]],
-            ['type' => 'streak_30', 'metadata' => ['streak_count' => 30]],
-            ['type' => 'goal_completed', 'metadata' => ['goal_id' => null]],
-            ['type' => 'habit_completed', 'metadata' => ['habit_id' => null]],
-            ['type' => 'streak_100', 'metadata' => ['streak_count' => 100]],
-            ['type' => 'perfect_week', 'metadata' => []],
-        ];
-
-        $achievements = fake()->randomElements($achievementTypes, $count);
-
-        foreach ($achievements as $achievement) {
-            Achievement::create([
-                'user_id' => $user->id,
-                'achievement_type' => $achievement['type'],
-                'metadata' => $achievement['metadata'],
-                'shown_at' => now()->subDays(rand(0, 5)),
-                'created_at' => now()->subDays(rand(1, 180)),
             ]);
         }
     }
