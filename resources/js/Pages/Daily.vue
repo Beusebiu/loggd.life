@@ -1,46 +1,63 @@
 <template>
   <AppLayout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-8">
       <!-- Journey Navigation -->
       <JourneyNav />
 
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Daily Check-in</h1>
-        <p class="text-gray-600">Start your morning with planning, end your day with reflection</p>
-        <p class="text-sm text-gray-500 mt-2 italic">💡 A few minutes each day compounds into massive progress.</p>
+      <div class="mb-4 sm:mb-8">
+        <h1 class="text-xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Daily Check-in</h1>
+        <p class="text-xs sm:text-base text-gray-600">Start your morning with planning, end your day with reflection</p>
+        <p class="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2 italic">💡 A few minutes each day compounds into massive progress.</p>
       </div>
 
-      <div class="flex gap-6">
-        <!-- History Sidebar -->
+      <!-- Mobile History Button -->
+      <button
+        @click="showMobileHistory = true"
+        class="lg:hidden mb-3 w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-lg hover:border-green-300 transition text-left flex items-center justify-between"
+      >
+        <span class="text-xs sm:text-sm font-medium text-gray-900">📅 Check-in History</span>
+        <span class="text-xs sm:text-sm text-gray-600">{{ recentCheckIns.length }} days</span>
+      </button>
+
+      <div class="flex gap-4 sm:gap-6">
+        <!-- History Sidebar (Desktop) -->
         <div class="w-64 hidden lg:block">
           <div class="sticky top-8">
             <h3 class="text-sm font-bold text-gray-900 mb-3">📅 Check-in History</h3>
-            <div class="space-y-2 max-h-[calc(100vh-12rem)] overflow-y-auto">
-              <button
-                v-for="entry in recentCheckIns"
-                :key="entry.date"
-                @click="selectDate(entry.date)"
-                :class="[
-                  'w-full text-left px-3 py-2 rounded-lg border-2 transition',
-                  selectedDate === entry.date
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 hover:border-green-300 bg-white'
-                ]"
-              >
-                <div class="flex items-center justify-between">
-                  <div>
-                    <div class="text-sm font-medium text-gray-900">
-                      {{ formatDateShort(entry.date) }}
-                    </div>
-                    <div class="text-xs text-gray-500">
-                      {{ entry.date === today ? 'Today' : formatRelative(entry.date) }}
-                    </div>
-                  </div>
-                  <div class="text-lg">
-                    {{ entry.today_priority ? '✅' : '📝' }}
+            <div class="space-y-3 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1">
+              <template v-for="(entry, index) in recentCheckIns" :key="entry.date">
+                <!-- Year separator -->
+                <div v-if="index === 0 || getYear(entry.date) !== getYear(recentCheckIns[index - 1].date)" class="sticky top-0 bg-white pt-3 pb-2 z-10 -mx-1 px-1">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                    <div class="text-xs font-bold text-gray-500 uppercase tracking-wide px-2">{{ getYear(entry.date) }}</div>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
                   </div>
                 </div>
-              </button>
+                <button
+                  @click="selectDate(entry.date)"
+                  :class="[
+                    'w-full text-left px-3 py-2 rounded-lg border-2 transition',
+                    selectedDate === entry.date
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300 bg-white'
+                  ]"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm font-medium text-gray-900">
+                        {{ formatDateShort(entry.date) }}
+                      </div>
+                      <div class="text-xs text-gray-500">
+                        {{ entry.date === today ? 'Today' : formatRelative(entry.date) }}
+                      </div>
+                    </div>
+                    <div class="text-lg">
+                      {{ entry.today_priority ? '✅' : '📝' }}
+                    </div>
+                  </div>
+                </button>
+              </template>
               <div v-if="recentCheckIns.length === 0" class="text-sm text-gray-500 text-center py-4">
                 No check-ins yet
               </div>
@@ -51,40 +68,40 @@
         <!-- Main Content -->
         <div class="flex-1 max-w-4xl">
           <!-- Check-in Streak -->
-          <div class="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 p-6">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-4">
-                <div class="flex items-center justify-center w-16 h-16 bg-white rounded-full border-2 border-green-300">
-                  <span class="text-3xl">🔥</span>
+          <div class="mb-4 sm:mb-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 p-3 sm:p-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+              <div class="flex items-center gap-3 sm:gap-4">
+                <div class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-full border-2 border-green-300">
+                  <span class="text-2xl sm:text-3xl">🔥</span>
                 </div>
                 <div>
-                  <h3 class="text-lg font-bold text-gray-900">Check-in Streak</h3>
-                  <p class="text-sm text-gray-600 mt-0.5">
-                    <span class="text-2xl font-bold text-green-600">{{ currentStreak }}</span>
+                  <h3 class="text-base sm:text-lg font-bold text-gray-900">Check-in Streak</h3>
+                  <p class="text-xs sm:text-sm text-gray-600 mt-0.5">
+                    <span class="text-xl sm:text-2xl font-bold text-green-600">{{ currentStreak }}</span>
                     <span class="text-gray-600 ml-1">{{ currentStreak === 1 ? 'day' : 'days' }}</span>
                   </p>
                 </div>
               </div>
 
-              <div class="text-right">
-                <div class="text-sm text-gray-600">Last 7 days</div>
+              <div class="text-left sm:text-right w-full sm:w-auto">
+                <div class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-0">Last 7 days</div>
                 <div class="flex gap-1 mt-2">
                   <div
                     v-for="day in last7Days"
                     :key="day.date"
                     :class="[
-                      'w-8 h-8 rounded-lg transition-all',
+                      'w-7 h-7 sm:w-8 sm:h-8 rounded-lg transition-all',
                       day.hasCheckIn ? 'bg-green-600 border-2 border-green-700' : 'bg-white border-2 border-gray-200'
                     ]"
                     :title="day.label"
                   >
                     <div class="w-full h-full flex items-center justify-center">
-                      <span v-if="day.hasCheckIn" class="text-white text-lg">✓</span>
+                      <span v-if="day.hasCheckIn" class="text-white text-sm sm:text-lg">✓</span>
                     </div>
                   </div>
                 </div>
-                <div class="flex gap-1 mt-1 text-xs text-gray-500">
-                  <div v-for="day in last7Days" :key="day.date + '-label'" class="w-8 text-center">
+                <div class="flex gap-1 mt-1 text-[10px] sm:text-xs text-gray-500">
+                  <div v-for="day in last7Days" :key="day.date + '-label'" class="w-7 sm:w-8 text-center">
                     {{ day.dayName }}
                   </div>
                 </div>
@@ -93,43 +110,49 @@
           </div>
 
           <!-- Date Navigation -->
-          <div class="mb-6 flex items-center gap-3">
-            <button
-              @click="navigateDate(-1)"
-              class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
-            >
-              ← Previous
-            </button>
-            <input
-              v-model="selectedDate"
-              @change="loadCheckIn"
-              type="date"
-              :max="today"
-              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-            />
-            <button
-              @click="navigateDate(1)"
-              :disabled="selectedDate === today"
-              :class="[
-                'px-3 py-2 border border-gray-300 rounded-lg text-gray-700',
-                selectedDate === today ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
-              ]"
-            >
-              Next →
-            </button>
-            <span class="text-sm text-gray-600">
-              {{ selectedDate === today ? '📝 Today\'s check-in' : '📅 Reviewing past day' }}
-            </span>
+          <div class="mb-4 sm:mb-6 flex flex-col md:flex-row md:items-center gap-2 sm:gap-3">
+            <div class="flex gap-2 sm:gap-3">
+              <button
+                @click="navigateDate(-1)"
+                class="flex-1 md:flex-none px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 text-xs sm:text-sm"
+              >
+                <span class="hidden sm:inline">← Previous</span>
+                <span class="sm:hidden">← Prev</span>
+              </button>
+              <button
+                @click="navigateDate(1)"
+                :disabled="selectedDate === today"
+                :class="[
+                  'flex-1 md:flex-none px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-gray-700 text-xs sm:text-sm',
+                  selectedDate === today ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                ]"
+              >
+                <span class="hidden sm:inline">Next →</span>
+                <span class="sm:hidden">Next →</span>
+              </button>
+            </div>
+            <div class="flex items-center gap-2 w-full md:w-auto">
+              <input
+                v-model="selectedDate"
+                @change="loadCheckIn"
+                type="date"
+                :max="today"
+                class="flex-1 px-2 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-xs sm:text-sm"
+              />
+              <span class="hidden md:inline text-xs sm:text-sm text-gray-600 whitespace-nowrap">
+                {{ selectedDate === today ? '📝 Today' : '📅 Past' }}
+              </span>
+            </div>
           </div>
 
-          <div class="space-y-6">
+          <div class="space-y-4 sm:space-y-6">
             <!-- ==================== MORNING START ==================== -->
-            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200 p-6">
-              <div class="flex items-center gap-2 mb-4">
-                <span class="text-2xl">🌅</span>
-                <h2 class="text-xl font-bold text-gray-900">Morning Start</h2>
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200 p-3 sm:p-6">
+              <div class="flex items-center gap-2 mb-3 sm:mb-4">
+                <span class="text-xl sm:text-2xl">🌅</span>
+                <h2 class="text-lg sm:text-xl font-bold text-gray-900">Morning Start</h2>
               </div>
-              <p class="text-sm text-gray-600 mb-6">Fill this when you wake up to plan your day</p>
+              <p class="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">Fill this when you wake up to plan your day</p>
 
               <!-- Yesterday's Quick Review -->
               <div class="mb-6">
@@ -392,6 +415,79 @@
           </div>
         </div>
       </div>
+
+      <!-- Mobile History Modal -->
+      <Transition
+        enter-active-class="transition-opacity duration-200"
+        leave-active-class="transition-opacity duration-200"
+        enter-from-class="opacity-0"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="showMobileHistory" @click="showMobileHistory = false" class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+      </Transition>
+
+      <Transition
+        enter-active-class="transition-transform duration-300"
+        leave-active-class="transition-transform duration-300"
+        enter-from-class="translate-y-full"
+        leave-to-class="translate-y-full"
+      >
+        <div v-if="showMobileHistory" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-50 h-[85vh] flex flex-col">
+          <!-- Modal Header -->
+          <div class="sticky top-0 bg-white border-b border-gray-200 p-4 sm:p-6 rounded-t-2xl flex items-center justify-between flex-shrink-0">
+            <h3 class="text-base sm:text-lg font-bold text-gray-900">📅 Check-in History</h3>
+            <button @click="showMobileHistory = false" class="text-gray-500 hover:text-gray-700 p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Scrollable History List -->
+          <div class="relative flex-1 min-h-0 overflow-hidden">
+            <div class="overflow-y-scroll h-full p-4 sm:p-6 space-y-3" style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
+              <template v-for="(entry, index) in recentCheckIns" :key="entry.date">
+                <!-- Year separator -->
+                <div v-if="index === 0 || getYear(entry.date) !== getYear(recentCheckIns[index - 1].date)" class="sticky top-0 bg-white pt-3 pb-2 z-10">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                    <div class="text-xs font-bold text-gray-600 uppercase tracking-wide px-2 bg-white">{{ getYear(entry.date) }}</div>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                  </div>
+                </div>
+                <button
+                  @click="selectDate(entry.date); showMobileHistory = false"
+                  :class="[
+                    'w-full text-left px-3 py-2 rounded-lg border-2 transition',
+                    selectedDate === entry.date
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300 bg-white'
+                  ]"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm font-medium text-gray-900">
+                        {{ formatDateShort(entry.date) }}
+                      </div>
+                      <div class="text-xs text-gray-500">
+                        {{ entry.date === today ? 'Today' : formatRelative(entry.date) }}
+                      </div>
+                    </div>
+                    <div class="text-lg">
+                      {{ entry.today_priority ? '✅' : '📝' }}
+                    </div>
+                  </div>
+                </button>
+              </template>
+              <div v-if="recentCheckIns.length === 0" class="text-sm text-gray-500 text-center py-4">
+                No check-ins yet
+              </div>
+            </div>
+            <!-- Scroll fade indicator -->
+            <div v-if="recentCheckIns.length > 8" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+          </div>
+        </div>
+      </Transition>
     </div>
   </AppLayout>
 </template>
@@ -411,6 +507,7 @@ const today = new Date().toISOString().split('T')[0];
 const selectedDate = ref(today);
 const saving = ref(false);
 const recentCheckIns = ref([]);
+const showMobileHistory = ref(false);
 const activeGoals = ref([]);
 const selectedGoalIds = ref([]);
 const allCheckIns = ref({}); // Map of date -> check-in data for grid
@@ -584,11 +681,29 @@ const toggleHabit = async (habitId) => {
 const loadCheckIn = async () => {
   try {
     const response = await window.axios.get(`/api/journey/daily/${selectedDate.value}`);
-    checkIn.value = response.data;
+    const data = response.data;
 
-    // Ensure arrays exist
-    if (!checkIn.value.today_tasks) checkIn.value.today_tasks = [];
-    if (!checkIn.value.goals_worked_on) checkIn.value.goals_worked_on = [];
+    // Merge with defaults to ensure all fields exist and null values become empty strings
+    checkIn.value = {
+      date: data.date || selectedDate.value,
+      // Morning Planning
+      yesterday_priority_completed: data.yesterday_priority_completed || false,
+      yesterday_review: data.yesterday_review || '',
+      today_priority: data.today_priority || '',
+      today_tasks: data.today_tasks || [],
+      goal_work_today: data.goal_work_today || false,
+      goal_work_details: data.goal_work_details || '',
+      // Evening Reflection
+      day_reflection: data.day_reflection || '',
+      mood: data.mood || 5,
+      // Other
+      goals_worked_on: data.goals_worked_on || [],
+      goal_specific_tasks: data.goal_specific_tasks || [],
+      habit_completions: data.habit_completions || [],
+      notes: data.notes || '',
+      is_public: data.is_public || false,
+      share_wins_to_feed: data.share_wins_to_feed || false,
+    };
 
     // Sync selected goals
     selectedGoalIds.value = checkIn.value.goals_worked_on || [];
@@ -644,6 +759,10 @@ const navigateDate = (days) => {
   selectedDate.value = current.toISOString().split('T')[0];
   loadCheckIn();
   loadHabitChecks();
+};
+
+const getYear = (dateString) => {
+  return new Date(dateString).getFullYear();
 };
 
 onMounted(() => {

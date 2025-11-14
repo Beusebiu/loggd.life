@@ -33,7 +33,7 @@ class DailyCheckIn extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'date',
+            'date' => 'date:Y-m-d',
             'yesterday_priority_completed' => 'boolean',
             'goal_work_today' => 'boolean',
             'today_tasks' => 'array',

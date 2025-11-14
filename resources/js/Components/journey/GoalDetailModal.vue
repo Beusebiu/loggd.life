@@ -1,18 +1,18 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.self="$emit('close')">
-    <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+  <div class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4" @click.self="$emit('close')">
+    <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-3xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
       <!-- Header -->
-      <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-start">
-        <div class="flex-1">
+      <div class="flex-shrink-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-start gap-2">
+        <div class="flex-1 min-w-0">
           <input
             v-if="editing"
             v-model="form.title"
-            class="text-2xl font-bold text-gray-900 w-full border-b-2 border-green-500 focus:outline-none"
+            class="text-lg sm:text-2xl font-bold text-gray-900 w-full border-b-2 border-green-500 focus:outline-none"
             placeholder="Goal title..."
           />
-          <h2 v-else class="text-2xl font-bold text-gray-900">{{ goal.title }}</h2>
+          <h2 v-else class="text-lg sm:text-2xl font-bold text-gray-900 truncate">{{ goal.title }}</h2>
 
-          <div class="flex items-center gap-2 mt-2 text-sm">
+          <div class="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1.5 sm:mt-2 text-xs sm:text-sm">
             <span :class="statusBadgeClass">{{ goal.status }}</span>
             <span class="text-gray-500">•</span>
             <span>{{ trackingTypeLabel }}</span>
@@ -29,11 +29,11 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2 ml-4">
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
           <button
             v-if="!editing"
             @click="editing = true"
-            class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+            class="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             Edit
           </button>
@@ -41,7 +41,7 @@
             v-else
             @click="saveGoal"
             :disabled="saving"
-            class="px-4 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+            class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
           >
             {{ saving ? 'Saving...' : 'Save' }}
           </button>
@@ -49,7 +49,7 @@
             @click="$emit('close')"
             class="text-gray-400 hover:text-gray-600"
           >
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
           </button>
@@ -57,7 +57,7 @@
       </div>
 
       <!-- Content -->
-      <div class="p-6 space-y-6">
+      <div class="overflow-y-auto flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6">
         <!-- Description -->
         <div>
           <label class="block text-sm font-semibold text-gray-700 mb-2">Why this matters</label>

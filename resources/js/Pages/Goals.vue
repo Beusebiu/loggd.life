@@ -1,20 +1,21 @@
 <template>
   <AppLayout>
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-8">
       <!-- Journey Navigation -->
       <JourneyNav />
 
       <!-- Header -->
-      <div class="flex justify-between items-start mb-6">
+      <div class="flex justify-between items-start mb-4 sm:mb-8">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Goals</h1>
-          <p class="text-gray-600 mt-1">Track progress toward what matters most</p>
+          <h1 class="text-xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Goals</h1>
+          <p class="text-xs sm:text-base text-gray-600">Track progress toward what matters most</p>
         </div>
         <button
           @click="showCreateModal = true"
-          class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold shadow-lg transition"
+          class="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-green-700 bg-white border border-green-300 rounded-lg hover:bg-green-50 transition flex items-center gap-1 sm:gap-2 flex-shrink-0"
         >
-          + New Goal
+          <span>➕</span>
+          <span class="hidden sm:inline">New Goal</span>
         </button>
       </div>
 
@@ -124,12 +125,14 @@
       />
 
       <!-- Update Metric Modal -->
-      <div v-if="metricUpdateGoal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.self="metricUpdateGoal = null">
-        <div class="bg-white rounded-xl max-w-md w-full p-6">
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Update: {{ metricUpdateGoal.title }}</h3>
-          <p class="text-sm text-gray-600 mb-4">Record your current progress</p>
+      <div v-if="metricUpdateGoal" class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4" @click.self="metricUpdateGoal = null">
+        <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+          <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
+            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">Update: {{ metricUpdateGoal.title }}</h3>
+            <p class="text-xs sm:text-sm text-gray-600">Record your current progress</p>
+          </div>
 
-          <form @submit.prevent="submitMetricUpdate" class="space-y-4">
+          <form @submit.prevent="submitMetricUpdate" class="overflow-y-auto flex-1 p-4 sm:p-6 space-y-3 sm:space-y-4">
             <div>
               <label class="block text-sm font-semibold mb-2">Current Value</label>
               <div class="flex items-center gap-2">
@@ -158,33 +161,37 @@
               ></textarea>
             </div>
 
-            <div class="flex justify-end gap-3">
-              <button
-                type="button"
-                @click="metricUpdateGoal = null"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                :disabled="updatingMetric"
-                class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-              >
-                {{ updatingMetric ? 'Saving...' : 'Update' }}
-              </button>
-            </div>
           </form>
+
+          <div class="flex justify-end gap-2 sm:gap-3 flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              @click="metricUpdateGoal = null"
+              class="px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              @click="submitMetricUpdate"
+              :disabled="updatingMetric"
+              class="px-6 py-2 text-xs sm:text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+            >
+              {{ updatingMetric ? 'Saving...' : 'Update' }}
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Journal Update Modal -->
-      <div v-if="journalUpdateGoal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.self="journalUpdateGoal = null">
-        <div class="bg-white rounded-xl max-w-md w-full p-6">
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Update: {{ journalUpdateGoal.title }}</h3>
-          <p class="text-sm text-gray-600 mb-4">Add progress notes or reflections</p>
+      <div v-if="journalUpdateGoal" class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4" @click.self="journalUpdateGoal = null">
+        <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+          <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
+            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">Update: {{ journalUpdateGoal.title }}</h3>
+            <p class="text-xs sm:text-sm text-gray-600">Add progress notes or reflections</p>
+          </div>
 
-          <form @submit.prevent="submitJournalUpdate" class="space-y-4">
+          <form @submit.prevent="submitJournalUpdate" class="overflow-y-auto flex-1 p-4 sm:p-6 space-y-3 sm:space-y-4">
             <div>
               <label class="block text-sm font-semibold mb-2">Update</label>
               <textarea
@@ -196,23 +203,25 @@
               ></textarea>
             </div>
 
-            <div class="flex justify-end gap-3">
-              <button
-                type="button"
-                @click="journalUpdateGoal = null"
-                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                :disabled="updatingJournal"
-                class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-              >
-                {{ updatingJournal ? 'Saving...' : 'Add Update' }}
-              </button>
-            </div>
           </form>
+
+          <div class="flex justify-end gap-2 sm:gap-3 flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200">
+            <button
+              type="button"
+              @click="journalUpdateGoal = null"
+              class="px-4 py-2 text-xs sm:text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              @click="submitJournalUpdate"
+              :disabled="updatingJournal"
+              class="px-6 py-2 text-xs sm:text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+            >
+              {{ updatingJournal ? 'Saving...' : 'Add Update' }}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,71 +1,73 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.self="$emit('close')">
-    <div class="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-      <h2 class="text-2xl font-bold mb-2">Create New Goal</h2>
-      <p class="text-sm text-gray-600 mb-4">Choose how you'll track progress toward what matters</p>
+  <div class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4" @click.self="$emit('close')">
+    <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-2xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+      <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
+        <h2 class="text-lg sm:text-2xl font-bold mb-1 sm:mb-2">Create New Goal</h2>
+        <p class="text-xs sm:text-sm text-gray-600">Choose how you'll track progress toward what matters</p>
+      </div>
 
-      <form @submit.prevent="createGoal" class="space-y-4">
+      <form @submit.prevent="createGoal" class="overflow-y-auto flex-1 p-4 sm:p-6 space-y-3 sm:space-y-4">
         <!-- Goal Title -->
         <div>
-          <label class="block text-sm font-semibold mb-2">Goal Title</label>
+          <label class="block text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2">Goal Title</label>
           <input
             v-model="form.title"
             type="text"
             required
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
-            placeholder="Pay off mortgage, Launch MVP, Get to 70kg..."
+            class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+            placeholder="Pay off mortgage, Launch MVP..."
           />
         </div>
 
         <!-- Tracking Type -->
         <div>
-          <label class="block text-sm font-semibold mb-2">How will you track progress?</label>
+          <label class="block text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2">How will you track progress?</label>
           <div class="grid grid-cols-2 gap-2">
             <button
               type="button"
               @click="form.tracking_type = 'metric'"
               :class="form.tracking_type === 'metric' ? 'border-green-500 bg-green-50' : 'border-gray-300'"
-              class="p-3 border-2 rounded-lg text-left hover:border-green-400 transition"
+              class="p-2 sm:p-3 border-2 rounded-lg text-left hover:border-green-400 transition"
             >
-              <div class="font-semibold text-sm">📊 Metric</div>
-              <div class="text-xs text-gray-600">Track a number (€, kg, customers)</div>
+              <div class="font-semibold text-xs sm:text-sm">📊 Metric</div>
+              <div class="text-[10px] sm:text-xs text-gray-600">Track a number</div>
             </button>
 
             <button
               type="button"
               @click="form.tracking_type = 'milestone'"
               :class="form.tracking_type === 'milestone' ? 'border-green-500 bg-green-50' : 'border-gray-300'"
-              class="p-3 border-2 rounded-lg text-left hover:border-green-400 transition"
+              class="p-2 sm:p-3 border-2 rounded-lg text-left hover:border-green-400 transition"
             >
-              <div class="font-semibold text-sm">🎯 Milestones</div>
-              <div class="text-xs text-gray-600">Key checkpoints to complete</div>
+              <div class="font-semibold text-xs sm:text-sm">🎯 Milestones</div>
+              <div class="text-[10px] sm:text-xs text-gray-600">Key checkpoints</div>
             </button>
 
             <button
               type="button"
               @click="form.tracking_type = 'evolution'"
               :class="form.tracking_type === 'evolution' ? 'border-green-500 bg-green-50' : 'border-gray-300'"
-              class="p-3 border-2 rounded-lg text-left hover:border-green-400 transition"
+              class="p-2 sm:p-3 border-2 rounded-lg text-left hover:border-green-400 transition"
             >
-              <div class="font-semibold text-sm">📝 Journal</div>
-              <div class="text-xs text-gray-600">Update with notes over time</div>
+              <div class="font-semibold text-xs sm:text-sm">📝 Journal</div>
+              <div class="text-[10px] sm:text-xs text-gray-600">Notes over time</div>
             </button>
 
             <button
               type="button"
               @click="form.tracking_type = 'active'"
               :class="form.tracking_type === 'active' ? 'border-green-500 bg-green-50' : 'border-gray-300'"
-              class="p-3 border-2 rounded-lg text-left hover:border-green-400 transition"
+              class="p-2 sm:p-3 border-2 rounded-lg text-left hover:border-green-400 transition"
             >
-              <div class="font-semibold text-sm">♾️ Active</div>
-              <div class="text-xs text-gray-600">Ongoing, no end date</div>
+              <div class="font-semibold text-xs sm:text-sm">♾️ Active</div>
+              <div class="text-[10px] sm:text-xs text-gray-600">Ongoing</div>
             </button>
           </div>
         </div>
 
         <!-- Metric Fields (if metric selected) -->
         <div v-if="form.tracking_type === 'metric'" class="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label class="block text-xs font-semibold mb-1">Unit</label>
               <input
@@ -111,19 +113,19 @@
 
         <!-- Description -->
         <div>
-          <label class="block text-sm font-semibold mb-2">Why does this matter?</label>
+          <label class="block text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2">Why does this matter?</label>
           <textarea
             v-model="form.description"
             rows="2"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+            class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
             placeholder="This matters because..."
           ></textarea>
         </div>
 
         <!-- Time Horizon & Life Area -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label class="block text-sm font-semibold mb-2">Time Horizon</label>
+            <label class="block text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2">Time Horizon</label>
             <select
               v-model="form.time_horizon"
               required
@@ -137,11 +139,11 @@
           </div>
 
           <div>
-            <label class="block text-sm font-semibold mb-2">Life Area</label>
+            <label class="block text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2">Life Area</label>
             <select
               v-model="form.life_area"
               required
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+              class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
             >
               <option value="career">💼 Career</option>
               <option value="health">🏃 Health</option>
@@ -224,24 +226,26 @@
           <label for="is_public" class="text-sm">Make this goal public</label>
         </div>
 
+      </form>
+
         <!-- Actions -->
-        <div class="flex justify-end gap-3 pt-4 border-t">
+        <div class="flex-shrink-0 flex justify-end gap-2 sm:gap-3 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200">
           <button
             type="button"
             @click="$emit('close')"
-            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-xs sm:text-sm"
           >
             Cancel
           </button>
           <button
             type="submit"
+            @click="createGoal"
             :disabled="saving"
-            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm font-semibold"
+            class="px-5 sm:px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 text-xs sm:text-sm font-semibold"
           >
             {{ saving ? 'Creating...' : 'Create Goal' }}
           </button>
         </div>
-      </form>
     </div>
   </div>
 </template>

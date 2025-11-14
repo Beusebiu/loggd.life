@@ -31,8 +31,8 @@ class WeeklyReview extends Model
     protected function casts(): array
     {
         return [
-            'week_start_date' => 'date',
-            'week_end_date' => 'date',
+            'week_start_date' => 'date:Y-m-d',
+            'week_end_date' => 'date:Y-m-d',
             'completed_goals' => 'array',
             'goal_progress' => 'array',
             'next_week_goals' => 'array',

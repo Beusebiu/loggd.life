@@ -1,58 +1,81 @@
 <template>
   <AppLayout>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-8">
       <!-- Journey Navigation -->
       <JourneyNav />
 
-      <div class="mb-8">
-        <div class="flex justify-between items-start">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Weekly Review</h1>
-            <p class="text-gray-600">Take 30 minutes to reflect, celebrate, and plan your week ahead</p>
+      <div class="mb-4 sm:mb-8">
+        <div class="flex justify-between items-start gap-2">
+          <div class="flex-1 min-w-0">
+            <h1 class="text-xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Weekly Review</h1>
+            <p class="text-xs sm:text-base text-gray-600">Take 30 minutes to reflect, celebrate, and plan your week ahead</p>
           </div>
           <!-- Completion Progress -->
-          <div class="bg-white border-2 border-gray-200 rounded-lg px-4 py-3">
-            <div class="text-sm text-gray-600 mb-1">Completion</div>
-            <div class="text-2xl font-bold text-green-600">{{ completionPercentage }}%</div>
-            <div class="text-xs text-gray-500">{{ completedSections }}/5 sections</div>
+          <div class="bg-white border border-gray-300 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 flex-shrink-0 flex items-center gap-1.5 sm:gap-2">
+            <div class="text-lg sm:text-xl font-bold text-green-600">{{ completionPercentage }}%</div>
+            <div class="text-[9px] sm:text-xs text-gray-500">{{ completedSections }}/5</div>
           </div>
         </div>
       </div>
 
-      <div class="flex gap-6">
-        <!-- History Sidebar -->
+      <!-- Mobile History Button -->
+      <button
+        @click="showMobileHistory = true"
+        class="lg:hidden mb-3 w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-lg hover:border-green-300 transition text-left flex items-center justify-between"
+      >
+        <span class="text-xs sm:text-sm font-medium text-gray-900">📊 Review History</span>
+        <span class="text-xs sm:text-sm text-gray-600">{{ recentReviews.length }} reviews</span>
+      </button>
+
+      <div class="flex gap-4 sm:gap-6">
+        <!-- History Sidebar (Desktop) -->
         <div class="w-64 hidden lg:block">
           <div class="sticky top-8">
-            <h3 class="text-sm font-bold text-gray-900 mb-3">📊 Review History</h3>
-            <div class="space-y-2 max-h-[calc(100vh-12rem)] overflow-y-auto">
-              <button
-                v-for="entry in recentReviews"
-                :key="entry.week_start_date"
-                @click="selectWeek(entry.week_start_date)"
-                :class="[
-                  'w-full text-left px-3 py-2 rounded-lg border-2 transition',
-                  weekStart === entry.week_start_date
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 hover:border-green-300 bg-white'
-                ]"
-              >
-                <div class="flex items-center justify-between">
-                  <div>
-                    <div class="text-sm font-medium text-gray-900">
-                      Week of {{ formatDateShort(entry.week_start_date) }}
-                    </div>
-                    <div class="text-xs text-gray-500">
-                      {{ entry.total_check_ins || 0 }}/7 check-ins
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-gray-900">📊 Review History</h3>
+              <span v-if="recentReviews.length > 0" class="text-xs text-gray-500">{{ recentReviews.length }}</span>
+            </div>
+            <div class="relative">
+              <div class="space-y-3 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1">
+                <template v-for="(entry, index) in recentReviews" :key="entry.week_start_date">
+                  <!-- Year separator -->
+                  <div v-if="index === 0 || getYear(entry.week_start_date) !== getYear(recentReviews[index - 1].week_start_date)" class="sticky top-0 bg-white pt-3 pb-2 z-10 -mx-1 px-1">
+                    <div class="flex items-center gap-2">
+                      <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                      <div class="text-xs font-bold text-gray-500 uppercase tracking-wide px-2">{{ getYear(entry.week_start_date) }}</div>
+                      <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
                     </div>
                   </div>
-                  <div class="text-lg">
-                    {{ entry.biggest_win ? '✅' : '📝' }}
-                  </div>
+                  <button
+                    @click="selectWeek(entry.week_start_date)"
+                    :class="[
+                      'w-full text-left px-3 py-2 rounded-lg border-2 transition',
+                      weekStart === entry.week_start_date
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-green-300 bg-white'
+                    ]"
+                  >
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">
+                          Week of {{ formatDateShort(entry.week_start_date) }}
+                        </div>
+                        <div class="text-xs text-gray-500">
+                          {{ entry.total_check_ins || 0 }}/7 check-ins
+                        </div>
+                      </div>
+                      <div class="text-lg">
+                        {{ entry.biggest_win ? '✅' : '📝' }}
+                      </div>
+                    </div>
+                  </button>
+                </template>
+                <div v-if="recentReviews.length === 0" class="text-sm text-gray-500 text-center py-4">
+                  No reviews yet
                 </div>
-              </button>
-              <div v-if="recentReviews.length === 0" class="text-sm text-gray-500 text-center py-4">
-                No reviews yet
               </div>
+              <!-- Scroll fade indicator -->
+              <div v-if="recentReviews.length > 5" class="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
             </div>
           </div>
         </div>
@@ -60,52 +83,56 @@
         <!-- Main Content -->
         <div class="flex-1 max-w-4xl">
           <!-- Week Navigation -->
-          <div class="mb-6 flex items-center gap-3">
-            <button
-              @click="navigateWeek(-1)"
-              class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700"
-            >
-              ← Previous Week
-            </button>
-            <div class="flex items-center gap-2">
-              <label class="text-sm font-semibold text-gray-700">Week:</label>
+          <div class="mb-4 sm:mb-6 flex flex-col xl:flex-row xl:items-center gap-2 sm:gap-3">
+            <div class="flex gap-2 sm:gap-3">
+              <button
+                @click="navigateWeek(-1)"
+                class="flex-1 xl:flex-none px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 text-xs sm:text-sm"
+              >
+                <span class="hidden sm:inline">← Previous Week</span>
+                <span class="sm:hidden">← Prev</span>
+              </button>
+              <button
+                @click="navigateWeek(1)"
+                :disabled="isCurrentWeek"
+                :class="[
+                  'flex-1 xl:flex-none px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-gray-700 text-xs sm:text-sm',
+                  isCurrentWeek ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                ]"
+              >
+                <span class="hidden sm:inline">Next Week →</span>
+                <span class="sm:hidden">Next →</span>
+              </button>
+            </div>
+            <div class="flex items-center gap-1.5 sm:gap-2 w-full xl:w-auto">
+              <label class="text-xs sm:text-sm font-semibold text-gray-700 whitespace-nowrap">Week:</label>
               <input
                 v-model="weekStart"
                 @change="loadReview"
                 type="date"
-                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                class="flex-1 px-2 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-xs sm:text-sm"
               />
-              <span class="text-sm text-gray-600">→ {{ weekEnd }}</span>
+              <span class="hidden xl:inline text-sm text-gray-600">→ {{ weekEnd }}</span>
             </div>
-            <button
-              @click="navigateWeek(1)"
-              :disabled="isCurrentWeek"
-              :class="[
-                'px-3 py-2 border border-gray-300 rounded-lg text-gray-700',
-                isCurrentWeek ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
-              ]"
-            >
-              Next Week →
-            </button>
           </div>
 
       <!-- Memory Jogger -->
-      <div class="mb-6 bg-gradient-to-r from-blue-50 to-green-50 border-2 border-blue-200 rounded-xl p-5">
-        <div class="flex items-start justify-between mb-3">
-          <div>
-            <h3 class="text-lg font-bold text-gray-900 mb-1">🔍 Your Week at a Glance</h3>
-            <p class="text-sm text-gray-600">Quick recap to jog your memory before reflecting</p>
+      <div class="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-green-50 border-2 border-blue-200 rounded-xl p-3 sm:p-5">
+        <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+          <div class="flex-1 min-w-0">
+            <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-0.5 sm:mb-1">🔍 Your Week at a Glance</h3>
+            <p class="text-xs sm:text-sm text-gray-600">Quick recap to jog your memory before reflecting</p>
           </div>
           <button
             @click="showMemoryJogger = !showMemoryJogger"
-            class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+            class="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-medium flex-shrink-0"
           >
             {{ showMemoryJogger ? 'Hide' : 'Show' }}
           </button>
         </div>
 
-        <div v-if="showMemoryJogger" class="space-y-3 text-sm">
-          <div class="bg-white rounded-lg p-3 border border-blue-200">
+        <div v-if="showMemoryJogger" class="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+          <div class="bg-white rounded-lg p-2 sm:p-3 border border-blue-200">
             <div class="font-semibold text-gray-900 mb-1">📊 Activity This Week</div>
             <div class="text-gray-600">
               <p>• {{ review.total_check_ins || 0 }} daily check-ins completed</p>
@@ -114,8 +141,8 @@
             </div>
           </div>
 
-          <div class="bg-white rounded-lg p-3 border border-blue-200">
-            <div class="font-semibold text-gray-900 mb-2">💡 Reflection Prompts</div>
+          <div class="bg-white rounded-lg p-2 sm:p-3 border border-blue-200">
+            <div class="font-semibold text-gray-900 mb-1 sm:mb-2">💡 Reflection Prompts</div>
             <div class="text-gray-600 space-y-1">
               <p>→ What did you work on most this week?</p>
               <p>→ What conversations or interactions stood out?</p>
@@ -126,51 +153,51 @@
       </div>
 
       <!-- Goal Progress This Week -->
-      <div v-if="goalsWorkedOn.length > 0" class="mb-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border-2 border-purple-200 p-5">
-        <h3 class="text-lg font-bold text-gray-900 mb-3">🎯 Goal Progress This Week</h3>
-        <p class="text-sm text-gray-600 mb-4">Goals you worked on this week based on your daily check-ins</p>
+      <div v-if="goalsWorkedOn.length > 0" class="mb-4 sm:mb-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border-2 border-purple-200 p-3 sm:p-5">
+        <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3">🎯 Goal Progress This Week</h3>
+        <p class="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">Goals you worked on this week based on your daily check-ins</p>
 
-        <div class="space-y-3">
+        <div class="space-y-2 sm:space-y-3">
           <div
             v-for="goal in goalsWorkedOn"
             :key="goal.id"
-            class="bg-white rounded-lg border border-purple-200 p-4"
+            class="bg-white rounded-lg border border-purple-200 p-2.5 sm:p-4"
           >
-            <div class="flex items-start justify-between mb-2">
-              <div class="flex-1">
-                <div class="font-semibold text-gray-900">{{ goal.title }}</div>
-                <div class="text-xs text-gray-500 mt-1">
+            <div class="flex items-start justify-between mb-1.5 sm:mb-2 gap-2">
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-gray-900 text-xs sm:text-base">{{ goal.title }}</div>
+                <div class="text-[10px] sm:text-xs text-gray-500 mt-0.5 sm:mt-1">
                   {{ formatTimeHorizon(goal.time_horizon) }} • {{ goal.life_area }}
                 </div>
               </div>
-              <div class="text-right">
-                <div class="text-sm font-bold text-purple-600">{{ goal.days_worked }} days</div>
-                <div class="text-xs text-gray-500">this week</div>
+              <div class="text-right flex-shrink-0">
+                <div class="text-xs sm:text-sm font-bold text-purple-600">{{ goal.days_worked }} days</div>
+                <div class="text-[10px] sm:text-xs text-gray-500">this week</div>
               </div>
             </div>
 
-            <div v-if="goal.tracking_type === 'metric'" class="mt-3">
-              <div class="flex justify-between text-xs text-gray-600 mb-1">
+            <div v-if="goal.tracking_type === 'metric'" class="mt-2 sm:mt-3">
+              <div class="flex justify-between text-[10px] sm:text-xs text-gray-600 mb-1">
                 <span>Progress</span>
                 <span class="font-semibold">{{ goal.metric_progress_percentage }}%</span>
               </div>
-              <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
                 <div
-                  class="bg-purple-600 h-2 rounded-full transition-all"
+                  class="bg-purple-600 h-1.5 sm:h-2 rounded-full transition-all"
                   :style="{ width: goal.metric_progress_percentage + '%' }"
                 ></div>
               </div>
             </div>
 
-            <div v-else-if="goal.tracking_type === 'milestone' && goal.milestones" class="mt-3">
-              <div class="text-xs text-gray-600">
+            <div v-else-if="goal.tracking_type === 'milestone' && goal.milestones" class="mt-2 sm:mt-3">
+              <div class="text-[10px] sm:text-xs text-gray-600">
                 {{ goal.milestones.filter(m => m.completed).length }}/{{ goal.milestones.length }} milestones completed
               </div>
             </div>
           </div>
         </div>
 
-        <div class="mt-4 p-3 bg-white rounded-lg border border-purple-200 text-sm">
+        <div class="mt-3 sm:mt-4 p-2 sm:p-3 bg-white rounded-lg border border-purple-200 text-xs sm:text-sm">
           <div class="font-semibold text-gray-900 mb-1">📊 Weekly Goal Summary</div>
           <div class="text-gray-600">
             You worked on <span class="font-bold text-purple-600">{{ goalsWorkedOn.length }} goal{{ goalsWorkedOn.length > 1 ? 's' : '' }}</span> across
@@ -179,28 +206,28 @@
         </div>
       </div>
 
-      <div class="space-y-6">
+      <div class="space-y-4 sm:space-y-6">
         <!-- Biggest Win -->
-        <div class="bg-white rounded-xl border-2 border-gray-200 p-6 hover:border-green-300 transition">
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">1/5</span>
-                <h3 class="text-lg font-bold text-gray-900">🏆 Biggest Win</h3>
+        <div class="bg-white rounded-xl border-2 border-gray-200 p-3 sm:p-6 hover:border-green-300 transition">
+          <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 sm:gap-2 mb-1">
+                <span class="text-[10px] sm:text-xs font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">1/5</span>
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">🏆 Biggest Win</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-2">What are you most proud of accomplishing this week?</p>
-              <p class="text-xs text-blue-600 italic">💡 Why: Celebrating wins builds momentum and reinforces positive patterns</p>
+              <p class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">What are you most proud of accomplishing this week?</p>
+              <p class="text-[10px] sm:text-xs text-blue-600 italic">💡 Why: Celebrating wins builds momentum and reinforces positive patterns</p>
             </div>
             <button
               @click="showExamples.biggestWin = !showExamples.biggestWin"
-              class="text-xs text-gray-500 hover:text-gray-700 underline ml-4"
+              class="text-[10px] sm:text-xs text-gray-500 hover:text-gray-700 underline flex-shrink-0"
             >
               {{ showExamples.biggestWin ? 'Hide' : 'Examples' }}
             </button>
           </div>
 
-          <div v-if="showExamples.biggestWin" class="mb-3 text-xs bg-gray-50 border border-gray-200 rounded-lg p-3">
-            <p class="font-semibold text-gray-900 mb-2">Examples of good wins:</p>
+          <div v-if="showExamples.biggestWin" class="mb-2 sm:mb-3 text-[10px] sm:text-xs bg-gray-50 border border-gray-200 rounded-lg p-2 sm:p-3">
+            <p class="font-semibold text-gray-900 mb-1.5 sm:mb-2">Examples of good wins:</p>
             <div class="text-gray-600 space-y-1">
               <p>✓ "Launched the new checkout flow - 3 months of work finally shipped!"</p>
               <p>✓ "Had a tough conversation with my manager about workload. Feel heard."</p>
@@ -208,7 +235,7 @@
             </div>
           </div>
 
-          <div class="mb-2 text-xs text-gray-500 space-y-0.5">
+          <div class="mb-1.5 sm:mb-2 text-[10px] sm:text-xs text-gray-500 space-y-0.5">
             <p>Consider: What went better than expected? What feedback did you get? What progress happened?</p>
           </div>
 
@@ -221,26 +248,26 @@
         </div>
 
         <!-- Biggest Challenge -->
-        <div class="bg-white rounded-xl border-2 border-gray-200 p-6 hover:border-green-300 transition">
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">2/5</span>
-                <h3 class="text-lg font-bold text-gray-900">🤔 Biggest Challenge</h3>
+        <div class="bg-white rounded-xl border-2 border-gray-200 p-3 sm:p-6 hover:border-green-300 transition">
+          <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 sm:gap-2 mb-1">
+                <span class="text-[10px] sm:text-xs font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">2/5</span>
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">🤔 Biggest Challenge</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-2">What was difficult this week? What did it teach you?</p>
-              <p class="text-xs text-blue-600 italic">💡 Why: Reflecting on challenges helps you learn and avoid repeating mistakes</p>
+              <p class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">What was difficult this week? What did it teach you?</p>
+              <p class="text-[10px] sm:text-xs text-blue-600 italic">💡 Why: Reflecting on challenges helps you learn and avoid repeating mistakes</p>
             </div>
             <button
               @click="showExamples.biggestChallenge = !showExamples.biggestChallenge"
-              class="text-xs text-gray-500 hover:text-gray-700 underline ml-4"
+              class="text-[10px] sm:text-xs text-gray-500 hover:text-gray-700 underline flex-shrink-0"
             >
               {{ showExamples.biggestChallenge ? 'Hide' : 'Examples' }}
             </button>
           </div>
 
-          <div v-if="showExamples.biggestChallenge" class="mb-3 text-xs bg-gray-50 border border-gray-200 rounded-lg p-3">
-            <p class="font-semibold text-gray-900 mb-2">Examples of good reflections:</p>
+          <div v-if="showExamples.biggestChallenge" class="mb-2 sm:mb-3 text-[10px] sm:text-xs bg-gray-50 border border-gray-200 rounded-lg p-2 sm:p-3">
+            <p class="font-semibold text-gray-900 mb-1.5 sm:mb-2">Examples of good reflections:</p>
             <div class="text-gray-600 space-y-1">
               <p>✓ "Overcommitted and missed my workout goals. Need to be more realistic in planning."</p>
               <p>✓ "Client changed requirements mid-sprint. Learned to document scope earlier."</p>
@@ -248,7 +275,7 @@
             </div>
           </div>
 
-          <div class="mb-2 text-xs text-gray-500 space-y-0.5">
+          <div class="mb-1.5 sm:mb-2 text-[10px] sm:text-xs text-gray-500 space-y-0.5">
             <p>Consider: What frustrated you? What would you do differently? What help do you need?</p>
           </div>
 
@@ -261,26 +288,26 @@
         </div>
 
         <!-- What I Learned -->
-        <div class="bg-white rounded-xl border-2 border-gray-200 p-6 hover:border-green-300 transition">
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">3/5</span>
-                <h3 class="text-lg font-bold text-gray-900">💡 What I Learned</h3>
+        <div class="bg-white rounded-xl border-2 border-gray-200 p-3 sm:p-6 hover:border-green-300 transition">
+          <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 sm:gap-2 mb-1">
+                <span class="text-[10px] sm:text-xs font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">3/5</span>
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">💡 What I Learned</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-2">What insights, patterns, or lessons emerged this week?</p>
-              <p class="text-xs text-blue-600 italic">💡 Why: Capturing lessons helps you build self-awareness and improve faster</p>
+              <p class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">What insights, patterns, or lessons emerged this week?</p>
+              <p class="text-[10px] sm:text-xs text-blue-600 italic">💡 Why: Capturing lessons helps you build self-awareness and improve faster</p>
             </div>
             <button
               @click="showExamples.whatILearned = !showExamples.whatILearned"
-              class="text-xs text-gray-500 hover:text-gray-700 underline ml-4"
+              class="text-[10px] sm:text-xs text-gray-500 hover:text-gray-700 underline flex-shrink-0"
             >
               {{ showExamples.whatILearned ? 'Hide' : 'Examples' }}
             </button>
           </div>
 
-          <div v-if="showExamples.whatILearned" class="mb-3 text-xs bg-gray-50 border border-gray-200 rounded-lg p-3">
-            <p class="font-semibold text-gray-900 mb-2">Examples of insights:</p>
+          <div v-if="showExamples.whatILearned" class="mb-2 sm:mb-3 text-[10px] sm:text-xs bg-gray-50 border border-gray-200 rounded-lg p-2 sm:p-3">
+            <p class="font-semibold text-gray-900 mb-1.5 sm:mb-2">Examples of insights:</p>
             <div class="text-gray-600 space-y-1">
               <p>✓ "Deep work sessions before 10am produce my best code. Afternoons for meetings."</p>
               <p>✓ "Saying 'no' to small requests freed up time for the big project"</p>
@@ -288,7 +315,7 @@
             </div>
           </div>
 
-          <div class="mb-2 text-xs text-gray-500 space-y-0.5">
+          <div class="mb-1.5 sm:mb-2 text-[10px] sm:text-xs text-gray-500 space-y-0.5">
             <p>Consider: What patterns did you notice? What worked well? What didn't? What surprised you?</p>
           </div>
 
@@ -301,38 +328,38 @@
         </div>
 
         <!-- Vision Alignment -->
-        <div class="bg-white rounded-xl border-2 border-gray-200 p-6 hover:border-green-300 transition">
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">4/5</span>
-                <h3 class="text-lg font-bold text-gray-900">🎯 Vision Alignment</h3>
+        <div class="bg-white rounded-xl border-2 border-gray-200 p-3 sm:p-6 hover:border-green-300 transition">
+          <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 sm:gap-2 mb-1">
+                <span class="text-[10px] sm:text-xs font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">4/5</span>
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">🎯 Vision Alignment</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-2">Are your daily actions moving you toward your long-term vision?</p>
-              <p class="text-xs text-blue-600 italic">💡 Why: Regular alignment checks prevent drifting off course</p>
+              <p class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">Are your daily actions moving you toward your long-term vision?</p>
+              <p class="text-[10px] sm:text-xs text-blue-600 italic">💡 Why: Regular alignment checks prevent drifting off course</p>
             </div>
             <button
               @click="showExamples.visionAlignment = !showExamples.visionAlignment"
-              class="text-xs text-gray-500 hover:text-gray-700 underline ml-4"
+              class="text-[10px] sm:text-xs text-gray-500 hover:text-gray-700 underline flex-shrink-0"
             >
               {{ showExamples.visionAlignment ? 'Hide' : 'Help' }}
             </button>
           </div>
 
-          <div v-if="showExamples.visionAlignment" class="mb-3 text-xs bg-gray-50 border border-gray-200 rounded-lg p-3">
-            <p class="font-semibold text-gray-900 mb-2">How to rate alignment:</p>
+          <div v-if="showExamples.visionAlignment" class="mb-2 sm:mb-3 text-[10px] sm:text-xs bg-gray-50 border border-gray-200 rounded-lg p-2 sm:p-3">
+            <p class="font-semibold text-gray-900 mb-1.5 sm:mb-2">How to rate alignment:</p>
             <div class="text-gray-600 space-y-1">
               <p>• 8-10: Week directly supported major goals, felt purposeful</p>
               <p>• 5-7: Some progress but also distractions or busy work</p>
               <p>• 1-4: Mostly reactive, not working toward what matters</p>
-              <p class="mt-2 text-blue-600">→ If consistently below 7, something needs to change</p>
+              <p class="mt-1 sm:mt-2 text-blue-600">→ If consistently below 7, something needs to change</p>
             </div>
           </div>
 
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-sm text-gray-600">Off track</span>
-            <span class="text-2xl font-bold text-green-600">{{ review.vision_alignment || 5 }}/10</span>
-            <span class="text-sm text-gray-600">Fully aligned</span>
+          <div class="flex justify-between items-center mb-1.5 sm:mb-2 gap-1 sm:gap-2">
+            <span class="text-[10px] sm:text-sm text-gray-600 flex-shrink-0 text-left">Off track</span>
+            <span class="text-base sm:text-lg md:text-2xl font-bold text-green-600 flex-shrink-0">{{ review.vision_alignment || 5 }}/10</span>
+            <span class="text-[10px] sm:text-sm text-gray-600 flex-shrink-0 text-right">Fully aligned</span>
           </div>
           <input
             v-model.number="review.vision_alignment"
@@ -340,44 +367,44 @@
             type="range"
             min="1"
             max="10"
-            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
+            class="w-full h-1.5 sm:h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
           />
-          <div class="mt-2 text-xs text-gray-500">
+          <div class="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-gray-500">
             <p>Consider: Did this week move you closer to your 3-year vision? Which goals did you progress?</p>
           </div>
         </div>
 
         <!-- Next Week Focus -->
-        <div class="bg-white rounded-xl border-2 border-gray-200 p-6 hover:border-green-300 transition">
-          <div class="flex items-start justify-between mb-3">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">5/5</span>
-                <h3 class="text-lg font-bold text-gray-900">📅 Next Week's Top Priorities</h3>
+        <div class="bg-white rounded-xl border-2 border-gray-200 p-3 sm:p-6 hover:border-green-300 transition">
+          <div class="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-1.5 sm:gap-2 mb-1">
+                <span class="text-[10px] sm:text-xs font-bold text-gray-500 bg-gray-100 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">5/5</span>
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">📅 Next Week's Top Priorities</h3>
               </div>
-              <p class="text-sm text-gray-600 mb-2">What are the 3 most important outcomes to achieve next week?</p>
-              <p class="text-xs text-blue-600 italic">💡 Why: Choosing just 3 priorities forces focus on what truly matters</p>
+              <p class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">What are the 3 most important outcomes to achieve next week?</p>
+              <p class="text-[10px] sm:text-xs text-blue-600 italic">💡 Why: Choosing just 3 priorities forces focus on what truly matters</p>
             </div>
             <button
               @click="showExamples.nextWeekFocus = !showExamples.nextWeekFocus"
-              class="text-xs text-gray-500 hover:text-gray-700 underline ml-4"
+              class="text-[10px] sm:text-xs text-gray-500 hover:text-gray-700 underline flex-shrink-0"
             >
               {{ showExamples.nextWeekFocus ? 'Hide' : 'Examples' }}
             </button>
           </div>
 
-          <div v-if="showExamples.nextWeekFocus" class="mb-3 text-xs bg-gray-50 border border-gray-200 rounded-lg p-3">
-            <p class="font-semibold text-gray-900 mb-2">Examples of clear priorities:</p>
+          <div v-if="showExamples.nextWeekFocus" class="mb-2 sm:mb-3 text-[10px] sm:text-xs bg-gray-50 border border-gray-200 rounded-lg p-2 sm:p-3">
+            <p class="font-semibold text-gray-900 mb-1.5 sm:mb-2">Examples of clear priorities:</p>
             <div class="text-gray-600 space-y-1">
               <p>✓ "1. Ship v2 dashboard to staging and get team feedback"</p>
               <p>✓ "2. Run 4x this week (Mon/Wed/Fri/Sun morning)"</p>
               <p>✓ "3. Have budget conversation with partner and agree on plan"</p>
-              <p class="mt-2 text-amber-600">✗ "Work on project" (too vague)</p>
+              <p class="mt-1 sm:mt-2 text-amber-600">✗ "Work on project" (too vague)</p>
               <p class="text-amber-600">✗ "Be healthier" (not measurable)</p>
             </div>
           </div>
 
-          <div class="mb-2 text-xs text-gray-500 space-y-0.5">
+          <div class="mb-1.5 sm:mb-2 text-[10px] sm:text-xs text-gray-500 space-y-0.5">
             <p>Make it specific: What done looks like? When will you do it? Focus on outcomes, not just tasks.</p>
           </div>
 
@@ -395,8 +422,73 @@ Keep it realistic - what can you actually accomplish?"
       </div>
 
           <!-- Save Status -->
-          <div v-if="saving" class="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
+          <div v-if="saving" class="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 bg-green-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow-lg text-xs sm:text-sm">
             Saving...
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile History Modal -->
+      <div v-if="showMobileHistory" class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4 lg:hidden" @click.self="showMobileHistory = false">
+        <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-md w-full h-[85vh] sm:max-h-[85vh] flex flex-col">
+          <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-900">📊 Review History</h3>
+                <span v-if="recentReviews.length > 0" class="text-xs sm:text-sm text-gray-500">({{ recentReviews.length }})</span>
+              </div>
+              <button
+                @click="showMobileHistory = false"
+                class="text-gray-400 hover:text-gray-600"
+              >
+                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="relative flex-1 min-h-0 overflow-hidden">
+            <div class="overflow-y-scroll h-full p-4 sm:p-6 space-y-3" style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
+              <template v-for="(entry, index) in recentReviews" :key="entry.week_start_date">
+                <!-- Year separator -->
+                <div v-if="index === 0 || getYear(entry.week_start_date) !== getYear(recentReviews[index - 1].week_start_date)" class="sticky top-0 bg-white pt-3 pb-2 z-10">
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                    <div class="text-xs font-bold text-gray-600 uppercase tracking-wide px-2 bg-white">{{ getYear(entry.week_start_date) }}</div>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                  </div>
+                </div>
+                <button
+                  @click="selectWeek(entry.week_start_date); showMobileHistory = false"
+                  :class="[
+                    'w-full text-left px-3 py-2 rounded-lg border-2 transition',
+                    weekStart === entry.week_start_date
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-green-300 bg-white'
+                  ]"
+                >
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <div class="text-sm font-medium text-gray-900">
+                        Week of {{ formatDateShort(entry.week_start_date) }}
+                      </div>
+                      <div class="text-xs text-gray-500">
+                        {{ entry.total_check_ins || 0 }}/7 check-ins
+                      </div>
+                    </div>
+                    <div class="text-lg">
+                      {{ entry.biggest_win ? '✅' : '📝' }}
+                    </div>
+                  </div>
+                </button>
+              </template>
+              <div v-if="recentReviews.length === 0" class="text-sm text-gray-500 text-center py-8">
+                No reviews yet
+              </div>
+            </div>
+            <!-- Scroll fade indicator -->
+            <div v-if="recentReviews.length > 8" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
           </div>
         </div>
       </div>
@@ -421,6 +513,7 @@ const getMonday = (date) => {
 const weekStart = ref(getMonday(new Date()).toISOString().split('T')[0]);
 const saving = ref(false);
 const recentReviews = ref([]);
+const showMobileHistory = ref(false);
 const showMemoryJogger = ref(false);
 const goalsWorkedOn = ref([]);
 
@@ -523,7 +616,28 @@ const loadGoalsWorkedOn = async () => {
 const loadReview = async () => {
   try {
     const response = await window.axios.get(`/api/journey/weekly/${weekStart.value}`);
-    review.value = response.data;
+    const data = response.data;
+
+    // Merge with defaults to ensure all fields exist and null values become empty strings
+    review.value = {
+      week_start_date: data.week_start_date || weekStart.value,
+      week_end_date: data.week_end_date || weekEnd.value,
+      biggest_win: data.biggest_win || '',
+      biggest_challenge: data.biggest_challenge || '',
+      what_i_learned: data.what_i_learned || '',
+      vision_alignment: data.vision_alignment || 5,
+      next_week_focus: data.next_week_focus || '',
+      total_check_ins: data.total_check_ins || 0,
+      total_wins: data.total_wins || 0,
+      avg_energy: data.avg_energy || 0,
+      avg_productivity: data.avg_productivity || 0,
+      avg_mood: data.avg_mood || 0,
+      goal_progress: data.goal_progress || [],
+      next_week_goals: data.next_week_goals || [],
+      notes: data.notes || '',
+      is_public: data.is_public || false,
+    };
+
     await loadGoalsWorkedOn();
   } catch (error) {
     console.error('Error loading review:', error);
@@ -564,6 +678,10 @@ const navigateWeek = (weeks) => {
   current.setDate(current.getDate() + (weeks * 7));
   weekStart.value = getMonday(current).toISOString().split('T')[0];
   loadReview();
+};
+
+const getYear = (dateString) => {
+  return new Date(dateString).getFullYear();
 };
 
 onMounted(() => {

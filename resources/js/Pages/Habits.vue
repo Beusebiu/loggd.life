@@ -49,6 +49,7 @@
           @toggle-check="({ habitId, date }) => toggleCheck(habitId, date)"
           @open-note="({ habitId, date }) => openNoteModal(habitId, date)"
           @open-multi-check="({ habit, date }) => openMultiCheckModal(habit, date)"
+          @change-year="(year) => changeHabitYear(habit.id, year)"
         />
       </div>
 
@@ -159,25 +160,25 @@
     <Transition name="modal">
       <div
         v-if="showCreateModal || editingHabit"
-        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4"
         @click.self="closeModal"
       >
         <Transition name="modal-content">
-          <div v-if="showCreateModal || editingHabit" class="bg-white rounded-xl shadow-2xl max-w-md w-full">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">
+          <div v-if="showCreateModal || editingHabit" class="bg-white rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+        <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex-shrink-0">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900">
             {{ editingHabit ? 'Edit Habit' : 'Create New Habit' }}
           </h3>
         </div>
 
-        <div class="px-6 py-5 space-y-4">
+        <div class="px-4 sm:px-6 py-4 sm:py-5 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
           <!-- Emoji Picker -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Emoji</label>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">Emoji</label>
             <button
               type="button"
               @click="openEmojiPicker"
-              class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg hover:border-gray-400 transition-colors flex items-center justify-center gap-2 text-3xl"
+              class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 rounded-lg hover:border-gray-400 transition-colors flex items-center justify-center gap-2 text-2xl sm:text-3xl"
             >
               {{ habitForm.emoji }}
             </button>
@@ -185,25 +186,25 @@
 
           <!-- Habit Name -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Habit Name</label>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">Habit Name</label>
             <input
               v-model="habitForm.name"
               type="text"
               placeholder="e.g., Morning workout"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+              class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm"
               autofocus
             />
           </div>
 
           <!-- Color Picker -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Color</label>
-            <div class="flex gap-2">
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">Color</label>
+            <div class="flex gap-1.5 sm:gap-2">
               <button
                 v-for="color in habitColors"
                 :key="color"
                 @click="habitForm.color = color"
-                class="w-10 h-10 rounded-lg transition-all"
+                class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg transition-all"
                 :class="habitForm.color === color ? 'ring-2 ring-offset-2 ring-black' : 'hover:scale-110'"
                 :style="{ backgroundColor: color }"
               ></button>
@@ -212,56 +213,56 @@
 
           <!-- Description (optional) -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
               Description <span class="text-gray-400 text-xs">(optional)</span>
             </label>
             <textarea
               v-model="habitForm.description"
               rows="2"
               placeholder="Why is this habit important?"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent resize-none"
+              class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent resize-none text-sm"
             ></textarea>
           </div>
 
           <!-- Frequency -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Track on</label>
-            <div class="space-y-2">
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">Track on</label>
+            <div class="space-y-1.5 sm:space-y-2">
               <label class="flex items-center cursor-pointer">
                 <input
                   v-model="habitForm.frequency"
                   type="radio"
                   value="daily"
-                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black"
+                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black flex-shrink-0"
                 />
-                <span class="ml-3 text-sm text-gray-700">Every day (including weekends)</span>
+                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700">Every day (including weekends)</span>
               </label>
               <label class="flex items-center cursor-pointer">
                 <input
                   v-model="habitForm.frequency"
                   type="radio"
                   value="weekdays"
-                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black"
+                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black flex-shrink-0"
                 />
-                <span class="ml-3 text-sm text-gray-700">Weekdays only (Mon-Fri)</span>
+                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700">Weekdays only (Mon-Fri)</span>
               </label>
               <label class="flex items-center cursor-pointer">
                 <input
                   v-model="habitForm.frequency"
                   type="radio"
                   value="weekends"
-                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black"
+                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black flex-shrink-0"
                 />
-                <span class="ml-3 text-sm text-gray-700">Weekends only (Sat-Sun)</span>
+                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700">Weekends only (Sat-Sun)</span>
               </label>
               <label class="flex items-center cursor-pointer">
                 <input
                   v-model="habitForm.frequency"
                   type="radio"
                   value="custom"
-                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black"
+                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black flex-shrink-0"
                 />
-                <span class="ml-3 text-sm text-gray-700">Custom days</span>
+                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700">Custom days</span>
               </label>
             </div>
 
@@ -287,50 +288,54 @@
 
           <!-- Allow Multiple Checks Per Day -->
           <div>
-            <label class="flex items-center cursor-pointer">
+            <label class="flex items-start cursor-pointer">
               <input
                 v-model="habitForm.allow_multiple_checks"
                 type="checkbox"
-                class="w-5 h-5 text-black border-gray-300 rounded focus:ring-2 focus:ring-black"
+                class="w-4 h-4 sm:w-5 sm:h-5 text-black border-gray-300 rounded focus:ring-2 focus:ring-black flex-shrink-0 mt-0.5"
               />
-              <span class="ml-3 text-sm font-medium text-gray-700">
-                Allow multiple checks per day
-              </span>
+              <div class="ml-2.5 sm:ml-3">
+                <span class="text-xs sm:text-sm font-medium text-gray-700">
+                  Allow multiple checks per day
+                </span>
+                <p class="mt-0.5 text-[10px] sm:text-xs text-gray-500">
+                  Track multiple completions per day with timestamps
+                </p>
+              </div>
             </label>
-            <p class="mt-1 ml-8 text-xs text-gray-500">
-              Enable this to track multiple completions per day with timestamps
-            </p>
           </div>
 
           <!-- Public/Private Toggle -->
           <div>
-            <label class="flex items-center cursor-pointer">
+            <label class="flex items-start cursor-pointer">
               <input
                 v-model="habitForm.is_public"
                 type="checkbox"
-                class="w-5 h-5 text-black border-gray-300 rounded focus:ring-2 focus:ring-black"
+                class="w-4 h-4 sm:w-5 sm:h-5 text-black border-gray-300 rounded focus:ring-2 focus:ring-black flex-shrink-0 mt-0.5"
               />
-              <span class="ml-3 text-sm font-medium text-gray-700">
-                Make habit public
-              </span>
+              <div class="ml-2.5 sm:ml-3">
+                <span class="text-xs sm:text-sm font-medium text-gray-700">
+                  Make habit public
+                </span>
+                <p class="mt-0.5 text-[10px] sm:text-xs text-gray-500">
+                  Public habits can be viewed by others
+                </p>
+              </div>
             </label>
-            <p class="mt-1 ml-8 text-xs text-gray-500">
-              Public habits can be viewed by others. Private habits are only visible to you.
-            </p>
           </div>
         </div>
 
-        <div class="px-6 py-4 border-t border-gray-200 flex gap-3">
+        <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 flex gap-2 sm:gap-3 flex-shrink-0">
           <button
             @click="saveHabit"
             :disabled="!habitForm.name"
-            class="flex-1 px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="flex-1 px-4 py-2.5 sm:py-2 bg-black text-white text-sm sm:text-base font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {{ editingHabit ? 'Save Changes' : 'Create Habit' }}
+            {{ editingHabit ? 'Save' : 'Create' }}
           </button>
           <button
             @click="closeModal"
-            class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+            class="px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 text-sm sm:text-base font-medium rounded-lg hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
@@ -344,42 +349,42 @@
     <Transition name="modal">
       <div
         v-if="noteModal.show"
-        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4"
         @click.self="closeNoteModal"
       >
         <Transition name="modal-content">
-          <div v-if="noteModal.show" class="bg-white rounded-xl shadow-2xl max-w-md w-full">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">
-            Note for {{ formatDateFull(noteModal.date) }}
-          </h3>
-        </div>
+          <div v-if="noteModal.show" class="bg-white rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+            <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
+              <h3 class="text-lg sm:text-xl font-semibold text-gray-900">
+                Note for {{ formatDateFull(noteModal.date) }}
+              </h3>
+            </div>
 
-        <div class="px-6 py-5">
-          <textarea
-            v-model="noteModal.note"
-            rows="4"
-            placeholder="Add a note about this day..."
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent resize-none"
-            autofocus
-          ></textarea>
-        </div>
+            <div class="overflow-y-auto flex-1 p-4 sm:p-6">
+              <textarea
+                v-model="noteModal.note"
+                rows="4"
+                placeholder="Add a note about this day..."
+                class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none text-sm"
+                autofocus
+              ></textarea>
+            </div>
 
-        <div class="px-6 py-4 border-t border-gray-200 flex gap-3">
-          <button
-            @click="saveNote"
-            class="flex-1 px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            Save Note
-          </button>
-          <button
-            @click="closeNoteModal"
-            class="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            Cancel
-          </button>
-        </div>
-        </div>
+            <div class="flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200 flex gap-2 sm:gap-3">
+              <button
+                @click="saveNote"
+                class="flex-1 px-4 py-2 text-xs sm:text-sm bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Save Note
+              </button>
+              <button
+                @click="closeNoteModal"
+                class="px-4 py-2 text-xs sm:text-sm border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </Transition>
       </div>
     </Transition>
@@ -388,37 +393,37 @@
     <Transition name="modal">
       <div
         v-if="multiCheckModal.show"
-        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4"
         @click.self="closeMultiCheckModal"
       >
         <Transition name="modal-content">
-          <div v-if="multiCheckModal.show" class="bg-white rounded-xl shadow-2xl max-w-md w-full">
-        <div class="px-6 py-4 border-b border-gray-200">
-          <h3 class="text-lg font-semibold text-gray-900">
-            {{ multiCheckModal.habit?.emoji }} {{ multiCheckModal.habit?.name }}
-          </h3>
-          <p class="text-sm text-gray-600 mt-1">{{ formatDateFull(multiCheckModal.date) }}</p>
-        </div>
+          <div v-if="multiCheckModal.show" class="bg-white rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+            <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
+              <h3 class="text-lg sm:text-xl font-semibold text-gray-900">
+                {{ multiCheckModal.habit?.emoji }} {{ multiCheckModal.habit?.name }}
+              </h3>
+              <p class="text-xs sm:text-sm text-gray-600 mt-1">{{ formatDateFull(multiCheckModal.date) }}</p>
+            </div>
 
-        <div class="px-6 py-5">
+            <div class="overflow-y-auto flex-1 p-4 sm:p-6 space-y-3 sm:space-y-4">
           <!-- Add New Check -->
-          <div class="mb-4 pb-4 border-b border-gray-200">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Add Check</label>
+          <div class="pb-3 sm:pb-4 border-b border-gray-200">
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Add Check</label>
             <div class="space-y-2">
               <input
                 v-model="multiCheckModal.newCheckTime"
                 type="time"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
               <input
                 v-model="multiCheckModal.newCheckNote"
                 type="text"
                 placeholder="Add a note (optional)"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
               <button
                 @click="addMultiCheck"
-                class="w-full px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+                class="w-full px-4 py-2 text-xs sm:text-sm bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
               >
                 + Add Check
               </button>
@@ -427,10 +432,10 @@
 
           <!-- List of Checks -->
           <div v-if="multiCheckModal.checks.length > 0">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
               Checks Today ({{ multiCheckModal.checks.length }})
             </label>
-            <div class="space-y-2 max-h-64 overflow-y-auto">
+            <div class="space-y-2">
               <TransitionGroup name="list">
                 <div
                   v-for="check in multiCheckModal.checks"
@@ -460,20 +465,20 @@
             </div>
           </div>
 
-          <div v-else class="text-center py-8 text-gray-500 text-sm">
+          <div v-else class="text-center py-8 text-gray-500 text-xs sm:text-sm">
             No checks yet for this day
           </div>
-        </div>
+            </div>
 
-        <div class="px-6 py-4 border-t border-gray-200">
-          <button
-            @click="closeMultiCheckModal"
-            class="w-full px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            Close
-          </button>
-        </div>
-        </div>
+            <div class="flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200">
+              <button
+                @click="closeMultiCheckModal"
+                class="w-full px-4 py-2 text-xs sm:text-sm border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </Transition>
       </div>
     </Transition>
@@ -575,6 +580,9 @@ const multiCheckModal = ref({
 const animatingChecks = ref({});
 const animatingStreaks = ref({});
 
+// Year selection for each habit (defaults to current year)
+const selectedYears = ref({});
+
 // Emoji Picker
 const showEmojiPicker = ref(false);
 const emojiPickerPosition = ref({ top: 0, left: 0 });
@@ -585,12 +593,41 @@ const habitColors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#EC
 
 const activeHabits = computed(() => habits.value.filter(h => h.status === 'active'));
 
+// Get available years for a habit (years with activity)
+const getAvailableYears = (habit) => {
+  const startYear = new Date(habit.start_date).getFullYear();
+  const currentYear = new Date().getFullYear();
+  const years = [];
+
+  for (let year = currentYear; year >= startYear; year--) {
+    // Check if there's any activity in this year
+    const hasActivity = Object.keys(checks.value).some(key => {
+      if (!key.startsWith(`${habit.id}-${year}`)) return false;
+      return checks.value[key] === true;
+    });
+
+    // Always include current year and habit start year, plus years with activity
+    if (year === currentYear || year === startYear || hasActivity) {
+      years.push(year);
+    }
+  }
+
+  return years;
+};
+
 // Add year_data to each habit for the HabitYearGrid component
 const activeHabitsWithYearData = computed(() => {
-  return activeHabits.value.map(habit => ({
-    ...habit,
-    year_data: buildYearDataForHabit(habit),
-  }));
+  return activeHabits.value.map(habit => {
+    const availableYears = getAvailableYears(habit);
+    const selectedYear = selectedYears.value[habit.id] || new Date().getFullYear();
+
+    return {
+      ...habit,
+      year_data: buildYearDataForHabit(habit, selectedYear),
+      available_years: availableYears,
+      selected_year: selectedYear,
+    };
+  });
 });
 
 // Check if a day should be tracked based on habit frequency
@@ -609,38 +646,106 @@ const shouldTrackDay = (habit, dayOfWeek) => {
   }
 };
 
-// Build year_data array for a habit (365 days)
-const buildYearDataForHabit = (habit) => {
+// Build year_data array for a habit (for a specific year or last 365 days)
+const buildYearDataForHabit = (habit, year = null) => {
   const yearData = [];
   const today = new Date();
-  const startDate = new Date(today);
-  startDate.setDate(startDate.getDate() - 364);
+  const habitStart = new Date(habit.start_date);
 
-  for (let i = 0; i < 365; i++) {
-    const date = new Date(startDate);
-    date.setDate(date.getDate() + i);
-    const dateString = date.toISOString().split('T')[0];
+  if (year) {
+    // Specific year: ALWAYS generate full year grid (Jan 1 - Dec 31) for consistency
+    const startDate = new Date(year, 0, 1); // January 1st of the year
+    const endDate = new Date(year, 11, 31); // December 31st of the year
 
-    // Check if this day should be tracked based on frequency
-    const dayOfWeek = date.getDay();
-    const tracked = shouldTrackDay(habit, dayOfWeek);
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      const dateString = currentDate.toISOString().split('T')[0];
 
-    // Check if completed
-    const checkKey = `${habit.id}-${dateString}`;
-    const completed = checks.value[checkKey] || false;
+      // Check if this date is before habit start or after today
+      const beforeHabitStart = currentDate < habitStart;
+      const afterToday = currentDate > today;
 
-    // Get count for multi-check habits
-    const count = checks.value[`${checkKey}-count`] || (completed ? 1 : 0);
+      if (beforeHabitStart || afterToday) {
+        // Date is outside valid range - add as empty/not tracked
+        yearData.push({
+          date: dateString,
+          tracked: false,
+          completed: false,
+          count: 0,
+          beforeStart: beforeHabitStart,
+          future: afterToday,
+        });
+      } else {
+        // Date is within valid range
+        const dayOfWeek = currentDate.getDay();
+        const tracked = shouldTrackDay(habit, dayOfWeek);
 
-    yearData.push({
-      date: dateString,
-      tracked,
-      completed,
-      count,
-    });
+        const checkKey = `${habit.id}-${dateString}`;
+        const completed = checks.value[checkKey] || false;
+        const count = checks.value[`${checkKey}-count`] || (completed ? 1 : 0);
+
+        yearData.push({
+          date: dateString,
+          tracked,
+          completed,
+          count,
+          beforeStart: false,
+          future: false,
+        });
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  } else {
+    // Default: last 365 days
+    const endDate = new Date(today);
+    const startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - 364);
+
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      const dateString = currentDate.toISOString().split('T')[0];
+
+      // Check if this date is before habit start
+      const beforeHabitStart = currentDate < habitStart;
+
+      if (beforeHabitStart) {
+        yearData.push({
+          date: dateString,
+          tracked: false,
+          completed: false,
+          count: 0,
+          beforeStart: true,
+          future: false,
+        });
+      } else {
+        const dayOfWeek = currentDate.getDay();
+        const tracked = shouldTrackDay(habit, dayOfWeek);
+
+        const checkKey = `${habit.id}-${dateString}`;
+        const completed = checks.value[checkKey] || false;
+        const count = checks.value[`${checkKey}-count`] || (completed ? 1 : 0);
+
+        yearData.push({
+          date: dateString,
+          tracked,
+          completed,
+          count,
+          beforeStart: false,
+          future: false,
+        });
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
   }
 
   return yearData;
+};
+
+// Change selected year for a habit
+const changeHabitYear = (habitId, year) => {
+  selectedYears.value[habitId] = year;
 };
 const archivedHabits = computed(() => habits.value.filter(h => h.status === 'archived'));
 
@@ -1249,21 +1354,35 @@ onMounted(() => {
 }
 
 .modal-content-enter-active {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-content-leave-active {
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 1, 1);
 }
 
-.modal-content-enter-from {
-  transform: translateY(50px) scale(0.95);
-  opacity: 0;
+/* Desktop: Scale from center */
+@media (min-width: 640px) {
+  .modal-content-enter-from {
+    transform: translateY(50px) scale(0.95);
+    opacity: 0;
+  }
+
+  .modal-content-leave-to {
+    transform: translateY(30px) scale(0.98);
+    opacity: 0;
+  }
 }
 
-.modal-content-leave-to {
-  transform: translateY(30px) scale(0.98);
-  opacity: 0;
+/* Mobile: Slide up from bottom */
+@media (max-width: 639px) {
+  .modal-content-enter-from {
+    transform: translateY(100%);
+  }
+
+  .modal-content-leave-to {
+    transform: translateY(100%);
+  }
 }
 
 /* Week Slide Transitions */

@@ -12,7 +12,6 @@ class WeeklyReviewController extends Controller
     {
         $reviews = WeeklyReview::where('user_id', $request->user()->id)
             ->orderBy('week_start_date', 'desc')
-            ->limit(12)
             ->get();
 
         return response()->json($reviews);
