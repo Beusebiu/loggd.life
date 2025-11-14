@@ -88,7 +88,7 @@ class GamificationSeeder extends Seeder
                 // Insert in batches of 100 for performance
                 if (count($usersData) >= 100) {
                     User::insert($usersData);
-                    $this->command->info("  Created ".count($usersData)." users...");
+                    $this->command->info('  Created '.count($usersData).' users...');
                     $usersData = [];
                 }
             }
@@ -96,7 +96,7 @@ class GamificationSeeder extends Seeder
             // Insert remaining users
             if (! empty($usersData)) {
                 User::insert($usersData);
-                $this->command->info("  Created ".count($usersData)." users...");
+                $this->command->info('  Created '.count($usersData).' users...');
             }
 
             // Refresh users list
@@ -116,7 +116,7 @@ class GamificationSeeder extends Seeder
             $showcaseUsername = "tier{$tier}_showcase";
             $showcaseUser = User::where('username', $showcaseUsername)->first();
 
-            if (!$showcaseUser) {
+            if (! $showcaseUser) {
                 $showcaseUser = User::create([
                     'name' => "Tier {$tier} Showcase",
                     'username' => $showcaseUsername,
@@ -402,7 +402,7 @@ class GamificationSeeder extends Seeder
                 // Progress feedback for large datasets
                 if ($totalChunks > 5 && ($index + 1) % 5 === 0) {
                     $recordsInserted = ($index + 1) * 2000;
-                    $this->command->info("    Progress: ".($index + 1)."/{$totalChunks} chunks (~".number_format(min($recordsInserted, $totalRecords))." records)");
+                    $this->command->info('    Progress: '.($index + 1)."/{$totalChunks} chunks (~".number_format(min($recordsInserted, $totalRecords)).' records)');
                 }
             }
         }

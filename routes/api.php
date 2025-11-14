@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\HabitController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\VisionController;
 use App\Http\Controllers\Api\WeeklyReviewController;
+use App\Http\Controllers\LeaderboardController;
 use Illuminate\Support\Facades\Route;
 
 // Public authentication routes
@@ -88,4 +89,10 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::patch('/settings/privacy', [SettingsController::class, 'updatePrivacy']);
     Route::patch('/settings/password', [SettingsController::class, 'updatePassword']);
     Route::patch('/settings/email', [SettingsController::class, 'updateEmail']);
+
+    // Leaderboard
+    Route::get('/leaderboard/all-time', [LeaderboardController::class, 'allTime']);
+    Route::get('/leaderboard/weekly', [LeaderboardController::class, 'weekly']);
+    Route::get('/leaderboard/my-position', [LeaderboardController::class, 'myPosition']);
+    Route::get('/leaderboard/near-miss', [LeaderboardController::class, 'nearMiss']);
 });

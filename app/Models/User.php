@@ -27,6 +27,10 @@ class User extends Authenticatable
         'profile_public',
         'timezone',
         'notification_style',
+        'weekly_points',
+        'last_activity_at',
+        'comeback_multiplier_active',
+        'comeback_multiplier_expires_at',
     ];
 
     /**

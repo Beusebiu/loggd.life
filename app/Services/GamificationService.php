@@ -10,6 +10,8 @@ use Carbon\Carbon;
 
 class GamificationService
 {
+    public function __construct(protected LeaderboardService $leaderboardService) {}
+
     /**
      * Log an activity and award points
      */
@@ -51,7 +53,7 @@ class GamificationService
     }
 
     /**
-     * Calculate points based on timing (Option C: Hybrid)
+     * Calculate points based on timing (Option C: Hybrid) with multipliers
      */
     protected function calculatePoints(int $basePoints, bool $isSameDay, Carbon $activityDate): int
     {
@@ -59,16 +61,54 @@ class GamificationService
 
         if ($isSameDay || $daysDifference === 0) {
             // Same day = 100%
-            return $basePoints;
-        }
-
-        if ($daysDifference <= 7) {
+            $points = $basePoints;
+        } elseif ($daysDifference <= 7) {
             // Next day up to 7 days = 50%
-            return (int) ($basePoints * 0.5);
+            $points = (int) ($basePoints * 0.5);
+        } else {
+            // Older than 7 days = 0 points
+            return 0;
         }
 
-        // Older than 7 days = 0 points
-        return 0;
+        // Apply time-based multiplier (Friday, Saturday, Sunday bonus)
+        $timeMultiplier = $this->getTimeMultiplier($activityDate);
+        $points = (int) ($points * $timeMultiplier);
+
+        // Apply comeback multiplier if active (must be for current user)
+        if (auth()->check()) {
+            $comebackMultiplier = $this->getComebackMultiplier(auth()->user());
+            $points = (int) ($points * $comebackMultiplier);
+        }
+
+        return $points;
+    }
+
+    /**
+     * Get time-based multiplier (weekday/weekend bonus)
+     */
+    protected function getTimeMultiplier(Carbon $date): float
+    {
+        $dayOfWeek = $date->dayOfWeek;
+
+        return match ($dayOfWeek) {
+            Carbon::FRIDAY, Carbon::SATURDAY => 1.5,
+            Carbon::SUNDAY => 2.0,
+            default => 1.0,
+        };
+    }
+
+    /**
+     * Get comeback multiplier (3x for 24 hours after 7+ days inactive)
+     */
+    protected function getComebackMultiplier(User $user): float
+    {
+        if ($user->comeback_multiplier_active
+            && $user->comeback_multiplier_expires_at
+            && $user->comeback_multiplier_expires_at > now()) {
+            return 3.0;
+        }
+
+        return 1.0;
     }
 
     /**
@@ -81,20 +121,37 @@ class GamificationService
             ->where('user_id', $user->id)
             ->sum('points_earned');
 
+        // Calculate weekly points (current week starting Monday)
+        $weekStart = $this->leaderboardService->getWeekStart();
+        $weeklyPoints = UserActivityLog::query()
+            ->where('user_id', $user->id)
+            ->where('activity_date', '>=', $weekStart->toDateString())
+            ->sum('points_earned');
+
         // Calculate level
         $currentLevel = UserLevel::calculateLevel($totalPoints);
 
         // Calculate streak
         $streak = $this->calculateStreak($user);
 
+        // Check and activate comeback bonus
+        $this->leaderboardService->checkAndActivateComebackBonus($user);
+
+        // Update last activity timestamp
+        $this->leaderboardService->updateLastActivity($user);
+
         // Update user
         $user->update([
             'total_points' => $totalPoints,
+            'weekly_points' => $weeklyPoints,
             'current_level' => $currentLevel,
             'current_streak' => $streak['current'],
             'longest_streak' => max($user->longest_streak ?? 0, $streak['current']),
             'last_activity_date' => $streak['last_activity_date'],
         ]);
+
+        // Invalidate leaderboard caches for this user
+        $this->leaderboardService->invalidateUserCache($user);
     }
 
     /**
