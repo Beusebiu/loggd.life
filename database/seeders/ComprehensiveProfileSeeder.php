@@ -2,21 +2,27 @@
 
 namespace Database\Seeders;
 
+use App\ActivityType;
 use App\Models\Achievement;
 use App\Models\DailyCheckIn;
 use App\Models\Goal;
-use App\Models\GoalMetric;
 use App\Models\GoalMilestone;
 use App\Models\GoalTask;
 use App\Models\Habit;
 use App\Models\HabitCheck;
 use App\Models\User;
+use App\Models\UserActivityLog;
 use App\Models\Vision;
 use App\Models\WeeklyReview;
+use App\Services\GamificationService;
 use Illuminate\Database\Seeder;
 
 class ComprehensiveProfileSeeder extends Seeder
 {
+    public function __construct(
+        private GamificationService $gamificationService
+    ) {}
+
     private $habitTemplates = [
         ['name' => 'Morning Workout', 'emoji' => '🏋️', 'color' => '#ef4444'],
         ['name' => 'Read 30 Minutes', 'emoji' => '📚', 'color' => '#3b82f6'],
@@ -80,6 +86,9 @@ class ComprehensiveProfileSeeder extends Seeder
 
             // Create achievements (1-5 per user)
             $this->createAchievements($user, rand(1, 5));
+
+            // Create gamification data (random activity levels)
+            $this->createGamificationData($user);
         }
 
         $this->command->info('✅ Created 50 diverse test profiles successfully!');
@@ -403,12 +412,12 @@ class ComprehensiveProfileSeeder extends Seeder
 
     private function getRandomMission(): string
     {
-        return "To build a life of purpose through consistent daily actions, focusing on health, meaningful work, and strong relationships.";
+        return 'To build a life of purpose through consistent daily actions, focusing on health, meaningful work, and strong relationships.';
     }
 
     private function getRandomEulogy(): string
     {
-        return "They lived with intention. Every day was an opportunity to grow, to help others, and to create something meaningful. They never stopped learning.";
+        return 'They lived with intention. Every day was an opportunity to grow, to help others, and to create something meaningful. They never stopped learning.';
     }
 
     private function getRandomBucketList(): array
@@ -440,17 +449,193 @@ class ComprehensiveProfileSeeder extends Seeder
     private function getRandomOdysseyPlan(): array
     {
         return [
-            'current_path' => "Continue building skills while working full-time. Balance family and side projects.",
-            'radical_path' => "Quit job, travel the world for a year while building online businesses.",
-            'alternative_path' => "Focus on content creation and teaching others what I know.",
+            'current_path' => 'Continue building skills while working full-time. Balance family and side projects.',
+            'radical_path' => 'Quit job, travel the world for a year while building online businesses.',
+            'alternative_path' => 'Focus on content creation and teaching others what I know.',
         ];
     }
 
     private function getRandomFutureCalendar(): array
     {
         return [
-            'ideal_sunday' => "Wake up naturally. Family time. Exercise. Work on side project. Read. Reflect.",
-            'ideal_tuesday' => "Morning workout. Deep work 8-12. Lunch walk. Collaboration 1-4. Family evening.",
+            'ideal_sunday' => 'Wake up naturally. Family time. Exercise. Work on side project. Read. Reflect.',
+            'ideal_tuesday' => 'Morning workout. Deep work 8-12. Lunch walk. Collaboration 1-4. Family evening.',
         ];
+    }
+
+    private function createGamificationData(User $user): void
+    {
+        // Random activity profile with distribution to cover all tiers
+        // Weighted to have more variety across all levels
+        $activityProfiles = [
+            ['name' => 'luminary', 'days' => rand(600, 800), 'daily_rate' => 0.95, 'weight' => 2],  // Level 51+
+            ['name' => 'phoenix', 'days' => rand(500, 600), 'daily_rate' => 0.92, 'weight' => 3],   // Level 41-50
+            ['name' => 'ocean', 'days' => rand(400, 500), 'daily_rate' => 0.88, 'weight' => 5],     // Level 31-40
+            ['name' => 'mountain', 'days' => rand(300, 400), 'daily_rate' => 0.85, 'weight' => 7],  // Level 21-30
+            ['name' => 'oak', 'days' => rand(180, 300), 'daily_rate' => 0.80, 'weight' => 10],      // Level 11-20
+            ['name' => 'sprout', 'days' => rand(90, 180), 'daily_rate' => 0.70, 'weight' => 15],    // Level 6-10
+            ['name' => 'seedling', 'days' => rand(7, 90), 'daily_rate' => 0.55, 'weight' => 20],    // Level 1-5
+        ];
+
+        // Weighted random selection to get good distribution
+        $totalWeight = array_sum(array_column($activityProfiles, 'weight'));
+        $random = rand(1, $totalWeight);
+        $currentWeight = 0;
+        $profile = $activityProfiles[0];
+
+        foreach ($activityProfiles as $p) {
+            $currentWeight += $p['weight'];
+            if ($random <= $currentWeight) {
+                $profile = $p;
+                break;
+            }
+        }
+
+        $daysActive = $profile['days'];
+        $dailyActivityRate = $profile['daily_rate'];
+
+        $startDate = now()->subDays($daysActive);
+        $activityLogs = [];
+
+        // Generate activity data efficiently
+        for ($i = 0; $i < $daysActive; $i++) {
+            $currentDate = $startDate->copy()->addDays($i);
+
+            // Skip some days based on activity rate
+            if (fake()->boolean($dailyActivityRate * 100) === false) {
+                continue;
+            }
+
+            // Ensure last 7 days have activity for streak
+            $isRecent = $i >= ($daysActive - 7);
+            if ($isRecent === false && rand(1, 100) > ($dailyActivityRate * 100)) {
+                continue;
+            }
+
+            $dateString = $currentDate->toDateString();
+            $isSameDay = $currentDate->isToday();
+
+            // Randomly select activities for this day
+            $activities = [];
+
+            // Daily reflection (most common, 10 pts)
+            if (fake()->boolean(80)) {
+                $activities[] = [
+                    'user_id' => $user->id,
+                    'activity_date' => $dateString,
+                    'activity_type' => ActivityType::DailyReflection->value,
+                    'related_id' => null,
+                    'related_type' => null,
+                    'points_earned' => $isSameDay ? 10 : 5,
+                    'is_same_day' => $isSameDay,
+                    'metadata' => null,
+                    'created_at' => $currentDate,
+                    'updated_at' => $currentDate,
+                ];
+            }
+
+            // Habit checks (2 points each, multiple per day)
+            // More habit checks for higher activity profiles
+            $baseHabitChecks = $isRecent ? rand(5, 12) : rand(3, 10);
+            // Scale by activity rate to get more checks for very active users
+            $habitCheckCount = (int) ($baseHabitChecks * $dailyActivityRate);
+            $habitCheckCount = max(2, min(15, $habitCheckCount)); // 2-15 checks per day
+
+            $usedHabitIds = [];
+            for ($j = 0; $j < $habitCheckCount; $j++) {
+                // Generate unique habit ID for this day
+                do {
+                    $habitId = rand(1, 20);
+                } while (in_array($habitId, $usedHabitIds));
+                $usedHabitIds[] = $habitId;
+
+                $activities[] = [
+                    'user_id' => $user->id,
+                    'activity_date' => $dateString,
+                    'activity_type' => ActivityType::HabitCheck->value,
+                    'related_id' => $habitId,
+                    'related_type' => 'habit',
+                    'points_earned' => $isSameDay ? 2 : 1,
+                    'is_same_day' => $isSameDay,
+                    'metadata' => null,
+                    'created_at' => $currentDate,
+                    'updated_at' => $currentDate,
+                ];
+            }
+
+            // Weekly review on Sundays (20 pts)
+            if ($currentDate->dayOfWeek === 0 && fake()->boolean(70)) {
+                $activities[] = [
+                    'user_id' => $user->id,
+                    'activity_date' => $dateString,
+                    'activity_type' => ActivityType::WeeklyReview->value,
+                    'related_id' => rand(1, 100),
+                    'related_type' => 'weekly_review',
+                    'points_earned' => $isSameDay ? 20 : 10,
+                    'is_same_day' => $isSameDay,
+                    'metadata' => null,
+                    'created_at' => $currentDate,
+                    'updated_at' => $currentDate,
+                ];
+            }
+
+            // Goal updates occasionally (5 pts)
+            if (fake()->boolean(30)) {
+                $activities[] = [
+                    'user_id' => $user->id,
+                    'activity_date' => $dateString,
+                    'activity_type' => ActivityType::GoalUpdate->value,
+                    'related_id' => rand(1, 50),
+                    'related_type' => 'goal',
+                    'points_earned' => $isSameDay ? 5 : 2,
+                    'is_same_day' => $isSameDay,
+                    'metadata' => null,
+                    'created_at' => $currentDate,
+                    'updated_at' => $currentDate,
+                ];
+            }
+
+            // Goal milestones rarely (15 pts)
+            if (fake()->boolean(10)) {
+                $activities[] = [
+                    'user_id' => $user->id,
+                    'activity_date' => $dateString,
+                    'activity_type' => ActivityType::GoalMilestone->value,
+                    'related_id' => rand(1, 50),
+                    'related_type' => 'goal_milestone',
+                    'points_earned' => $isSameDay ? 15 : 7,
+                    'is_same_day' => $isSameDay,
+                    'metadata' => null,
+                    'created_at' => $currentDate,
+                    'updated_at' => $currentDate,
+                ];
+            }
+
+            // Vision updates rarely (10 pts)
+            if (fake()->boolean(5)) {
+                $activities[] = [
+                    'user_id' => $user->id,
+                    'activity_date' => $dateString,
+                    'activity_type' => ActivityType::VisionUpdate->value,
+                    'related_id' => rand(1, 10),
+                    'related_type' => 'vision',
+                    'points_earned' => $isSameDay ? 10 : 5,
+                    'is_same_day' => $isSameDay,
+                    'metadata' => null,
+                    'created_at' => $currentDate,
+                    'updated_at' => $currentDate,
+                ];
+            }
+
+            $activityLogs = array_merge($activityLogs, $activities);
+        }
+
+        // Bulk insert all activities for this user (much faster!)
+        if (! empty($activityLogs)) {
+            UserActivityLog::insert($activityLogs);
+
+            // Update user stats after all activities are inserted
+            $this->gamificationService->updateUserStats($user);
+        }
     }
 }

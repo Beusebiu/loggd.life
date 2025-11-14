@@ -116,4 +116,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(DailyCheckIn::class);
     }
+
+    /**
+     * Get the user's activity logs.
+     */
+    public function activityLogs()
+    {
+        return $this->hasMany(UserActivityLog::class);
+    }
 }

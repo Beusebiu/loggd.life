@@ -44,6 +44,16 @@ Route::get('/@{username}/journey/daily', function () {
 Route::get('/@{username}/journey/weekly', function () {
     return Inertia::render('Weekly');
 })->middleware('auth')->name('profile.journey.weekly');
+Route::get('/@{username}/leaderboard', function () {
+    $users = \App\Models\User::where('profile_public', true)
+        ->orderBy('total_points', 'desc')
+        ->limit(100)
+        ->get(['id', 'name', 'username', 'total_points', 'current_level', 'current_streak', 'longest_streak']);
+
+    return Inertia::render('Leaderboard', [
+        'users' => $users,
+    ]);
+})->middleware('auth')->name('profile.leaderboard');
 Route::get('/@{username}/settings', function () {
     return Inertia::render('Settings');
 })->middleware('auth')->name('profile.settings');

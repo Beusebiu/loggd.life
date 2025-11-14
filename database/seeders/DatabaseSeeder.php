@@ -95,7 +95,7 @@ class DatabaseSeeder extends Seeder
 
                 // Add randomness: occasional "bad weeks" where completion drops
                 $weekNumber = floor($i / 7);
-                $isBadWeek = ($weekNumber % 8 === 0) && !$isRecent; // Don't apply bad weeks to recent days
+                $isBadWeek = ($weekNumber % 8 === 0) && ! $isRecent; // Don't apply bad weeks to recent days
                 $completionRate = $isBadWeek ? $baseCompletionRate - rand(15, 30) : $baseCompletionRate;
 
                 // Recent days get a boost to maintain active streaks
@@ -140,7 +140,7 @@ class DatabaseSeeder extends Seeder
         // Seed Journey data (Vision, Goals, Weekly Reviews, Daily Check-ins)
         $this->call(JourneySeeder::class);
 
-        // Create 50 comprehensive test profiles with everything
+        // Create 50 comprehensive test profiles with everything (including gamification)
         $this->call(ComprehensiveProfileSeeder::class);
     }
 

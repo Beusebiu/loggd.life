@@ -26,14 +26,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return \Inertia\Inertia::render('Error', [
                     'status' => $response->getStatusCode(),
                 ])
-                ->toResponse(request())
-                ->setStatusCode($response->getStatusCode());
+                    ->toResponse(request())
+                    ->setStatusCode($response->getStatusCode());
             } elseif (in_array($response->getStatusCode(), [404, 403])) {
                 return \Inertia\Inertia::render('Error', [
                     'status' => $response->getStatusCode(),
                 ])
-                ->toResponse(request())
-                ->setStatusCode($response->getStatusCode());
+                    ->toResponse(request())
+                    ->setStatusCode($response->getStatusCode());
             }
 
             return $response;

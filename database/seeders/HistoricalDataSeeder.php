@@ -4,12 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\DailyCheckIn;
 use App\Models\Goal;
-use App\Models\GoalMilestone;
-use App\Models\GoalUpdate;
 use App\Models\Habit;
 use App\Models\HabitCheck;
 use App\Models\User;
-use App\Models\Vision;
 use App\Models\VisionSnapshot;
 use App\Models\WeeklyReview;
 use Carbon\Carbon;
@@ -420,6 +417,7 @@ class HistoricalDataSeeder extends Seeder
 
         if ($habits->isEmpty()) {
             $this->command->warn('No habits found for user. Skipping habit check seeding.');
+
             return;
         }
 
@@ -495,9 +493,10 @@ class HistoricalDataSeeder extends Seeder
 
             case 'custom':
                 // Check if dayOfWeek is in custom_days array
-                if (!$habit->custom_days) {
+                if (! $habit->custom_days) {
                     return true; // Default to true if custom_days not set
                 }
+
                 return in_array($dayOfWeek, $habit->custom_days);
 
             default:

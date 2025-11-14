@@ -14,7 +14,7 @@
             <Link
               v-if="isActualOwner && !isPreviewMode"
               :href="`/@${profileUser.username}?preview=public`"
-              class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-lg hover:bg-blue-100 transition-colors"
+              class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors"
             >
               <span>👁️</span>
               <span class="hidden sm:inline">Preview Public</span>
@@ -22,7 +22,7 @@
             <Link
               v-if="isPreviewMode"
               :href="`/@${profileUser.username}`"
-              class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
             >
               <span>←</span>
               <span class="hidden sm:inline">My View</span>
@@ -32,48 +32,17 @@
       </div>
 
       <div class="px-3 sm:px-4 py-3 sm:py-4 space-y-3 sm:space-y-4">
-        <!-- Compact Hero -->
-        <div class="bg-gradient-to-br from-white to-green-50 rounded-lg p-3 sm:p-4 border border-gray-200">
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-3 sm:gap-4">
-              <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-lg sm:text-2xl shadow-md flex-shrink-0">
-                {{ profileUser.name.charAt(0).toUpperCase() }}
-              </div>
-              <div class="min-w-0 flex-1">
-                <h1 class="text-lg sm:text-xl font-bold text-gray-900 truncate">{{ profileUser.name }}</h1>
-                <p class="text-xs sm:text-sm text-gray-600">
-                  @{{ profileUser.username }}
-                  <span v-if="stats.activeStreak > 0" class="ml-2 px-2 py-0.5 bg-orange-100 text-orange-700 font-semibold rounded text-xs">
-                    🔥 {{ stats.activeStreak }} day streak
-                  </span>
-                </p>
-                <p v-if="profileUser.bio" class="text-xs text-gray-600 mt-1">{{ profileUser.bio }}</p>
-              </div>
-            </div>
-
-            <div class="flex gap-2 sm:gap-3 items-center w-full sm:w-auto">
-              <div class="text-center px-2 sm:px-3 py-1.5 sm:py-2 bg-white rounded-lg border border-gray-200 flex-1 sm:flex-initial">
-                <div class="text-lg sm:text-2xl font-bold text-gray-900">{{ stats.totalActiveDays }}</div>
-                <div class="text-[10px] sm:text-xs text-gray-600">Active</div>
-              </div>
-              <div class="text-center px-2 sm:px-3 py-1.5 sm:py-2 bg-white rounded-lg border border-gray-200 flex-1 sm:flex-initial">
-                <div class="text-lg sm:text-2xl font-bold text-green-600">{{ stats.activeGoals }}</div>
-                <div class="text-[10px] sm:text-xs text-gray-600">Goals</div>
-              </div>
-              <div class="text-center px-2 sm:px-3 py-1.5 sm:py-2 bg-white rounded-lg border border-gray-200 flex-1 sm:flex-initial">
-                <div class="text-lg sm:text-2xl font-bold text-amber-600">{{ stats.achievements }}</div>
-                <div class="text-[10px] sm:text-xs text-gray-600">Awards</div>
-              </div>
-              <Link
-                v-if="isOwnProfile"
-                :href="`/@${profileUser.username}/settings`"
-                class="px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors hidden sm:block"
-              >
-                Edit
-              </Link>
-            </div>
-          </div>
-        </div>
+        <!-- Unified Profile Header with Activity Grid -->
+        <ProfileHeader
+          v-if="levelInfo"
+          :user-name="profileUser.name"
+          :username="profileUser.username"
+          :bio="profileUser.bio"
+          :level-info="levelInfo"
+          :current-streak="profileUser.current_streak || 0"
+          :is-own-profile="isOwnProfile"
+          :activity-grid-data="activityGridData || []"
+        />
 
         <!-- Habits with 365-Day Trackers -->
         <div v-if="publicHabits && publicHabits.length > 0" class="bg-white rounded-lg p-3 sm:p-4 border border-gray-200">
@@ -85,7 +54,7 @@
             <Link
               v-if="isOwnProfile"
               :href="`/@${profileUser.username}/habits`"
-              class="text-xs text-green-600 hover:text-green-700 font-medium"
+              class="text-xs text-green-600 hover:text-green-700 active:text-green-800 font-medium"
             >
               Manage →
             </Link>
@@ -95,7 +64,7 @@
             <div
               v-for="habit in habitsWithYearData"
               :key="habit.id"
-              class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+              class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md active:shadow-lg transition-shadow"
             >
               <!-- Habit Header -->
               <div class="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-100">
@@ -159,14 +128,14 @@
               <button
                 v-if="publicGoals.length > 4"
                 @click="goalsExpanded = !goalsExpanded"
-                class="text-[10px] sm:text-xs font-medium text-green-600 hover:text-green-700 transition-colors"
+                class="text-[10px] sm:text-xs font-medium text-green-600 hover:text-green-700 active:text-green-800 transition-colors"
               >
                 {{ goalsExpanded ? 'Show less' : 'Show all' }}
               </button>
               <Link
                 v-if="isOwnProfile"
                 :href="`/@${profileUser.username}/journey/goals`"
-                class="text-[10px] sm:text-xs text-green-600 hover:text-green-700 font-medium"
+                class="text-[10px] sm:text-xs text-green-600 hover:text-green-700 active:text-green-800 font-medium"
               >
                 Manage →
               </Link>
@@ -204,7 +173,7 @@
                     <div
                       v-for="goal in group.goals"
                       :key="goal.id"
-                      class="p-2 sm:p-3 border border-gray-200 rounded-lg hover:border-green-300 transition-all"
+                      class="p-2 sm:p-3 border border-gray-200 rounded-lg hover:border-green-300 active:border-green-400 active:bg-green-50/30 transition-all"
                     >
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex-1">
@@ -319,7 +288,7 @@
             </h2>
             <button
               @click="visionExpanded = !visionExpanded"
-              class="text-[10px] sm:text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+              class="text-[10px] sm:text-xs font-medium text-indigo-600 hover:text-indigo-700 active:text-indigo-800 transition-colors"
             >
               {{ visionExpanded ? 'Show less' : 'Show more' }}
             </button>
@@ -426,7 +395,7 @@
           <p class="text-green-100 text-sm mb-4">Track habits • Set goals • Build consistency</p>
           <Link
             href="/register"
-            class="inline-block px-6 py-2 bg-white text-green-600 font-semibold text-sm rounded-lg hover:bg-gray-100 transition-colors"
+            class="inline-block px-6 py-2 bg-white text-green-600 font-semibold text-sm rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
           >
             Sign Up Free
           </Link>
@@ -469,6 +438,8 @@ import { Link, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '../Layouts/AppLayout.vue';
 import HabitYearGrid from '../Components/habits/HabitYearGrid.vue';
+import ActivityGrid from '../Components/gamification/ActivityGrid.vue';
+import ProfileHeader from '../Components/profile/ProfileHeader.vue';
 
 const props = defineProps({
   profileUser: Object,
@@ -478,6 +449,8 @@ const props = defineProps({
   activityData: Array,
   visionSnippet: [Array, Object],
   milestones: Array,
+  levelInfo: Object,
+  activityGridData: Array,
   isOwnProfile: Boolean,
   isActualOwner: Boolean,
 });
@@ -842,6 +815,47 @@ const formatCalendarDay = (dayKey) => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 };
+
+// Tier-specific styling for activity grid container - ENHANCED
+const activityGridClasses = computed(() => {
+  if (!props.levelInfo) return 'bg-white rounded-lg p-3 sm:p-4 border border-gray-200';
+
+  const level = props.levelInfo.level;
+  const baseClasses = 'rounded-lg p-3 sm:p-4 border-2 transition-all duration-300';
+
+  if (level >= 51) {
+    return `${baseClasses} bg-gradient-to-br from-purple-900 via-fuchsia-800 to-amber-700 border-yellow-400 shadow-2xl shadow-purple-900/50`;
+  }
+  if (level >= 41) {
+    return `${baseClasses} bg-gradient-to-br from-red-900 via-orange-800 to-amber-700 border-orange-400 shadow-2xl shadow-red-900/50`;
+  }
+  if (level >= 31) {
+    return `${baseClasses} bg-gradient-to-br from-blue-900 via-cyan-800 to-sky-700 border-cyan-400 shadow-2xl shadow-blue-900/50`;
+  }
+  if (level >= 21) {
+    return `${baseClasses} bg-gradient-to-br from-violet-900 via-purple-800 to-fuchsia-700 border-purple-400 shadow-2xl shadow-purple-900/50`;
+  }
+  if (level >= 11) {
+    return `${baseClasses} bg-gradient-to-br from-emerald-800 via-green-700 to-teal-600 border-emerald-400 shadow-xl shadow-emerald-900/40`;
+  }
+  if (level >= 6) {
+    return `${baseClasses} bg-gradient-to-br from-green-50 to-emerald-100 border-green-300 shadow-md`;
+  }
+  return `${baseClasses} bg-white border-gray-200`;
+});
+
+const activityTitleColor = computed(() => {
+  if (!props.levelInfo) return 'text-gray-900';
+
+  const level = props.levelInfo.level;
+
+  if (level >= 51) return 'text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-pink-200 to-purple-200';
+  if (level >= 41) return 'text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-orange-200 to-red-200';
+  if (level >= 31) return 'text-cyan-100';
+  if (level >= 21) return 'text-purple-100';
+  if (level >= 11) return 'text-emerald-100';
+  return 'text-gray-900';
+});
 </script>
 
 <style scoped>

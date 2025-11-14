@@ -110,34 +110,6 @@
             </form>
           </div>
 
-          <!-- Privacy Section -->
-          <div class="bg-white rounded-xl p-5 border border-gray-200 hover:border-gray-300 transition-colors">
-            <div class="flex items-center gap-2 mb-4">
-              <span class="text-xl">🔒</span>
-              <h3 class="text-base font-bold text-gray-900">Privacy</h3>
-            </div>
-            <div class="space-y-3">
-              <label class="flex items-start gap-3 cursor-pointer group">
-                <div class="relative flex items-center">
-                  <input
-                    v-model="privacyForm.profile_public"
-                    @change="updatePrivacy"
-                    type="checkbox"
-                    class="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 transition-all"
-                  />
-                </div>
-                <div class="flex-1">
-                  <div class="text-sm font-medium text-gray-900 group-hover:text-green-600 transition-colors">
-                    Public Profile
-                  </div>
-                  <p class="text-xs text-gray-500 mt-0.5">
-                    Others can view your profile at @{{ $page.props.auth.user.username }}
-                  </p>
-                </div>
-              </label>
-            </div>
-          </div>
-
           <!-- Notification Preferences -->
           <div class="bg-white rounded-xl p-5 border border-gray-200 hover:border-gray-300 transition-colors">
             <div class="flex items-center gap-2 mb-4">
@@ -327,10 +299,6 @@ const emailForm = reactive({
   email: '',
 });
 
-const privacyForm = reactive({
-  profile_public: false,
-});
-
 const notificationForm = reactive({
   notification_style: 'polite',
 });
@@ -372,7 +340,6 @@ const loadUserData = async () => {
     profileForm.name = user.name;
     profileForm.bio = user.bio || '';
     emailForm.email = user.email;
-    privacyForm.profile_public = user.profile_public;
     notificationForm.notification_style = user.notification_style || 'polite';
   } catch (error) {
     console.error('Error loading user data:', error);
@@ -406,16 +373,6 @@ const updateEmail = async () => {
     }
   } finally {
     savingEmail.value = false;
-  }
-};
-
-const updatePrivacy = async () => {
-  try {
-    await axios.patch('/api/settings/privacy', privacyForm);
-    showToast('Privacy settings updated!');
-  } catch (error) {
-    console.error('Error updating privacy:', error);
-    showToast('Failed to update privacy settings', 'error');
   }
 };
 

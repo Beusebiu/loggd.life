@@ -7,11 +7,16 @@ use App\Models\Goal;
 use App\Models\GoalMilestone;
 use App\Models\User;
 use App\Models\Vision;
+use App\Services\GamificationService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProfileController extends Controller
 {
+    public function __construct(
+        protected GamificationService $gamificationService
+    ) {}
+
     /**
      * Display the specified user's profile.
      */
@@ -51,6 +56,10 @@ class ProfileController extends Controller
         $visionSnippet = $this->getVisionSnippet($user, $isOwnProfile);
         $milestones = $this->getMilestones($user);
 
+        // Get gamification data
+        $levelInfo = $this->gamificationService->getLevelInfo($user);
+        $activityGridData = $this->gamificationService->getActivityGridData($user);
+
         return Inertia::render('Profile', [
             'profileUser' => [
                 'id' => $user->id,
@@ -67,6 +76,8 @@ class ProfileController extends Controller
             'activityData' => $activityData,
             'visionSnippet' => $visionSnippet,
             'milestones' => $milestones,
+            'levelInfo' => $levelInfo,
+            'activityGridData' => $activityGridData,
             'isOwnProfile' => $isOwnProfile,
             'isActualOwner' => $isActualOwner,
         ]);
