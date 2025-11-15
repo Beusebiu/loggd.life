@@ -44,6 +44,7 @@ class HandleInertiaRequests extends Middleware
                     'username' => $request->user()->username,
                     'email' => $request->user()->email,
                     'notification_style' => $request->user()->notification_style,
+                    'dark_mode' => $request->user()->dark_mode,
                     'created_at' => $request->user()->created_at,
                 ] : null,
             ],

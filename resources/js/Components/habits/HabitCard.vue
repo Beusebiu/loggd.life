@@ -1,24 +1,24 @@
 <template>
   <div
-    class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow habit-card-enter"
+    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow habit-card-enter"
     :style="{ animationDelay: `${index * 0.05}s` }"
   >
     <!-- Habit Header -->
-    <div class="px-3 sm:px-4 py-3 sm:py-2.5 border-b border-gray-100">
+    <div class="px-3 sm:px-4 py-3 sm:py-2.5 border-b border-gray-100 dark:border-gray-700">
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
           <span class="text-xl flex-shrink-0">{{ habit.emoji || '📌' }}</span>
           <div class="min-w-0 flex-1">
-            <h3 class="text-sm font-semibold text-gray-900">{{ habit.name }}</h3>
-            <p v-if="habit.description" class="text-[11px] text-gray-600 mt-0.5">{{ habit.description }}</p>
-            <div class="flex items-center flex-wrap gap-x-2 sm:gap-x-3 gap-y-1 mt-1 sm:mt-0.5 text-[11px] text-gray-500">
+            <h3 class="text-sm font-semibold text-gray-900 dark:text-white">{{ habit.name }}</h3>
+            <p v-if="habit.description" class="text-[11px] text-gray-600 dark:text-gray-400 mt-0.5">{{ habit.description }}</p>
+            <div class="flex items-center flex-wrap gap-x-2 sm:gap-x-3 gap-y-1 mt-1 sm:mt-0.5 text-[11px] text-gray-500 dark:text-gray-400">
               <span class="whitespace-nowrap">Started {{ formatStartDate(habit.start_date) }}</span>
               <span v-if="stats" class="flex items-center gap-0.5 whitespace-nowrap">
                 <span class="text-orange-500" :class="animatingStreaks[habit.id] ? 'flame-wiggle' : ''">🔥</span>
-                <span class="font-semibold text-gray-900" :class="animatingStreaks[habit.id] ? 'count-up' : ''">{{ stats.current_streak }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white" :class="animatingStreaks[habit.id] ? 'count-up' : ''">{{ stats.current_streak }}</span>
                 <span>day streak</span>
               </span>
-              <span v-if="stats" class="font-medium text-gray-700 whitespace-nowrap">
+              <span v-if="stats" class="font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
                 {{ stats.total_completions }} days completed
               </span>
             </div>
@@ -27,7 +27,7 @@
         <div class="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
           <button
             @click="$emit('edit', habit)"
-            class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             title="Edit"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +36,7 @@
           </button>
           <button
             @click="$emit('archive', habit.id)"
-            class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
             title="Archive"
           >
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,12 +57,12 @@
     />
 
     <!-- Calendar Checkboxes (Navigable Week) -->
-    <div class="px-2 sm:px-4 py-3 border-t border-gray-100">
+    <div class="px-2 sm:px-4 py-3 border-t border-gray-100 dark:border-gray-700">
       <!-- Navigation Header -->
       <div class="flex items-center justify-between mb-3 gap-2">
         <button
           @click="$emit('previous-week', habit.id)"
-          class="px-2 sm:px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1"
+          class="px-2 sm:px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-1"
         >
           <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -70,7 +70,7 @@
           <span class="hidden sm:inline">Previous</span>
         </button>
 
-        <div class="text-xs font-semibold text-gray-900 text-center flex-1">
+        <div class="text-xs font-semibold text-gray-900 dark:text-white text-center flex-1">
           {{ weekRange }}
         </div>
 
@@ -85,7 +85,7 @@
           <button
             @click="$emit('next-week', habit.id)"
             :disabled="weekOffset >= 0"
-            class="px-2 sm:px-3 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed"
+            class="px-2 sm:px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed"
           >
             <span class="hidden sm:inline">Next</span>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +103,7 @@
           class="flex flex-col items-center"
         >
           <!-- Day Name -->
-          <div class="text-[10px] font-medium text-gray-500 mb-1">
+          <div class="text-[10px] font-medium text-gray-500 dark:text-gray-400 mb-1">
             {{ formatDayName(date) }}
           </div>
 
@@ -121,11 +121,11 @@
             class="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg border-2 transition-all"
             :class="[
               isFutureDate(date)
-                ? 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-50'
+                ? 'bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 cursor-not-allowed opacity-50'
                 : isChecked(habit.id, date)
                 ? 'bg-green-500 border-green-500 shadow-sm hover:scale-105'
                 : isToday(date)
-                ? 'bg-yellow-50 border-yellow-400 hover:border-green-400 ring-2 ring-yellow-200 hover:scale-105'
+                ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400 dark:border-yellow-600 hover:border-green-400 ring-2 ring-yellow-200 dark:ring-yellow-800 hover:scale-105'
                 : 'bg-white border-gray-200 hover:border-gray-400 hover:scale-105',
               animatingChecks[`${habit.id}-${date}`] && isChecked(habit.id, date) ? 'check-success' : '',
               animatingChecks[`${habit.id}-${date}`] && !isChecked(habit.id, date) ? 'check-animate' : ''
@@ -156,11 +156,11 @@
             class="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg border-2 transition-all flex items-center justify-center"
             :class="[
               isFutureDate(date)
-                ? 'bg-gray-100 border-gray-200 cursor-not-allowed opacity-50'
+                ? 'bg-gray-100 dark:bg-gray-700 border-gray-200 dark:border-gray-600 cursor-not-allowed opacity-50'
                 : getCheckCount(habit.id, date) > 0
                 ? 'bg-green-500 border-green-500 shadow-sm text-white hover:scale-105'
                 : isToday(date)
-                ? 'bg-yellow-50 border-yellow-400 hover:border-green-400 ring-2 ring-yellow-200 hover:scale-105'
+                ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400 dark:border-yellow-600 hover:border-green-400 ring-2 ring-yellow-200 dark:ring-yellow-800 hover:scale-105'
                 : 'bg-white border-gray-200 hover:border-gray-400 hover:scale-105'
             ]"
             :title="isFutureDate(date) ? 'Cannot check future dates' : `${getCheckCount(habit.id, date)} check(s) on ${formatDateFull(date)}`"
@@ -175,17 +175,17 @@
           </button>
 
           <!-- Date with Month -->
-          <div class="text-[11px] font-medium mt-1.5" :class="isToday(date) ? 'text-yellow-600' : 'text-gray-700'">
+          <div class="text-[11px] font-medium mt-1.5" :class="isToday(date) ? 'text-yellow-600 dark:text-yellow-500' : 'text-gray-700 dark:text-gray-300'">
             {{ formatDateWithMonth(date, habit.id) }}
           </div>
         </div>
       </div>
 
-      <p class="mt-3 text-[10px] text-gray-500 text-center hidden sm:block">
+      <p class="mt-3 text-[10px] text-gray-500 dark:text-gray-400 text-center hidden sm:block">
         <span v-if="!habit.allow_multiple_checks">💡 Click to check/uncheck • Right-click to add note • Blue dot = has note</span>
         <span v-else>💡 Click to view/add checks • Right-click to add note • Blue dot = has note • Numbers show check count</span>
       </p>
-      <p class="mt-3 text-[10px] text-gray-500 text-center sm:hidden">
+      <p class="mt-3 text-[10px] text-gray-500 dark:text-gray-400 text-center sm:hidden">
         <span v-if="!habit.allow_multiple_checks">💡 Tap to check/uncheck • Hold to add note • Blue dot = has note</span>
         <span v-else>💡 Tap to view/add checks • Hold to add note • Blue dot = has note</span>
       </p>

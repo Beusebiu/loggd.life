@@ -97,4 +97,23 @@ class SettingsController extends Controller
             'user' => $user,
         ]);
     }
+
+    /**
+     * Update user dark mode preference.
+     */
+    public function updateDarkMode(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'dark_mode' => 'required|boolean',
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Dark mode preference updated successfully',
+            'user' => $user,
+        ]);
+    }
 }

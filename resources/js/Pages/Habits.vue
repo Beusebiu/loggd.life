@@ -2,11 +2,11 @@
   <AppLayout>
     <div class="max-w-7xl mx-auto">
       <!-- Page Header -->
-      <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <h2 class="text-xl font-bold text-black">Habits</h2>
+      <div class="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-black dark:text-white">Habits</h2>
         <button
           @click="showCreateModal = true"
-          class="px-4 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          class="px-4 py-2 bg-black dark:bg-gray-700 text-white text-sm font-medium rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
         >
           + New Habit
         </button>
@@ -63,7 +63,7 @@
         <template #action>
           <button
             @click="showCreateModal = true"
-            class="px-6 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+            class="px-6 py-2 bg-black dark:bg-gray-700 text-white text-sm font-medium rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
           >
             Create Your First Habit
           </button>
@@ -71,12 +71,12 @@
       </EmptyState>
 
       <!-- Archived Habits Section -->
-      <div v-if="archivedHabits.length > 0" class="mt-12 pt-8 border-t-2 border-gray-200">
+      <div v-if="archivedHabits.length > 0" class="mt-12 pt-8 border-t-2 border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between mb-4">
-          <h2 class="text-lg font-semibold text-gray-700">Archived Habits</h2>
+          <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300">Archived Habits</h2>
           <button
             @click="showArchived = !showArchived"
-            class="text-sm text-gray-500 hover:text-gray-700"
+            class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           >
             {{ showArchived ? 'Hide' : 'Show' }} ({{ archivedHabits.length }})
           </button>
@@ -86,13 +86,13 @@
           <div
             v-for="habit in archivedHabits"
             :key="habit.id"
-            class="flex items-center justify-between px-4 py-3 bg-gray-100 rounded-lg"
+            class="flex items-center justify-between px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-lg"
           >
             <div class="flex items-center gap-3">
               <span class="text-xl opacity-60">{{ habit.emoji || '📌' }}</span>
               <div>
-                <span class="text-sm font-medium text-gray-700">{{ habit.name }}</span>
-                <div class="text-xs text-gray-500 mt-0.5">
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ habit.name }}</span>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                   Archived • Started {{ formatStartDate(habit.start_date) }}
                 </div>
               </div>
@@ -100,13 +100,13 @@
             <div class="flex items-center gap-2">
               <button
                 @click="reactivateHabit(habit.id)"
-                class="px-3 py-1.5 text-xs bg-white border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                class="px-3 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               >
                 Reactivate
               </button>
               <button
                 @click="confirmDelete(habit.id)"
-                class="px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 rounded transition-colors"
+                class="px-3 py-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
               >
                 Delete
               </button>
@@ -164,9 +164,9 @@
         @click.self="closeModal"
       >
         <Transition name="modal-content">
-          <div v-if="showCreateModal || editingHabit" class="bg-white rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
-        <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 flex-shrink-0">
-          <h3 class="text-base sm:text-lg font-semibold text-gray-900">
+          <div v-if="showCreateModal || editingHabit" class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+        <div class="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
             {{ editingHabit ? 'Edit Habit' : 'Create New Habit' }}
           </h3>
         </div>
@@ -174,11 +174,11 @@
         <div class="px-4 sm:px-6 py-4 sm:py-5 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
           <!-- Emoji Picker -->
           <div>
-            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">Emoji</label>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">Emoji</label>
             <button
               type="button"
               @click="openEmojiPicker"
-              class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 rounded-lg hover:border-gray-400 transition-colors flex items-center justify-center gap-2 text-2xl sm:text-3xl"
+              class="w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition-colors flex items-center justify-center gap-2 text-2xl sm:text-3xl dark:bg-gray-700"
             >
               {{ habitForm.emoji }}
             </button>
@@ -186,26 +186,26 @@
 
           <!-- Habit Name -->
           <div>
-            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">Habit Name</label>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">Habit Name</label>
             <input
               v-model="habitForm.name"
               type="text"
               placeholder="e.g., Morning workout"
-              class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent text-sm"
+              class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-black dark:focus:ring-gray-500 focus:border-transparent text-sm"
               autofocus
             />
           </div>
 
           <!-- Color Picker -->
           <div>
-            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">Color</label>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">Color</label>
             <div class="flex gap-1.5 sm:gap-2">
               <button
                 v-for="color in habitColors"
                 :key="color"
                 @click="habitForm.color = color"
                 class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg transition-all"
-                :class="habitForm.color === color ? 'ring-2 ring-offset-2 ring-black' : 'hover:scale-110'"
+                :class="habitForm.color === color ? 'ring-2 ring-offset-2 ring-black dark:ring-white dark:ring-offset-gray-800' : 'hover:scale-110'"
                 :style="{ backgroundColor: color }"
               ></button>
             </div>
@@ -213,56 +213,56 @@
 
           <!-- Description (optional) -->
           <div>
-            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">
-              Description <span class="text-gray-400 text-xs">(optional)</span>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
+              Description <span class="text-gray-400 dark:text-gray-500 text-xs">(optional)</span>
             </label>
             <textarea
               v-model="habitForm.description"
               rows="2"
               placeholder="Why is this habit important?"
-              class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent resize-none text-sm"
+              class="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-black dark:focus:ring-gray-500 focus:border-transparent resize-none text-sm"
             ></textarea>
           </div>
 
           <!-- Frequency -->
           <div>
-            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">Track on</label>
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">Track on</label>
             <div class="space-y-1.5 sm:space-y-2">
               <label class="flex items-center cursor-pointer">
                 <input
                   v-model="habitForm.frequency"
                   type="radio"
                   value="daily"
-                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black flex-shrink-0"
+                  class="w-4 h-4 text-black dark:text-gray-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-black dark:focus:ring-gray-500 flex-shrink-0"
                 />
-                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700">Every day (including weekends)</span>
+                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700 dark:text-gray-300">Every day (including weekends)</span>
               </label>
               <label class="flex items-center cursor-pointer">
                 <input
                   v-model="habitForm.frequency"
                   type="radio"
                   value="weekdays"
-                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black flex-shrink-0"
+                  class="w-4 h-4 text-black dark:text-gray-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-black dark:focus:ring-gray-500 flex-shrink-0"
                 />
-                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700">Weekdays only (Mon-Fri)</span>
+                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700 dark:text-gray-300">Weekdays only (Mon-Fri)</span>
               </label>
               <label class="flex items-center cursor-pointer">
                 <input
                   v-model="habitForm.frequency"
                   type="radio"
                   value="weekends"
-                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black flex-shrink-0"
+                  class="w-4 h-4 text-black dark:text-gray-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-black dark:focus:ring-gray-500 flex-shrink-0"
                 />
-                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700">Weekends only (Sat-Sun)</span>
+                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700 dark:text-gray-300">Weekends only (Sat-Sun)</span>
               </label>
               <label class="flex items-center cursor-pointer">
                 <input
                   v-model="habitForm.frequency"
                   type="radio"
                   value="custom"
-                  class="w-4 h-4 text-black border-gray-300 focus:ring-2 focus:ring-black flex-shrink-0"
+                  class="w-4 h-4 text-black dark:text-gray-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-black dark:focus:ring-gray-500 flex-shrink-0"
                 />
-                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700">Custom days</span>
+                <span class="ml-2.5 sm:ml-3 text-xs sm:text-sm text-gray-700 dark:text-gray-300">Custom days</span>
               </label>
             </div>
 
@@ -276,13 +276,13 @@
                   type="button"
                   class="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
                   :class="habitForm.custom_days && habitForm.custom_days.includes(index)
-                    ? 'bg-black text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
+                    ? 'bg-black dark:bg-gray-600 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
                 >
                   {{ day }}
                 </button>
               </div>
-              <p class="mt-2 text-xs text-gray-500">Select which days to track this habit</p>
+              <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">Select which days to track this habit</p>
             </div>
           </div>
 
@@ -292,13 +292,13 @@
               <input
                 v-model="habitForm.allow_multiple_checks"
                 type="checkbox"
-                class="w-4 h-4 sm:w-5 sm:h-5 text-black border-gray-300 rounded focus:ring-2 focus:ring-black flex-shrink-0 mt-0.5"
+                class="w-4 h-4 sm:w-5 sm:h-5 text-black dark:text-gray-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded focus:ring-2 focus:ring-black dark:focus:ring-gray-500 flex-shrink-0 mt-0.5"
               />
               <div class="ml-2.5 sm:ml-3">
-                <span class="text-xs sm:text-sm font-medium text-gray-700">
+                <span class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                   Allow multiple checks per day
                 </span>
-                <p class="mt-0.5 text-[10px] sm:text-xs text-gray-500">
+                <p class="mt-0.5 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                   Track multiple completions per day with timestamps
                 </p>
               </div>
@@ -311,13 +311,13 @@
               <input
                 v-model="habitForm.is_public"
                 type="checkbox"
-                class="w-4 h-4 sm:w-5 sm:h-5 text-black border-gray-300 rounded focus:ring-2 focus:ring-black flex-shrink-0 mt-0.5"
+                class="w-4 h-4 sm:w-5 sm:h-5 text-black dark:text-gray-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded focus:ring-2 focus:ring-black dark:focus:ring-gray-500 flex-shrink-0 mt-0.5"
               />
               <div class="ml-2.5 sm:ml-3">
-                <span class="text-xs sm:text-sm font-medium text-gray-700">
+                <span class="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
                   Make habit public
                 </span>
-                <p class="mt-0.5 text-[10px] sm:text-xs text-gray-500">
+                <p class="mt-0.5 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                   Public habits can be viewed by others
                 </p>
               </div>
@@ -325,17 +325,17 @@
           </div>
         </div>
 
-        <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 flex gap-2 sm:gap-3 flex-shrink-0">
+        <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 dark:border-gray-700 flex gap-2 sm:gap-3 flex-shrink-0">
           <button
             @click="saveHabit"
             :disabled="!habitForm.name"
-            class="flex-1 px-4 py-2.5 sm:py-2 bg-black text-white text-sm sm:text-base font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            class="flex-1 px-4 py-2.5 sm:py-2 bg-black dark:bg-gray-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-gray-800 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {{ editingHabit ? 'Save' : 'Create' }}
           </button>
           <button
             @click="closeModal"
-            class="px-4 py-2.5 sm:py-2 border border-gray-300 text-gray-700 text-sm sm:text-base font-medium rounded-lg hover:bg-gray-50 transition-colors"
+            class="px-4 py-2.5 sm:py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm sm:text-base font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             Cancel
           </button>
@@ -353,9 +353,9 @@
         @click.self="closeNoteModal"
       >
         <Transition name="modal-content">
-          <div v-if="noteModal.show" class="bg-white rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
-            <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
-              <h3 class="text-lg sm:text-xl font-semibold text-gray-900">
+          <div v-if="noteModal.show" class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+            <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
                 Note for {{ formatDateFull(noteModal.date) }}
               </h3>
             </div>
@@ -365,21 +365,21 @@
                 v-model="noteModal.note"
                 rows="4"
                 placeholder="Add a note about this day..."
-                class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none text-sm"
+                class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 focus:border-transparent resize-none text-sm"
                 autofocus
               ></textarea>
             </div>
 
-            <div class="flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200 flex gap-2 sm:gap-3">
+            <div class="flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700 flex gap-2 sm:gap-3">
               <button
                 @click="saveNote"
-                class="flex-1 px-4 py-2 text-xs sm:text-sm bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                class="flex-1 px-4 py-2 text-xs sm:text-sm bg-green-600 dark:bg-green-700 text-white font-medium rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
               >
                 Save Note
               </button>
               <button
                 @click="closeNoteModal"
-                class="px-4 py-2 text-xs sm:text-sm border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                class="px-4 py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Cancel
               </button>
@@ -397,33 +397,33 @@
         @click.self="closeMultiCheckModal"
       >
         <Transition name="modal-content">
-          <div v-if="multiCheckModal.show" class="bg-white rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
-            <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
-              <h3 class="text-lg sm:text-xl font-semibold text-gray-900">
+          <div v-if="multiCheckModal.show" class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+            <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
                 {{ multiCheckModal.habit?.emoji }} {{ multiCheckModal.habit?.name }}
               </h3>
-              <p class="text-xs sm:text-sm text-gray-600 mt-1">{{ formatDateFull(multiCheckModal.date) }}</p>
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">{{ formatDateFull(multiCheckModal.date) }}</p>
             </div>
 
             <div class="overflow-y-auto flex-1 p-4 sm:p-6 space-y-3 sm:space-y-4">
           <!-- Add New Check -->
-          <div class="pb-3 sm:pb-4 border-b border-gray-200">
-            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">Add Check</label>
+          <div class="pb-3 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Add Check</label>
             <div class="space-y-2">
               <input
                 v-model="multiCheckModal.newCheckTime"
                 type="time"
-                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 focus:border-transparent"
               />
               <input
                 v-model="multiCheckModal.newCheckNote"
                 type="text"
                 placeholder="Add a note (optional)"
-                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 focus:border-transparent"
               />
               <button
                 @click="addMultiCheck"
-                class="w-full px-4 py-2 text-xs sm:text-sm bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                class="w-full px-4 py-2 text-xs sm:text-sm bg-green-600 dark:bg-green-700 text-white font-medium rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition-colors"
               >
                 + Add Check
               </button>
@@ -432,7 +432,7 @@
 
           <!-- List of Checks -->
           <div v-if="multiCheckModal.checks.length > 0">
-            <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+            <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Checks Today ({{ multiCheckModal.checks.length }})
             </label>
             <div class="space-y-2">
@@ -440,20 +440,20 @@
                 <div
                   v-for="check in multiCheckModal.checks"
                   :key="check.id"
-                  class="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg"
+                  class="flex items-center justify-between px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
                 >
                 <div class="flex items-center gap-3">
-                  <span class="text-green-500 text-lg">✓</span>
+                  <span class="text-green-500 dark:text-green-400 text-lg">✓</span>
                   <div>
-                    <div class="text-sm font-medium text-gray-900">
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">
                       {{ check.time ? formatTime(check.time) : 'No time' }}
                     </div>
-                    <div v-if="check.note" class="text-xs text-gray-600 mt-0.5">{{ check.note }}</div>
+                    <div v-if="check.note" class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{{ check.note }}</div>
                   </div>
                 </div>
                 <button
                   @click="deleteMultiCheck(check.id)"
-                  class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                  class="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
                   title="Delete check"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -465,15 +465,15 @@
             </div>
           </div>
 
-          <div v-else class="text-center py-8 text-gray-500 text-xs sm:text-sm">
+          <div v-else class="text-center py-8 text-gray-500 dark:text-gray-400 text-xs sm:text-sm">
             No checks yet for this day
           </div>
             </div>
 
-            <div class="flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200">
+            <div class="flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700">
               <button
                 @click="closeMultiCheckModal"
-                class="w-full px-4 py-2 text-xs sm:text-sm border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                class="w-full px-4 py-2 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Close
               </button>
@@ -489,7 +489,7 @@
       class="fixed z-50"
       :style="{ top: emojiPickerPosition.top + 'px', left: emojiPickerPosition.left + 'px' }"
     >
-      <div class="bg-white rounded-lg shadow-xl border border-gray-200" ref="emojiPickerRef">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700" ref="emojiPickerRef">
         <!-- Emoji picker element will be mounted here -->
       </div>
     </div>

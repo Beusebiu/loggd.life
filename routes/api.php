@@ -89,6 +89,7 @@ Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::patch('/settings/privacy', [SettingsController::class, 'updatePrivacy']);
     Route::patch('/settings/password', [SettingsController::class, 'updatePassword']);
     Route::patch('/settings/email', [SettingsController::class, 'updateEmail']);
+    Route::patch('/settings/dark-mode', [SettingsController::class, 'updateDarkMode']);
 
     // Leaderboard
     Route::get('/leaderboard/all-time', [LeaderboardController::class, 'allTime']);

@@ -60,56 +60,73 @@ enum UserLevel: int
     }
 
     /**
-     * Get the color theme for this tier (Tailwind classes)
-     * Progression: Colorless → Vibrant (Gray → Silver → Blue → Gold → Purple → Cosmic)
+     * Get the complete visual theme for this tier
+     * Single source of truth for all tier styling
      */
     public function colorTheme(): array
     {
         return match ($this) {
-            // Awakened - Pale & Colorless
+            // Awakened - Green (GitHub style)
             self::Awakened => [
-                'primary' => '#d1d5db',
-                'light' => '#f3f4f6',
-                'medium' => '#e5e7eb',
-                'dark' => '#9ca3af',
-                'border' => 'border-gray-300',
-                'bg' => 'bg-white',
+                // Activity grid
+                'primary' => '#22c55e',
+
+                // Card background gradients
+                'gradient_light' => 'linear-gradient(135deg, rgba(240, 253, 244, 0.5) 0%, rgba(220, 252, 231, 0.4) 50%, rgba(209, 250, 229, 0.3) 100%)',
+                'gradient_dark' => 'linear-gradient(135deg, rgba(5, 46, 22, 0.3) 0%, rgba(20, 83, 45, 0.2) 50%, rgba(22, 101, 52, 0.15) 100%)',
+
+                // Borders
+                'border_light' => '1px solid rgba(34, 197, 94, 0.3)',
+                'border_dark' => '1px solid rgba(34, 197, 94, 0.3)',
+
+                // Shadows
+                'shadow_light' => '0 2px 8px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 197, 94, 0.1)',
+                'shadow_dark' => '0 2px 8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(34, 197, 94, 0.2)',
+
+                // Text colors
+                'text_primary' => '#22c55e',
+                'text_light' => '#16a34a',
+                'text_dark' => '#86efac',
+
+                // Avatar
+                'avatar_gradient' => 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                'avatar_shadow' => '0 3px 12px rgba(34, 197, 94, 0.3)',
             ],
-            // Committed - Light Gray
+            // Committed - Cyan
             self::Committed => [
-                'primary' => '#9ca3af',
-                'light' => '#e5e7eb',
-                'medium' => '#d1d5db',
-                'dark' => '#6b7280',
-                'border' => 'border-gray-400',
-                'bg' => 'bg-gradient-to-br from-white to-gray-50',
+                'primary' => '#06b6d4',  // cyan-500 for activity grid cells
+                'light' => '#cffafe',
+                'medium' => '#67e8f9',
+                'dark' => '#0891b2',
+                'border' => 'border-cyan-400',
+                'bg' => 'bg-gradient-to-br from-cyan-50 to-sky-50',
             ],
-            // Devoted - Silver
+            // Devoted - Blue
             self::Devoted => [
-                'primary' => '#71717a',
-                'light' => '#d4d4d8',
-                'medium' => '#a1a1aa',
-                'dark' => '#52525b',
-                'border' => 'border-zinc-400',
-                'bg' => 'bg-gradient-to-br from-gray-50 to-zinc-100',
+                'primary' => '#60a5fa',  // blue-400 for bright activity grid cells
+                'light' => '#dbeafe',
+                'medium' => '#93c5fd',
+                'dark' => '#3b82f6',
+                'border' => 'border-blue-400',
+                'bg' => 'bg-gradient-to-br from-blue-50 to-sky-100',
             ],
-            // Relentless - Steel Blue-Gray
+            // Relentless - Purple
             self::Relentless => [
-                'primary' => '#64748b',
-                'light' => '#cbd5e1',
-                'medium' => '#94a3b8',
-                'dark' => '#475569',
-                'border' => 'border-slate-400',
-                'bg' => 'bg-gradient-to-br from-slate-50 to-slate-100',
+                'primary' => '#a855f7',  // purple-500 for activity grid cells
+                'light' => '#f3e8ff',
+                'medium' => '#d8b4fe',
+                'dark' => '#9333ea',
+                'border' => 'border-purple-400',
+                'bg' => 'bg-gradient-to-br from-purple-50 to-violet-50',
             ],
-            // Unwavering - Steel Blue
+            // Unwavering - Rose/Pink
             self::Unwavering => [
-                'primary' => '#0ea5e9',
-                'light' => '#bae6fd',
-                'medium' => '#7dd3fc',
-                'dark' => '#0284c7',
-                'border' => 'border-sky-400',
-                'bg' => 'bg-gradient-to-br from-sky-50 to-blue-100',
+                'primary' => '#f43f5e',  // rose-500 for activity grid cells
+                'light' => '#ffe4e6',
+                'medium' => '#fda4af',
+                'dark' => '#e11d48',
+                'border' => 'border-rose-400',
+                'bg' => 'bg-gradient-to-br from-rose-50 to-pink-50',
             ],
             // Formidable - Bronze/Gold
             self::Formidable => [

@@ -51,22 +51,46 @@ const initial = computed(() => props.userName.charAt(0).toUpperCase());
   }
 }
 
-/* Tier 1-3: Grayscale/Colorless - No special effects */
-.avatar-default {
-  background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
-  color: #374151;
+/* Tier 1: Awakened - Green */
+.avatar-awakened {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 3px 12px rgba(34, 197, 94, 0.3);
+  color: white;
 }
 
-/* Tier 4: Relentless - Steel Blue-Gray */
+/* Tier 2: Committed - Cyan */
+.avatar-committed {
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+  box-shadow: 0 3px 14px rgba(6, 182, 212, 0.35);
+  color: white;
+}
+
+/* Tier 3: Devoted - Blue */
+.avatar-devoted {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+  color: white;
+}
+
+/* Tier 4: Relentless - Purple */
 .avatar-relentless {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-  box-shadow: 0 4px 16px rgba(100, 116, 139, 0.4);
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  box-shadow: 0 4px 18px rgba(168, 85, 247, 0.45);
+  color: white;
 }
 
-/* Tier 5: Unwavering - Steel Blue */
+/* Tier 5: Unwavering - Rose/Pink */
 .avatar-unwavering {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5);
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  box-shadow: 0 5px 20px rgba(244, 63, 94, 0.5);
+  color: white;
+}
+
+/* Default avatar (fallback) */
+.avatar-default {
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 3px 12px rgba(34, 197, 94, 0.3);
+  color: white;
 }
 
 /* Tier 6: Formidable - Bronze/Gold */

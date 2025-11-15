@@ -8,14 +8,14 @@
       <div class="mb-4 sm:mb-8">
         <div class="flex items-start justify-between gap-2">
           <div class="flex-1 min-w-0">
-            <h1 class="text-xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Your Life Compass</h1>
-            <p class="text-xs sm:text-base text-gray-600">Define your north star - the life you're building toward</p>
-            <p class="text-xs sm:text-sm text-gray-500 mt-1 sm:mt-2 italic">💡 Take what works for you, adapt what doesn't. This isn't about perfection - it's about clarity.</p>
+            <h1 class="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">Your Life Compass</h1>
+            <p class="text-xs sm:text-base text-gray-600 dark:text-gray-400">Define your north star - the life you're building toward</p>
+            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 sm:mt-2 italic">💡 Take what works for you, adapt what doesn't. This isn't about perfection - it's about clarity.</p>
           </div>
           <div class="flex gap-1.5 sm:gap-2 flex-shrink-0">
             <button
               @click="showHistoryModal = true"
-              class="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center gap-1 sm:gap-2"
+              class="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition flex items-center gap-1 sm:gap-2"
               title="View past snapshots of your vision"
             >
               <span>📜</span>
@@ -23,7 +23,7 @@
             </button>
             <button
               @click="showSnapshotModal = true"
-              class="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition flex items-center gap-1 sm:gap-2"
+              class="px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white bg-green-600 dark:bg-green-700 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition flex items-center gap-1 sm:gap-2"
               title="Capture how you see your life right now"
             >
               <span>📸</span>
@@ -34,21 +34,21 @@
       </div>
 
       <!-- Snapshot Feature Info Banner -->
-      <div v-if="!hasSeenSnapshotInfo" class="mb-4 sm:mb-6 bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-3 sm:p-4">
+      <div v-if="!hasSeenSnapshotInfo" class="mb-4 sm:mb-6 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 border-2 border-purple-200 dark:border-purple-800 rounded-lg p-3 sm:p-4">
         <div class="flex items-start gap-2 sm:gap-3">
           <span class="text-xl sm:text-2xl flex-shrink-0">💡</span>
           <div class="flex-1 min-w-0">
-            <h4 class="text-xs sm:text-sm font-semibold text-purple-900 mb-1">New: Vision History</h4>
-            <p class="text-xs sm:text-sm text-purple-800 mb-1 sm:mb-2">
+            <h4 class="text-xs sm:text-sm font-semibold text-purple-900 dark:text-purple-300 mb-1">New: Vision History</h4>
+            <p class="text-xs sm:text-sm text-purple-800 dark:text-purple-200 mb-1 sm:mb-2">
               Your vision auto-saves as you edit. But when life changes—save a <strong>snapshot</strong> to remember this moment.
             </p>
-            <p class="text-[10px] sm:text-xs text-purple-700">
+            <p class="text-[10px] sm:text-xs text-purple-700 dark:text-purple-300">
               In 5 years, you'll love looking back at how your bucket list and priorities evolved.
             </p>
           </div>
           <button
             @click="dismissSnapshotInfo"
-            class="text-purple-400 hover:text-purple-600 flex-shrink-0"
+            class="text-purple-400 dark:text-purple-500 hover:text-purple-600 dark:hover:text-purple-300 flex-shrink-0"
             title="Dismiss"
           >
             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -59,14 +59,14 @@
       </div>
 
       <!-- Privacy Notice -->
-      <div v-if="vision.is_public" class="mb-4 sm:mb-6 bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
+      <div v-if="vision.is_public" class="mb-4 sm:mb-6 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 sm:p-4">
         <div class="flex items-start gap-2 sm:gap-3">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
           </svg>
           <div class="flex-1 min-w-0">
-            <h4 class="text-xs sm:text-sm font-semibold text-green-900">Your vision is PUBLIC by default</h4>
-            <p class="text-xs sm:text-sm text-green-700 mt-1">You can make individual sections private using the lock icon</p>
+            <h4 class="text-xs sm:text-sm font-semibold text-green-900 dark:text-green-300">Your vision is PUBLIC by default</h4>
+            <p class="text-xs sm:text-sm text-green-700 dark:text-green-200 mt-1">You can make individual sections private using the lock icon</p>
           </div>
         </div>
       </div>
@@ -80,9 +80,9 @@
           :is-private="isSectionPrivate('eulogy_method')"
           @toggle-privacy="toggleSectionPrivacy('eulogy_method')"
         >
-          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3">
+          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2 sm:p-3">
             <p class="font-medium mb-1">💭 This isn't morbid - it's about clarity on how you want to <em>live</em>.</p>
-            <p class="text-[10px] sm:text-xs text-gray-500">Reflect on what your family, friends, colleagues, and community would say about you.</p>
+            <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Reflect on what your family, friends, colleagues, and community would say about you.</p>
           </div>
           <TextareaWithEmoji
             v-model="vision.eulogy_method"
@@ -102,9 +102,9 @@ What values and qualities would people remember about you?"
           :is-private="isSectionPrivate('bucket_list')"
           @toggle-privacy="toggleSectionPrivacy('bucket_list')"
         >
-          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3">
+          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2 sm:p-3">
             <p class="font-medium mb-1">✨ Think about what you'd like to:</p>
-            <p class="text-[10px] sm:text-xs text-gray-500">Do • Be • Learn • Contribute to • Create • See • Experience • Have • Overcome</p>
+            <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Do • Be • Learn • Contribute to • Create • See • Experience • Have • Overcome</p>
           </div>
           <div class="space-y-1.5 sm:space-y-2">
             <div
@@ -116,21 +116,21 @@ What values and qualities would people remember about you?"
                 type="checkbox"
                 v-model="item.completed"
                 @change="saveVision"
-                class="w-4 h-4 sm:w-5 sm:h-5 text-green-600 border-gray-300 rounded focus:ring-green-500 flex-shrink-0"
+                class="w-4 h-4 sm:w-5 sm:h-5 text-green-600 border-gray-300 dark:border-gray-600 rounded focus:ring-green-500 dark:bg-gray-700 flex-shrink-0"
               />
               <input
                 type="text"
                 v-model="item.text"
                 @blur="saveVision"
                 :class="[
-                  'flex-1 px-2 py-1.5 sm:px-3 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-xs sm:text-sm',
-                  item.completed ? 'line-through text-gray-500' : ''
+                  'flex-1 px-2 py-1.5 sm:px-3 sm:py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-xs sm:text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:placeholder-gray-400',
+                  item.completed ? 'line-through text-gray-500 dark:text-gray-400' : ''
                 ]"
                 :placeholder="`${index + 1}. Start a business, learn piano, visit Japan, write a book...`"
               />
               <button
                 @click="removeBucketListItem(index)"
-                class="text-red-500 hover:text-red-700 flex-shrink-0"
+                class="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex-shrink-0"
               >
                 <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -139,7 +139,7 @@ What values and qualities would people remember about you?"
             </div>
             <button
               @click="addBucketListItem"
-              class="mt-2 sm:mt-3 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-green-700 bg-green-50 border border-green-300 rounded-lg hover:bg-green-100 transition"
+              class="mt-2 sm:mt-3 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/30 border border-green-300 dark:border-green-800 rounded-lg hover:bg-green-100 dark:hover:bg-green-950/50 transition"
             >
               + Add Item
             </button>
@@ -153,9 +153,9 @@ What values and qualities would people remember about you?"
           :is-private="isSectionPrivate('mission_prompt')"
           @toggle-privacy="toggleSectionPrivacy('mission_prompt')"
         >
-          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3">
+          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2 sm:p-3">
             <p class="font-medium mb-1">🪄 Imagine a magical world:</p>
-            <p class="text-[10px] sm:text-xs text-gray-500">You have all the time and money you need. You're not afraid of failure or judgment. You must spend 40 hours a week using your talents to serve others. What would you do?</p>
+            <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">You have all the time and money you need. You're not afraid of failure or judgment. You must spend 40 hours a week using your talents to serve others. What would you do?</p>
           </div>
           <TextareaWithEmoji
             v-model="vision.mission_prompt"
@@ -167,7 +167,7 @@ If you could leave one lasting positive change, what would it be?
 
 My mission is to..."
           />
-          <p class="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-gray-500 italic">
+          <p class="mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 italic">
             💡 Example: "Help motivated people achieve more by building tools that bring balance between work and family life"
           </p>
         </VisionSection>
@@ -179,13 +179,13 @@ My mission is to..."
           :is-private="isSectionPrivate('definition_of_success')"
           @toggle-privacy="toggleSectionPrivacy('definition_of_success')"
         >
-          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3">
+          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2 sm:p-3">
             <p class="font-medium mb-1">🌟 Picture deep, lasting satisfaction:</p>
-            <p class="text-[10px] sm:text-xs text-gray-500">Not achievement or recognition, but genuine peace. What fills your days? Who surrounds you? What worries are absent?</p>
+            <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">Not achievement or recognition, but genuine peace. What fills your days? Who surrounds you? What worries are absent?</p>
           </div>
           <div class="space-y-3 sm:space-y-4">
-            <div v-for="area in lifeAreas" :key="area.key" class="border border-gray-200 rounded-lg p-2.5 sm:p-4 hover:border-green-300 transition">
-              <label class="block text-xs sm:text-sm font-semibold text-gray-900 mb-1.5 sm:mb-2">
+            <div v-for="area in lifeAreas" :key="area.key" class="border border-gray-200 dark:border-gray-700 rounded-lg p-2.5 sm:p-4 hover:border-green-300 dark:hover:border-green-600 transition">
+              <label class="block text-xs sm:text-sm font-semibold text-gray-900 dark:text-white mb-1.5 sm:mb-2">
                 {{ area.icon }} {{ area.label }}
               </label>
               <TextareaWithEmoji
@@ -198,21 +198,21 @@ My mission is to..."
               />
 
               <!-- Goals in this area -->
-              <div v-if="getGoalsForArea(area.key).length > 0" class="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-200">
+              <div v-if="getGoalsForArea(area.key).length > 0" class="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex items-center justify-between mb-1.5 sm:mb-2">
-                  <p class="text-[10px] sm:text-xs font-semibold text-gray-700">🎯 Active goals in this area:</p>
-                  <a :href="`/@${$page.props.auth.user.username}/journey/goals`" class="text-[10px] sm:text-xs text-green-600 hover:underline">View all</a>
+                  <p class="text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300">🎯 Active goals in this area:</p>
+                  <a :href="`/@${$page.props.auth.user.username}/journey/goals`" class="text-[10px] sm:text-xs text-green-600 dark:text-green-400 hover:underline">View all</a>
                 </div>
                 <div class="space-y-1.5 sm:space-y-2">
                   <div
                     v-for="goal in getGoalsForArea(area.key)"
                     :key="goal.id"
-                    class="bg-green-50 border border-green-200 rounded-lg p-1.5 sm:p-2 text-[10px] sm:text-xs"
+                    class="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-1.5 sm:p-2 text-[10px] sm:text-xs"
                   >
                     <div class="flex items-start justify-between gap-2">
                       <div class="flex-1 min-w-0">
-                        <div class="font-medium text-gray-900">{{ goal.title }}</div>
-                        <div class="text-gray-600 mt-0.5">
+                        <div class="font-medium text-gray-900 dark:text-white">{{ goal.title }}</div>
+                        <div class="text-gray-600 dark:text-gray-400 mt-0.5">
                           {{ formatTimeHorizon(goal.time_horizon) }}
                           <span v-if="goal.tracking_type === 'metric' && goal.metric_progress_percentage !== undefined">
                             • {{ goal.metric_progress_percentage }}% complete
@@ -222,7 +222,7 @@ My mission is to..."
                           </span>
                         </div>
                       </div>
-                      <span v-if="goal.status === 'completed'" class="text-green-600 font-bold flex-shrink-0">✓</span>
+                      <span v-if="goal.status === 'completed'" class="text-green-600 dark:text-green-400 font-bold flex-shrink-0">✓</span>
                     </div>
                   </div>
                 </div>
@@ -238,19 +238,19 @@ My mission is to..."
           :is-private="isSectionPrivate('odyssey_plan')"
           @toggle-privacy="toggleSectionPrivacy('odyssey_plan')"
         >
-          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3">
+          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2 sm:p-3">
             <p class="font-medium mb-1">🧭 Explore multiple futures to avoid getting stuck:</p>
-            <p class="text-[10px] sm:text-xs text-gray-500">For each path, think about <strong>Self</strong> (your health, energy, mindset), <strong>Work</strong> (your career/projects), and <strong>Relationships</strong> (family, friends, community).</p>
+            <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">For each path, think about <strong>Self</strong> (your health, energy, mindset), <strong>Work</strong> (your career/projects), and <strong>Relationships</strong> (family, friends, community).</p>
           </div>
           <div class="space-y-4 sm:space-y-6">
             <!-- Current Path -->
-            <div class="border-2 border-gray-200 rounded-lg p-3 sm:p-5 hover:border-green-300 transition">
+            <div class="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-5 hover:border-green-300 dark:hover:border-green-600 transition">
               <div class="mb-2 sm:mb-3">
-                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1">🎯 Current Path</h4>
-                <p class="text-xs sm:text-sm text-gray-600">
+                <h4 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">🎯 Current Path</h4>
+                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   What does your life look like if you continue on your current trajectory?
                 </p>
-                <p class="text-[10px] sm:text-xs text-gray-500 mt-1 italic">
+                <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
                   Use your current context - where will you be in 5-10 years if nothing changes?
                 </p>
               </div>
@@ -269,13 +269,13 @@ Describe the full picture..."
             </div>
 
             <!-- Alternative Path -->
-            <div class="border-2 border-gray-200 rounded-lg p-3 sm:p-5 hover:border-green-300 transition">
+            <div class="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-5 hover:border-green-300 dark:hover:border-green-600 transition">
               <div class="mb-2 sm:mb-3">
-                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1">🐉 Alternative Path</h4>
-                <p class="text-xs sm:text-sm text-gray-600">
+                <h4 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">🐉 Alternative Path</h4>
+                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   If your current path wasn't an option, what's another way your life could unfold that would be fulfilling?
                 </p>
-                <p class="text-[10px] sm:text-xs text-gray-500 mt-1 italic">
+                <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
                   Imagine your current career is completely unavailable. What would you pivot to?
                 </p>
               </div>
@@ -294,13 +294,13 @@ Paint the picture..."
             </div>
 
             <!-- Radical Alternative Path -->
-            <div class="border-2 border-gray-200 rounded-lg p-3 sm:p-5 hover:border-green-300 transition">
+            <div class="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-5 hover:border-green-300 dark:hover:border-green-600 transition">
               <div class="mb-2 sm:mb-3">
-                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1">🦄 Radical Path</h4>
-                <p class="text-xs sm:text-sm text-gray-600">
+                <h4 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">🦄 Radical Path</h4>
+                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   If money, fear, and societal expectations weren't limiting factors, what would you do with your life?
                 </p>
-                <p class="text-[10px] sm:text-xs text-gray-500 mt-1 italic">
+                <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
                   Dream big. No constraints. The California beach lifestyle? Go for it.
                 </p>
               </div>
@@ -327,19 +327,19 @@ What's your wildest dream?"
           :is-private="isSectionPrivate('future_calendar')"
           @toggle-privacy="toggleSectionPrivacy('future_calendar')"
         >
-          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3">
+          <div class="mb-2 sm:mb-3 text-xs sm:text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2 sm:p-3">
             <p class="font-medium mb-1">⏰ Your life is made up of ordinary days:</p>
-            <p class="text-[10px] sm:text-xs text-gray-500">If you can design an amazing Tuesday and Sunday, you'll probably have an amazing life.</p>
+            <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">If you can design an amazing Tuesday and Sunday, you'll probably have an amazing life.</p>
           </div>
           <div class="space-y-4 sm:space-y-6">
             <!-- Ideal Tuesday (Workday) -->
-            <div class="border-2 border-gray-200 rounded-lg p-3 sm:p-5 hover:border-green-300 transition">
+            <div class="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-5 hover:border-green-300 dark:hover:border-green-600 transition">
               <div class="mb-2 sm:mb-3">
-                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1">🕴️ Your Ideal Tuesday</h4>
-                <p class="text-xs sm:text-sm text-gray-600">
+                <h4 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">🕴️ Your Ideal Tuesday</h4>
+                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   3 years from now, what does a perfect workday look like?
                 </p>
-                <p class="text-[10px] sm:text-xs text-gray-500 mt-1 italic">
+                <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
                   Walk through the entire day - morning to evening.
                 </p>
               </div>
@@ -359,13 +359,13 @@ What time do you sleep?"
             </div>
 
             <!-- Ideal Sunday (Rest Day) -->
-            <div class="border-2 border-gray-200 rounded-lg p-3 sm:p-5 hover:border-green-300 transition">
+            <div class="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-5 hover:border-green-300 dark:hover:border-green-600 transition">
               <div class="mb-2 sm:mb-3">
-                <h4 class="text-base sm:text-lg font-bold text-gray-900 mb-1">🏠 Your Ideal Sunday</h4>
-                <p class="text-xs sm:text-sm text-gray-600">
+                <h4 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-1">🏠 Your Ideal Sunday</h4>
+                <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   3 years from now, how do you spend a perfect day of rest?
                 </p>
-                <p class="text-[10px] sm:text-xs text-gray-500 mt-1 italic">
+                <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1 italic">
                   This is about life, not work. How do you recharge?
                 </p>
               </div>
@@ -388,27 +388,27 @@ How does it feel to be you on a day of rest?"
       </div>
 
       <!-- Save Status -->
-      <div v-if="saving" class="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 bg-green-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow-lg text-xs sm:text-sm">
+      <div v-if="saving" class="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 bg-green-600 dark:bg-green-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow-lg text-xs sm:text-sm">
         Saving...
       </div>
-      <div v-else-if="saved" class="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 bg-green-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow-lg text-xs sm:text-sm">
+      <div v-else-if="saved" class="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 bg-green-600 dark:bg-green-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg shadow-lg text-xs sm:text-sm">
         ✓ Saved
       </div>
 
       <!-- Create Snapshot Modal -->
-      <div v-if="showSnapshotModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/20 backdrop-blur-sm sm:p-4" @click.self="showSnapshotModal = false">
-        <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-lg w-full shadow-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col">
-          <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
-            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">📸 Save a Snapshot of Your Vision</h3>
-            <p class="text-xs sm:text-sm text-gray-600">Create a time capsule of how you see your life right now.</p>
+      <div v-if="showSnapshotModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/20 dark:bg-gray-900/40 backdrop-blur-sm sm:p-4" @click.self="showSnapshotModal = false">
+        <div class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-xl max-w-lg w-full shadow-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+          <div class="flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">📸 Save a Snapshot of Your Vision</h3>
+            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Create a time capsule of how you see your life right now.</p>
           </div>
 
           <div class="overflow-y-auto flex-1 p-4 sm:p-6 space-y-3 sm:space-y-4">
 
             <!-- Why this matters -->
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
-              <p class="text-xs sm:text-sm font-semibold text-blue-900 mb-1.5 sm:mb-2">✨ Why save snapshots?</p>
-              <ul class="text-[10px] sm:text-xs text-blue-800 space-y-1">
+            <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
+              <p class="text-xs sm:text-sm font-semibold text-blue-900 dark:text-blue-300 mb-1.5 sm:mb-2">✨ Why save snapshots?</p>
+              <ul class="text-[10px] sm:text-xs text-blue-800 dark:text-blue-200 space-y-1">
                 <li>• <strong>Track your evolution:</strong> See how your priorities shift as life changes</li>
                 <li>• <strong>Celebrate growth:</strong> Look back at bucket list items you've completed</li>
                 <li>• <strong>Gain perspective:</strong> Understand patterns in what matters to you</li>
@@ -417,35 +417,35 @@ How does it feel to be you on a day of rest?"
             </div>
 
             <!-- When to save -->
-            <div class="bg-green-50 border border-green-200 rounded-lg p-2.5 sm:p-3">
-              <p class="text-[10px] sm:text-xs font-semibold text-green-900 mb-1">💡 Good times to save a snapshot:</p>
-              <p class="text-[10px] sm:text-xs text-green-700">New Year, birthday, career change, moving cities, getting married, having a child, or just feeling different about life</p>
+            <div class="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-2.5 sm:p-3">
+              <p class="text-[10px] sm:text-xs font-semibold text-green-900 dark:text-green-300 mb-1">💡 Good times to save a snapshot:</p>
+              <p class="text-[10px] sm:text-xs text-green-700 dark:text-green-200">New Year, birthday, career change, moving cities, getting married, having a child, or just feeling different about life</p>
             </div>
 
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 sm:mb-2">What's happening in your life? (optional)</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">What's happening in your life? (optional)</label>
               <textarea
                 v-model="snapshotNote"
                 rows="3"
-                class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm"
+                class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white dark:placeholder-gray-400"
                 placeholder="e.g., 'Just turned 30 - refocusing on health and family' or 'Starting my own business after 10 years corporate'"
                 maxlength="500"
               ></textarea>
-              <p class="text-xs text-gray-500 mt-1">{{ snapshotNote.length }}/500 characters</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ snapshotNote.length }}/500 characters</p>
             </div>
           </div>
 
-          <div class="flex gap-2 sm:gap-3 justify-end flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200">
+          <div class="flex gap-2 sm:gap-3 justify-end flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700">
             <button
               @click="showSnapshotModal = false"
-              class="px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              class="px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Cancel
             </button>
             <button
               @click="createSnapshot"
               :disabled="creatingSnapshot"
-              class="px-4 py-2 text-xs sm:text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
+              class="px-4 py-2 text-xs sm:text-sm font-medium text-white bg-green-600 dark:bg-green-700 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50"
             >
               {{ creatingSnapshot ? 'Saving...' : 'Save Snapshot' }}
             </button>
@@ -454,16 +454,16 @@ How does it feel to be you on a day of rest?"
       </div>
 
       <!-- History Modal -->
-      <div v-if="showHistoryModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/20 backdrop-blur-sm sm:p-4" @click.self="showHistoryModal = false">
-        <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-2xl w-full shadow-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col">
-          <div class="flex items-start justify-between flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
+      <div v-if="showHistoryModal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/20 dark:bg-gray-900/40 backdrop-blur-sm sm:p-4" @click.self="showHistoryModal = false">
+        <div class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-xl max-w-2xl w-full shadow-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+          <div class="flex items-start justify-between flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
             <div>
-              <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-1">📜 Your Vision History</h3>
-              <p class="text-xs sm:text-sm text-gray-600">See how your life vision has evolved over time</p>
+              <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-1">📜 Your Vision History</h3>
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">See how your life vision has evolved over time</p>
             </div>
             <button
               @click="showHistoryModal = false"
-              class="text-gray-400 hover:text-gray-600 flex-shrink-0 ml-2"
+              class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0 ml-2"
             >
               <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -473,7 +473,7 @@ How does it feel to be you on a day of rest?"
 
           <div class="overflow-y-auto flex-1 p-4 sm:p-6">
 
-            <div v-if="loadingSnapshots" class="text-center py-8 text-gray-500 text-sm">
+            <div v-if="loadingSnapshots" class="text-center py-8 text-gray-500 dark:text-gray-400 text-sm">
               Loading history...
             </div>
 
@@ -481,14 +481,14 @@ How does it feel to be you on a day of rest?"
               <div class="mb-4 sm:mb-6">
                 <span class="text-5xl sm:text-6xl">🌱</span>
               </div>
-              <h4 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Your Journey Starts Here</h4>
-              <p class="text-sm sm:text-base text-gray-600 mb-4 max-w-md mx-auto px-4">
+              <h4 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2">Your Journey Starts Here</h4>
+              <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-4 max-w-md mx-auto px-4">
                 You haven't saved any snapshots yet. Your vision will naturally evolve as life happens.
               </p>
 
-              <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 sm:p-4 max-w-md mx-auto mb-4">
-                <p class="text-xs sm:text-sm font-semibold text-purple-900 mb-1.5 sm:mb-2">💭 Imagine this in 5 years:</p>
-                <ul class="text-[10px] sm:text-xs text-purple-800 text-left space-y-1">
+              <div class="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-lg p-3 sm:p-4 max-w-md mx-auto mb-4">
+                <p class="text-xs sm:text-sm font-semibold text-purple-900 dark:text-purple-300 mb-1.5 sm:mb-2">💭 Imagine this in 5 years:</p>
+                <ul class="text-[10px] sm:text-xs text-purple-800 dark:text-purple-200 text-left space-y-1">
                   <li>• Looking back at your 2025 bucket list vs your 2030 bucket list</li>
                   <li>• Seeing how your definition of success changed after a career shift</li>
                   <li>• Remembering what mattered most before you had kids</li>
@@ -498,12 +498,12 @@ How does it feel to be you on a day of rest?"
 
               <button
                 @click="showHistoryModal = false; showSnapshotModal = true"
-                class="px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition"
+                class="px-5 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-white bg-green-600 dark:bg-green-700 rounded-lg hover:bg-green-700 dark:hover:bg-green-600 transition"
               >
                 📸 Save Your First Snapshot
               </button>
 
-              <p class="text-[10px] sm:text-xs text-gray-500 mt-3 px-4">
+              <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-3 px-4">
                 Your current vision auto-saves as you edit. Snapshots are for big moments.
               </p>
             </div>
@@ -512,22 +512,22 @@ How does it feel to be you on a day of rest?"
               <div
                 v-for="snapshot in snapshots"
                 :key="snapshot.id"
-                class="border-2 border-gray-200 rounded-lg p-3 sm:p-4 hover:border-green-300 transition cursor-pointer"
+                class="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-3 sm:p-4 hover:border-green-300 dark:hover:border-green-600 transition cursor-pointer"
                 @click="viewSnapshot(snapshot)"
               >
                 <div class="flex items-start justify-between gap-2">
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-1">
-                      <span class="text-xs sm:text-sm font-semibold text-gray-900">
+                      <span class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
                         {{ formatDate(snapshot.snapshot_date) }}
                       </span>
                     </div>
-                    <p v-if="snapshot.note" class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 truncate">{{ snapshot.note }}</p>
-                    <p class="text-[10px] sm:text-xs text-gray-500">
+                    <p v-if="snapshot.note" class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 sm:mb-2 truncate">{{ snapshot.note }}</p>
+                    <p class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                       Bucket list: {{ (snapshot.bucket_list || []).length }} items
                     </p>
                   </div>
-                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 dark:text-gray-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
                   </svg>
                 </div>
@@ -538,18 +538,18 @@ How does it feel to be you on a day of rest?"
       </div>
 
       <!-- View Snapshot Modal -->
-      <div v-if="viewingSnapshot" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/20 backdrop-blur-sm sm:p-4" @click.self="viewingSnapshot = null">
-        <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-2xl w-full shadow-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col">
-          <div class="flex items-start justify-between flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200">
+      <div v-if="viewingSnapshot" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-gray-900/20 dark:bg-gray-900/40 backdrop-blur-sm sm:p-4" @click.self="viewingSnapshot = null">
+        <div class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-xl max-w-2xl w-full shadow-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+          <div class="flex items-start justify-between flex-shrink-0 p-4 sm:p-6 pb-3 sm:pb-4 border-b border-gray-200 dark:border-gray-700">
             <div class="flex-1 min-w-0 mr-2">
-              <h3 class="text-base sm:text-xl font-bold text-gray-900 mb-1">
+              <h3 class="text-base sm:text-xl font-bold text-gray-900 dark:text-white mb-1">
                 Vision Snapshot - {{ formatDate(viewingSnapshot.snapshot_date) }}
               </h3>
-              <p v-if="viewingSnapshot.note" class="text-xs sm:text-sm text-gray-600">{{ viewingSnapshot.note }}</p>
+              <p v-if="viewingSnapshot.note" class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{{ viewingSnapshot.note }}</p>
             </div>
             <button
               @click="viewingSnapshot = null"
-              class="text-gray-400 hover:text-gray-600 flex-shrink-0"
+              class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 flex-shrink-0"
             >
               <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -562,66 +562,66 @@ How does it feel to be you on a day of rest?"
             <div class="space-y-4 sm:space-y-6 text-xs sm:text-sm">
               <!-- Eulogy Method -->
               <div v-if="viewingSnapshot.eulogy_method">
-                <h4 class="font-semibold text-gray-900 mb-1.5 sm:mb-2">📜 The Eulogy Method</h4>
-                <p class="text-gray-700 whitespace-pre-wrap">{{ viewingSnapshot.eulogy_method }}</p>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-1.5 sm:mb-2">📜 The Eulogy Method</h4>
+                <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ viewingSnapshot.eulogy_method }}</p>
               </div>
 
               <!-- Bucket List -->
               <div v-if="viewingSnapshot.bucket_list && viewingSnapshot.bucket_list.length > 0">
-                <h4 class="font-semibold text-gray-900 mb-1.5 sm:mb-2">🪣 The Bucket List</h4>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-1.5 sm:mb-2">🪣 The Bucket List</h4>
                 <ul class="space-y-1">
                   <li v-for="(item, index) in viewingSnapshot.bucket_list" :key="index" class="flex items-start gap-2">
                     <span>{{ item.completed ? '✅' : '⬜' }}</span>
-                    <span :class="item.completed ? 'line-through text-gray-500' : 'text-gray-700'">{{ item.text }}</span>
+                    <span :class="item.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-700 dark:text-gray-300'">{{ item.text }}</span>
                   </li>
                 </ul>
               </div>
 
               <!-- Mission Prompt -->
               <div v-if="viewingSnapshot.mission_prompt">
-                <h4 class="font-semibold text-gray-900 mb-1.5 sm:mb-2">🎯 The Mission Prompt</h4>
-                <p class="text-gray-700 whitespace-pre-wrap">{{ viewingSnapshot.mission_prompt }}</p>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-1.5 sm:mb-2">🎯 The Mission Prompt</h4>
+                <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ viewingSnapshot.mission_prompt }}</p>
               </div>
 
               <!-- Definition of Success -->
               <div v-if="viewingSnapshot.definition_of_success && Object.keys(viewingSnapshot.definition_of_success).length > 0">
-                <h4 class="font-semibold text-gray-900 mb-1.5 sm:mb-2">🏆 Definition of Success</h4>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-1.5 sm:mb-2">🏆 Definition of Success</h4>
                 <div class="space-y-2">
                   <div v-for="(value, key) in viewingSnapshot.definition_of_success" :key="key">
-                    <p class="font-medium text-gray-800 capitalize text-xs sm:text-sm">{{ key.replace('_', ' ') }}</p>
-                    <p class="text-gray-700 whitespace-pre-wrap">{{ value }}</p>
+                    <p class="font-medium text-gray-800 dark:text-gray-300 capitalize text-xs sm:text-sm">{{ key.replace('_', ' ') }}</p>
+                    <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ value }}</p>
                   </div>
                 </div>
               </div>
 
               <!-- Odyssey Plan -->
               <div v-if="viewingSnapshot.odyssey_plan && Object.keys(viewingSnapshot.odyssey_plan).length > 0">
-                <h4 class="font-semibold text-gray-900 mb-1.5 sm:mb-2">🗺️ Odyssey Plan</h4>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-1.5 sm:mb-2">🗺️ Odyssey Plan</h4>
                 <div class="space-y-2">
                   <div v-for="(value, key) in viewingSnapshot.odyssey_plan" :key="key">
-                    <p class="font-medium text-gray-800 capitalize text-xs sm:text-sm">{{ key.replace('_', ' ') }}</p>
-                    <p class="text-gray-700 whitespace-pre-wrap">{{ value }}</p>
+                    <p class="font-medium text-gray-800 dark:text-gray-300 capitalize text-xs sm:text-sm">{{ key.replace('_', ' ') }}</p>
+                    <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ value }}</p>
                   </div>
                 </div>
               </div>
 
               <!-- Future Calendar -->
               <div v-if="viewingSnapshot.future_calendar && Object.keys(viewingSnapshot.future_calendar).length > 0">
-                <h4 class="font-semibold text-gray-900 mb-1.5 sm:mb-2">📅 Future Calendar</h4>
+                <h4 class="font-semibold text-gray-900 dark:text-white mb-1.5 sm:mb-2">📅 Future Calendar</h4>
                 <div class="space-y-2">
                   <div v-for="(value, key) in viewingSnapshot.future_calendar" :key="key">
-                    <p class="font-medium text-gray-800 capitalize text-xs sm:text-sm">{{ key.replace('_', ' ') }}</p>
-                    <p class="text-gray-700 whitespace-pre-wrap">{{ value }}</p>
+                    <p class="font-medium text-gray-800 dark:text-gray-300 capitalize text-xs sm:text-sm">{{ key.replace('_', ' ') }}</p>
+                    <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ value }}</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div class="flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200 flex justify-end">
+          <div class="flex-shrink-0 p-4 sm:p-6 pt-3 sm:pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
             <button
               @click="viewingSnapshot = null"
-              class="px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+              class="px-4 py-2 text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Close
             </button>

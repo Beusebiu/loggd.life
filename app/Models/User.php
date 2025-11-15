@@ -25,6 +25,7 @@ class User extends Authenticatable
         'password',
         'bio',
         'profile_public',
+        'dark_mode',
         'timezone',
         'notification_style',
         'weekly_points',
@@ -54,6 +55,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'profile_public' => 'boolean',
+            'dark_mode' => 'boolean',
         ];
     }
 

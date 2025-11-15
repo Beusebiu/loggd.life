@@ -1,31 +1,31 @@
 <template>
-  <div class="fixed inset-0 bg-gray-900/20 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4" @click.self="$emit('close')">
-    <div class="bg-white rounded-t-2xl sm:rounded-xl max-w-3xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
+  <div class="fixed inset-0 bg-gray-900/20 dark:bg-gray-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4" @click.self="$emit('close')">
+    <div class="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-xl max-w-3xl w-full max-h-[90vh] sm:max-h-[85vh] flex flex-col">
       <!-- Header -->
-      <div class="flex-shrink-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-start gap-2">
+      <div class="flex-shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-start gap-2">
         <div class="flex-1 min-w-0">
           <input
             v-if="editing"
             v-model="form.title"
-            class="text-lg sm:text-2xl font-bold text-gray-900 w-full border-b-2 border-green-500 focus:outline-none"
+            class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white w-full border-b-2 border-green-500 dark:border-green-600 focus:outline-none bg-transparent"
             placeholder="Goal title..."
           />
-          <h2 v-else class="text-lg sm:text-2xl font-bold text-gray-900 truncate">{{ goal.title }}</h2>
+          <h2 v-else class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white truncate">{{ goal.title }}</h2>
 
           <div class="flex items-center flex-wrap gap-x-2 gap-y-1 mt-1.5 sm:mt-2 text-xs sm:text-sm">
             <span :class="statusBadgeClass">{{ goal.status }}</span>
-            <span class="text-gray-500">•</span>
-            <span>{{ trackingTypeLabel }}</span>
-            <span class="text-gray-500">•</span>
-            <span>{{ lifeAreaIcon }} {{ goal.life_area }}</span>
-            <span class="text-gray-500">•</span>
+            <span class="text-gray-500 dark:text-gray-400">•</span>
+            <span class="text-gray-900 dark:text-gray-300">{{ trackingTypeLabel }}</span>
+            <span class="text-gray-500 dark:text-gray-400">•</span>
+            <span class="text-gray-900 dark:text-gray-300">{{ lifeAreaIcon }} {{ goal.life_area }}</span>
+            <span class="text-gray-500 dark:text-gray-400">•</span>
             <span
-              :class="goal.is_public ? 'text-green-600' : 'text-gray-500'"
+              :class="goal.is_public ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'"
               :title="goal.is_public ? 'Public - visible on your profile' : 'Private - only you can see'"
             >
               {{ goal.is_public ? '🌍 Public' : '🔒 Private' }}
             </span>
-            <span v-if="goal.target_date" class="text-gray-500">• {{ formatDate(goal.target_date) }}</span>
+            <span v-if="goal.target_date" class="text-gray-500 dark:text-gray-400">• {{ formatDate(goal.target_date) }}</span>
           </div>
         </div>
 
@@ -33,7 +33,7 @@
           <button
             v-if="!editing"
             @click="editing = true"
-            class="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+            class="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
           >
             Edit
           </button>
@@ -41,13 +41,13 @@
             v-else
             @click="saveGoal"
             :disabled="saving"
-            class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+            class="px-3 sm:px-4 py-1.5 text-xs sm:text-sm bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-600 disabled:opacity-50"
           >
             {{ saving ? 'Saving...' : 'Save' }}
           </button>
           <button
             @click="$emit('close')"
-            class="text-gray-400 hover:text-gray-600"
+            class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-400"
           >
             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -60,37 +60,37 @@
       <div class="overflow-y-auto flex-1 p-4 sm:p-6 space-y-4 sm:space-y-6">
         <!-- Description -->
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Why this matters</label>
+          <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Why this matters</label>
           <textarea
             v-if="editing"
             v-model="form.description"
             rows="2"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
             placeholder="What makes this goal important?"
           ></textarea>
-          <p v-else class="text-gray-700">{{ goal.description || 'No description' }}</p>
+          <p v-else class="text-gray-700 dark:text-gray-300">{{ goal.description || 'No description' }}</p>
         </div>
 
         <!-- Goal Relationships -->
-        <div v-if="goal.parent || (goal.children && goal.children.length > 0)" class="bg-gray-50 rounded-lg p-4 space-y-2">
+        <div v-if="goal.parent || (goal.children && goal.children.length > 0)" class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
           <div v-if="goal.parent" class="flex items-center gap-2 text-sm">
-            <span class="text-gray-500">Part of:</span>
-            <span class="font-medium text-gray-900">{{ goal.parent.title }}</span>
-            <span class="text-xs text-gray-400">({{ timeHorizonLabel(goal.parent.time_horizon) }})</span>
+            <span class="text-gray-500 dark:text-gray-400">Part of:</span>
+            <span class="font-medium text-gray-900 dark:text-white">{{ goal.parent.title }}</span>
+            <span class="text-xs text-gray-400 dark:text-gray-500">({{ timeHorizonLabel(goal.parent.time_horizon) }})</span>
           </div>
 
           <div v-if="goal.children && goal.children.length > 0">
-            <div class="text-sm text-gray-500 mb-1">Sub-goals:</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sub-goals:</div>
             <div class="space-y-1">
               <div
                 v-for="child in goal.children"
                 :key="child.id"
                 class="flex items-center gap-2 text-sm pl-3"
               >
-                <span class="text-gray-400">↳</span>
-                <span class="font-medium text-gray-900">{{ child.title }}</span>
-                <span class="text-xs text-gray-400">({{ timeHorizonLabel(child.time_horizon) }})</span>
-                <span v-if="child.status === 'completed'" class="text-xs text-green-600">✓</span>
+                <span class="text-gray-400 dark:text-gray-500">↳</span>
+                <span class="font-medium text-gray-900 dark:text-white">{{ child.title }}</span>
+                <span class="text-xs text-gray-400 dark:text-gray-500">({{ timeHorizonLabel(child.time_horizon) }})</span>
+                <span v-if="child.status === 'completed'" class="text-xs text-green-600 dark:text-green-400">✓</span>
               </div>
             </div>
           </div>
@@ -99,30 +99,30 @@
         <!-- Metric Goal Content -->
         <div v-if="goal.tracking_type === 'metric'" class="space-y-4">
           <!-- Current Stats -->
-          <div class="bg-gray-50 rounded-lg p-4">
+          <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
             <div class="grid grid-cols-4 gap-4 text-center">
               <div>
-                <div class="text-xs text-gray-500 mb-1">Start</div>
-                <div class="font-bold text-lg">{{ formatMetric(goal.metric_start_value) }}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Start</div>
+                <div class="font-bold text-lg text-gray-900 dark:text-white">{{ formatMetric(goal.metric_start_value) }}</div>
               </div>
               <div>
-                <div class="text-xs text-gray-500 mb-1">Current</div>
-                <div class="font-bold text-lg text-green-600">{{ formatMetric(goal.metric_current_value) }}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Current</div>
+                <div class="font-bold text-lg text-green-600 dark:text-green-400">{{ formatMetric(goal.metric_current_value) }}</div>
               </div>
               <div>
-                <div class="text-xs text-gray-500 mb-1">Target</div>
-                <div class="font-bold text-lg">{{ formatMetric(goal.metric_target_value) }}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Target</div>
+                <div class="font-bold text-lg text-gray-900 dark:text-white">{{ formatMetric(goal.metric_target_value) }}</div>
               </div>
               <div>
-                <div class="text-xs text-gray-500 mb-1">Progress</div>
-                <div class="font-bold text-lg text-green-600">{{ goal.metric_progress_percentage }}%</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Progress</div>
+                <div class="font-bold text-lg text-green-600 dark:text-green-400">{{ goal.metric_progress_percentage }}%</div>
               </div>
             </div>
 
             <!-- Progress Bar -->
-            <div class="mt-4 w-full bg-gray-200 rounded-full h-2">
+            <div class="mt-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div
-                class="bg-green-600 h-2 rounded-full transition-all"
+                class="bg-green-600 dark:bg-green-500 h-2 rounded-full transition-all"
                 :style="{ width: goal.metric_progress_percentage + '%' }"
               ></div>
             </div>
@@ -131,10 +131,10 @@
           <!-- Update History -->
           <div>
             <div class="flex justify-between items-center mb-3">
-              <h3 class="font-semibold text-gray-900">Update History</h3>
+              <h3 class="font-semibold text-gray-900 dark:text-white">Update History</h3>
               <button
                 @click="$emit('update-metric', goal)"
-                class="text-sm text-green-600 hover:text-green-700 font-medium"
+                class="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium"
               >
                 + Add Update
               </button>
@@ -144,31 +144,31 @@
               <div
                 v-for="update in goal.updates"
                 :key="update.id"
-                class="border border-gray-200 rounded-lg p-3 text-sm"
+                class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 text-sm bg-white dark:bg-gray-700/50"
               >
                 <div class="flex justify-between items-start mb-1">
-                  <span class="font-semibold">{{ formatMetric(update.metric_value) }}</span>
-                  <span class="text-xs text-gray-500">{{ formatDate(update.update_date) }}</span>
+                  <span class="font-semibold text-gray-900 dark:text-white">{{ formatMetric(update.metric_value) }}</span>
+                  <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(update.update_date) }}</span>
                 </div>
-                <p v-if="update.note" class="text-gray-600 text-xs">{{ update.note }}</p>
+                <p v-if="update.note" class="text-gray-600 dark:text-gray-400 text-xs">{{ update.note }}</p>
               </div>
             </div>
-            <div v-else class="text-sm text-gray-500 italic">No updates yet</div>
+            <div v-else class="text-sm text-gray-500 dark:text-gray-400 italic">No updates yet</div>
           </div>
         </div>
 
         <!-- Milestone Goal Content -->
         <div v-else-if="goal.tracking_type === 'milestone'" class="space-y-4">
           <!-- Progress Stats -->
-          <div class="bg-gray-50 rounded-lg p-4">
+          <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
             <div class="text-center mb-4">
-              <div class="text-xs text-gray-500 mb-1">Milestones</div>
-              <div class="font-bold text-lg">{{ completedMilestones }}/{{ totalMilestones }}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">Milestones</div>
+              <div class="font-bold text-lg text-gray-900 dark:text-white">{{ completedMilestones }}/{{ totalMilestones }}</div>
             </div>
 
-            <div class="w-full bg-gray-200 rounded-full h-2">
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div
-                class="bg-green-600 h-2 rounded-full transition-all"
+                class="bg-green-600 dark:bg-green-500 h-2 rounded-full transition-all"
                 :style="{ width: currentProgress + '%' }"
               ></div>
             </div>
@@ -177,11 +177,11 @@
           <!-- Milestones -->
           <div>
             <div class="flex justify-between items-center mb-3">
-              <h3 class="font-semibold text-gray-900">Milestones</h3>
+              <h3 class="font-semibold text-gray-900 dark:text-white">Milestones</h3>
               <button
                 v-if="editing"
                 @click="addMilestone"
-                class="text-sm text-green-600 hover:text-green-700 font-medium"
+                class="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium"
               >
                 + Add Milestone
               </button>
@@ -191,14 +191,14 @@
               <div
                 v-for="(milestone, index) in milestones"
                 :key="milestone.id || `new-${index}`"
-                class="flex items-center gap-2 p-2 border border-gray-200 rounded-lg"
+                class="flex items-center gap-2 p-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700/50"
               >
                 <input
                   v-if="!editing"
                   type="checkbox"
                   :checked="milestone.completed"
                   @change="toggleMilestone(milestone)"
-                  class="w-5 h-5 text-green-600 border-gray-300 rounded flex-shrink-0"
+                  class="w-5 h-5 text-green-600 dark:text-green-500 border-gray-300 dark:border-gray-600 rounded flex-shrink-0 focus:ring-green-500 dark:focus:ring-green-600 bg-white dark:bg-gray-700"
                 />
 
                 <input
@@ -206,12 +206,12 @@
                   v-model="milestone.title"
                   type="text"
                   placeholder="Milestone title..."
-                  class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-green-500"
+                  class="flex-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-green-500 dark:focus:ring-green-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                 />
                 <span
                   v-else
                   class="flex-1 text-sm"
-                  :class="milestone.completed ? 'line-through text-gray-500' : 'text-gray-900'"
+                  :class="milestone.completed ? 'line-through text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-white'"
                 >
                   {{ milestone.title }}
                 </span>
@@ -220,16 +220,16 @@
                   v-if="editing"
                   v-model="milestone.target_date"
                   type="date"
-                  class="px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-green-500"
+                  class="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-green-500 dark:focus:ring-green-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
-                <span v-else-if="milestone.target_date" class="text-xs text-gray-500 flex-shrink-0">
+                <span v-else-if="milestone.target_date" class="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
                   {{ formatDate(milestone.target_date) }}
                 </span>
 
                 <button
                   v-if="editing"
                   @click="removeMilestone(index)"
-                  class="text-red-600 hover:text-red-700 flex-shrink-0"
+                  class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex-shrink-0"
                 >
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -237,17 +237,17 @@
                 </button>
               </div>
             </div>
-            <div v-else class="text-sm text-gray-500 italic">No milestones yet</div>
+            <div v-else class="text-sm text-gray-500 dark:text-gray-400 italic">No milestones yet</div>
           </div>
         </div>
 
         <!-- Evolution Goal Content -->
         <div v-else-if="goal.tracking_type === 'evolution'" class="space-y-4">
           <div class="flex justify-between items-center">
-            <h3 class="font-semibold text-gray-900">Journal Updates</h3>
+            <h3 class="font-semibold text-gray-900 dark:text-white">Journal Updates</h3>
             <button
               @click="$emit('add-update', goal)"
-              class="text-sm text-green-600 hover:text-green-700 font-medium"
+              class="text-sm text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium"
             >
               + Add Update
             </button>
@@ -257,36 +257,36 @@
             <div
               v-for="update in goal.updates"
               :key="update.id"
-              class="border border-gray-200 rounded-lg p-4"
+              class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-700/50"
             >
               <div class="flex justify-between items-start mb-2">
-                <span class="text-xs font-semibold text-gray-500">{{ formatDate(update.update_date) }}</span>
+                <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">{{ formatDate(update.update_date) }}</span>
               </div>
-              <p class="text-gray-700 text-sm whitespace-pre-wrap">{{ update.note }}</p>
+              <p class="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap">{{ update.note }}</p>
             </div>
           </div>
-          <div v-else class="text-sm text-gray-500 italic">No updates yet</div>
+          <div v-else class="text-sm text-gray-500 dark:text-gray-400 italic">No updates yet</div>
         </div>
 
         <!-- Active Goal Content -->
         <div v-else-if="goal.tracking_type === 'active'">
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+          <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-300">
             <p class="font-medium mb-1">Ongoing Goal</p>
             <p>This is an active goal with no specific end date. Update as needed.</p>
           </div>
 
           <div v-if="goal.last_update_note" class="mt-4">
-            <h3 class="font-semibold text-gray-900 mb-2">Latest Note</h3>
-            <p class="text-gray-700 text-sm">{{ goal.last_update_note }}</p>
+            <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Latest Note</h3>
+            <p class="text-gray-700 dark:text-gray-300 text-sm">{{ goal.last_update_note }}</p>
           </div>
         </div>
 
         <!-- Edit Fields (when editing) -->
-        <div v-if="editing" class="space-y-4 pt-4 border-t">
+        <div v-if="editing" class="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-semibold mb-2">Status</label>
-              <select v-model="form.status" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Status</label>
+              <select v-model="form.status" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                 <option value="active">Active</option>
                 <option value="completed">Completed</option>
                 <option value="paused">Paused</option>
@@ -295,19 +295,19 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold mb-2">Target Date</label>
+              <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Target Date</label>
               <input
                 v-model="form.target_date"
                 type="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-semibold mb-2">Time Horizon</label>
-              <select v-model="form.time_horizon" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Time Horizon</label>
+              <select v-model="form.time_horizon" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                 <option value="3_year">🎯 3-Year</option>
                 <option value="yearly">📆 Yearly</option>
                 <option value="quarterly">📅 Quarterly</option>
@@ -316,8 +316,8 @@
             </div>
 
             <div>
-              <label class="block text-sm font-semibold mb-2">Life Area</label>
-              <select v-model="form.life_area" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Life Area</label>
+              <select v-model="form.life_area" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
                 <option value="career">💼 Career</option>
                 <option value="health">🏃 Health</option>
                 <option value="relationships">❤️ Relationships</option>
@@ -330,35 +330,35 @@
           </div>
 
           <!-- Metric Goal Edit Fields -->
-          <div v-if="goal.tracking_type === 'metric'" class="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
-            <h4 class="text-sm font-semibold text-gray-900">Metric Settings</h4>
+          <div v-if="goal.tracking_type === 'metric'" class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900 rounded-lg p-4 space-y-3">
+            <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Metric Settings</h4>
             <div class="grid grid-cols-3 gap-3">
               <div>
-                <label class="block text-xs font-semibold mb-1">Unit</label>
+                <label class="block text-xs font-semibold mb-1 text-gray-900 dark:text-white">Unit</label>
                 <input
                   v-model="form.metric_unit"
                   type="text"
-                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
                   placeholder="€, kg, #"
                   maxlength="10"
                 />
               </div>
               <div>
-                <label class="block text-xs font-semibold mb-1">Start Value</label>
+                <label class="block text-xs font-semibold mb-1 text-gray-900 dark:text-white">Start Value</label>
                 <input
                   v-model.number="form.metric_start_value"
                   type="number"
                   step="0.01"
-                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
               <div>
-                <label class="block text-xs font-semibold mb-1">Target Value</label>
+                <label class="block text-xs font-semibold mb-1 text-gray-900 dark:text-white">Target Value</label>
                 <input
                   v-model.number="form.metric_target_value"
                   type="number"
                   step="0.01"
-                  class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                  class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
               </div>
             </div>
@@ -367,36 +367,36 @@
                 v-model="form.metric_decrease"
                 type="checkbox"
                 id="edit_metric_decrease"
-                class="w-4 h-4 text-green-600 border-gray-300 rounded"
+                class="w-4 h-4 text-green-600 dark:text-green-500 border-gray-300 dark:border-gray-600 rounded focus:ring-green-500 dark:focus:ring-green-600 bg-white dark:bg-gray-700"
               />
-              <label for="edit_metric_decrease" class="text-xs">Lower is better (mortgage, weight loss)</label>
+              <label for="edit_metric_decrease" class="text-xs text-gray-900 dark:text-gray-300">Lower is better (mortgage, weight loss)</label>
             </div>
           </div>
 
           <!-- Period Identifier (for quarterly/yearly) -->
           <div v-if="form.time_horizon === 'quarterly' || form.time_horizon === 'yearly'">
-            <label class="block text-sm font-semibold mb-2">Period (Optional)</label>
+            <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Period (Optional)</label>
             <input
               v-model="form.period_identifier"
               type="text"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
               :placeholder="form.time_horizon === 'quarterly' ? 'Q1_2025' : '2025'"
             />
           </div>
 
           <!-- Parent Goal -->
           <div v-if="availableParentGoals.length > 0">
-            <label class="block text-sm font-semibold mb-2">Parent Goal (Optional)</label>
+            <label class="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">Parent Goal (Optional)</label>
             <select
               v-model="form.parent_goal_id"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option :value="null">None - standalone goal</option>
               <option v-for="goal in availableParentGoals" :key="goal.id" :value="goal.id">
                 {{ goal.title }}
               </option>
             </select>
-            <p class="text-xs text-gray-500 mt-1">Link this to a broader goal</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Link this to a broader goal</p>
           </div>
 
           <!-- Public Toggle -->
@@ -405,17 +405,17 @@
               v-model="form.is_public"
               type="checkbox"
               id="edit_is_public"
-              class="w-4 h-4 text-green-600 border-gray-300 rounded"
+              class="w-4 h-4 text-green-600 dark:text-green-500 border-gray-300 dark:border-gray-600 rounded focus:ring-green-500 dark:focus:ring-green-600 bg-white dark:bg-gray-700"
             />
-            <label for="edit_is_public" class="text-sm">Make this goal public (visible on your profile)</label>
+            <label for="edit_is_public" class="text-sm text-gray-900 dark:text-gray-300">Make this goal public (visible on your profile)</label>
           </div>
         </div>
 
         <!-- Actions -->
-        <div class="flex justify-between items-center pt-4 border-t">
+        <div class="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
             @click="deleteGoal"
-            class="text-sm text-red-600 hover:text-red-700 font-medium"
+            class="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium"
           >
             Delete Goal
           </button>
@@ -423,7 +423,7 @@
           <button
             v-if="goal.status !== 'completed'"
             @click="markComplete"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold"
+            class="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 text-sm font-semibold"
           >
             Mark as Complete
           </button>
@@ -536,10 +536,10 @@ const trackingTypeLabel = computed(() => {
 
 const statusBadgeClass = computed(() => {
   const colors = {
-    active: 'px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800',
-    completed: 'px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800',
-    paused: 'px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800',
-    abandoned: 'px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800',
+    active: 'px-2 py-1 text-xs font-semibold rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400',
+    completed: 'px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400',
+    paused: 'px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400',
+    abandoned: 'px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-400',
   };
   return colors[props.goal.status] || colors.active;
 });

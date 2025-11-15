@@ -1,36 +1,6 @@
 <template>
   <AppLayout>
     <div class="max-w-7xl mx-auto">
-      <!-- Compact Header -->
-      <div class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-200 px-3 sm:px-4 py-2">
-        <div class="flex items-center justify-between">
-          <h2 class="text-base sm:text-lg font-bold text-black">
-            Profile
-            <span v-if="isPreviewMode" class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-normal hidden sm:inline">
-              Public Preview
-            </span>
-          </h2>
-          <div class="flex gap-1 sm:gap-2">
-            <Link
-              v-if="isActualOwner && !isPreviewMode"
-              :href="`/@${profileUser.username}?preview=public`"
-              class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors"
-            >
-              <span>👁️</span>
-              <span class="hidden sm:inline">Preview Public</span>
-            </Link>
-            <Link
-              v-if="isPreviewMode"
-              :href="`/@${profileUser.username}`"
-              class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors"
-            >
-              <span>←</span>
-              <span class="hidden sm:inline">My View</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-
       <div class="px-3 sm:px-4 py-3 sm:py-4 space-y-3 sm:space-y-4">
         <!-- Unified Profile Header with Activity Grid -->
         <ProfileHeader
@@ -45,16 +15,16 @@
         />
 
         <!-- Habits with 365-Day Trackers -->
-        <div v-if="publicHabits && publicHabits.length > 0" class="bg-white rounded-lg p-3 sm:p-4 border border-gray-200">
+        <div v-if="publicHabits && publicHabits.length > 0" class="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700 transition-colors">
           <div class="flex items-center justify-between mb-3">
-            <h2 class="text-base font-bold text-gray-900 flex items-center gap-2">
+            <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <span>🔥</span>
               Habits
             </h2>
             <Link
               v-if="isOwnProfile"
               :href="`/@${profileUser.username}/habits`"
-              class="text-xs text-green-600 hover:text-green-700 active:text-green-800 font-medium"
+              class="text-xs text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 active:text-green-800 dark:active:text-green-500 font-medium"
             >
               Manage →
             </Link>
@@ -64,16 +34,16 @@
             <div
               v-for="habit in habitsWithYearData"
               :key="habit.id"
-              class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md active:shadow-lg transition-shadow"
+              class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md active:shadow-lg transition-all"
             >
               <!-- Habit Header -->
-              <div class="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-100">
+              <div class="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-100 dark:border-gray-700">
                 <div class="flex items-start sm:items-center justify-between gap-2">
                   <div class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     <span class="text-xl sm:text-2xl flex-shrink-0">{{ habit.emoji }}</span>
                     <div class="min-w-0 flex-1">
-                      <h3 class="text-sm font-semibold text-gray-900 truncate">{{ habit.name }}</h3>
-                      <div class="flex items-center gap-2 sm:gap-3 mt-1 text-[11px] sm:text-xs text-gray-500 flex-wrap">
+                      <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ habit.name }}</h3>
+                      <div class="flex items-center gap-2 sm:gap-3 mt-1 text-[11px] sm:text-xs text-gray-500 dark:text-gray-400 flex-wrap">
                         <span>{{ formatFrequency(habit.frequency) }}</span>
                         <span
                           v-if="habit.allow_multiple_checks"
@@ -88,7 +58,7 @@
                         </span>
                         <span class="flex items-center gap-1">
                           <span :style="{ color: habit.color || '#10b981' }">🔥</span>
-                          <span class="font-semibold text-gray-900">{{ habit.current_streak }}</span>
+                          <span class="font-semibold text-gray-900 dark:text-white">{{ habit.current_streak }}</span>
                           <span>day streak</span>
                         </span>
                       </div>
@@ -98,7 +68,7 @@
                     <div class="text-base sm:text-lg font-bold" :style="{ color: habit.color || '#10b981' }">
                       {{ habit.completion_rate }}%
                     </div>
-                    <div class="text-[10px] sm:text-xs text-gray-500 hidden sm:block">completion</div>
+                    <div class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 hidden sm:block">completion</div>
                   </div>
                 </div>
               </div>
@@ -115,12 +85,12 @@
         </div>
 
         <!-- Goals: Active & Timeline -->
-        <div v-if="publicGoals && publicGoals.length > 0" class="bg-white rounded-lg p-3 sm:p-4 border border-gray-200">
+        <div v-if="publicGoals && publicGoals.length > 0" class="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700 transition-colors">
           <div class="flex items-center justify-between mb-3">
-            <h2 class="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-2">
+            <h2 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <span>🎯</span>
               Goals
-              <span class="text-[10px] sm:text-xs font-normal text-gray-500">
+              <span class="text-[10px] sm:text-xs font-normal text-gray-500 dark:text-gray-400">
                 ({{ totalActiveGoals }} active<span v-if="totalCompletedGoals > 0">, {{ totalCompletedGoals }} completed</span>)
               </span>
             </h2>
@@ -128,14 +98,14 @@
               <button
                 v-if="publicGoals.length > 4"
                 @click="goalsExpanded = !goalsExpanded"
-                class="text-[10px] sm:text-xs font-medium text-green-600 hover:text-green-700 active:text-green-800 transition-colors"
+                class="text-[10px] sm:text-xs font-medium text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 active:text-green-800 dark:active:text-green-500 transition-colors"
               >
                 {{ goalsExpanded ? 'Show less' : 'Show all' }}
               </button>
               <Link
                 v-if="isOwnProfile"
                 :href="`/@${profileUser.username}/journey/goals`"
-                class="text-[10px] sm:text-xs text-green-600 hover:text-green-700 active:text-green-800 font-medium"
+                class="text-[10px] sm:text-xs text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 active:text-green-800 dark:active:text-green-500 font-medium"
               >
                 Manage →
               </Link>
@@ -149,7 +119,7 @@
             <!-- Active Goals Section -->
             <div v-if="activeGoals.length > 0">
               <div class="flex items-center gap-2 mb-3">
-                <h3 class="text-xs sm:text-sm font-bold text-gray-800">🚀 Active Goals</h3>
+                <h3 class="text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">🚀 Active Goals</h3>
               </div>
 
               <div class="space-y-4">
@@ -162,10 +132,10 @@
                   <!-- Group header -->
                   <div class="flex items-center gap-2 mb-2">
                     <span class="text-sm sm:text-base">{{ group.icon }}</span>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-gray-600 uppercase tracking-wide">
+                    <h4 class="text-[10px] sm:text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                       {{ group.label }}
                     </h4>
-                    <span class="text-[10px] sm:text-xs text-gray-500">({{ group.goals.length }})</span>
+                    <span class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">({{ group.goals.length }})</span>
                   </div>
 
                   <!-- Goals in this group -->
@@ -173,23 +143,23 @@
                     <div
                       v-for="goal in group.goals"
                       :key="goal.id"
-                      class="p-2 sm:p-3 border border-gray-200 rounded-lg hover:border-green-300 active:border-green-400 active:bg-green-50/30 transition-all"
+                      class="p-2 sm:p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-green-300 dark:hover:border-green-600 active:border-green-400 dark:active:border-green-500 active:bg-green-50/30 dark:active:bg-green-900/20 transition-all"
                     >
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex-1">
-                          <h5 class="text-xs sm:text-sm font-semibold text-gray-900">{{ goal.title }}</h5>
+                          <h5 class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">{{ goal.title }}</h5>
                           <div class="flex gap-1.5 mt-1">
-                            <span class="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] sm:text-xs rounded">
+                            <span class="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-[10px] sm:text-xs rounded">
                               {{ goal.life_area }}
                             </span>
                           </div>
                         </div>
-                        <div class="text-base sm:text-xl font-bold" :class="goal.progress_percentage >= 100 ? 'text-green-600' : 'text-gray-900'">
+                        <div class="text-base sm:text-xl font-bold" :class="goal.progress_percentage >= 100 ? 'text-green-600 dark:text-green-400' : 'text-gray-900 dark:text-white'">
                           {{ goal.progress_percentage }}%
                         </div>
                       </div>
 
-                      <div class="w-full bg-gray-200 rounded-full h-1.5">
+                      <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div
                           class="h-1.5 rounded-full transition-all"
                           :class="goal.on_track ? 'bg-green-500' : 'bg-amber-500'"
@@ -197,12 +167,12 @@
                         ></div>
                       </div>
 
-                      <div class="flex justify-between text-[10px] sm:text-xs text-gray-600 mt-1">
+                      <div class="flex justify-between text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mt-1">
                         <span v-if="goal.tracking_type === 'milestone'">
                           {{ goal.milestones_completed }}/{{ goal.milestones_total }} milestones
                         </span>
-                        <span v-if="goal.on_track" class="text-green-600 font-medium">On track</span>
-                        <span v-else class="text-amber-600 font-medium">Behind</span>
+                        <span v-if="goal.on_track" class="text-green-600 dark:text-green-400 font-medium">On track</span>
+                        <span v-else class="text-amber-600 dark:text-amber-400 font-medium">Behind</span>
                       </div>
                     </div>
                   </div>
@@ -211,9 +181,9 @@
             </div>
 
             <!-- Completed Goals Timeline -->
-            <div v-if="completedGoals.length > 0" class="border-t border-gray-200 pt-4">
+            <div v-if="completedGoals.length > 0" class="border-t border-gray-200 dark:border-gray-700 pt-4">
               <div class="flex items-center gap-2 mb-3">
-                <h3 class="text-xs sm:text-sm font-bold text-gray-800">✅ Completed Goals</h3>
+                <h3 class="text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200">✅ Completed Goals</h3>
               </div>
 
               <div class="space-y-4">
@@ -226,10 +196,10 @@
                   <!-- Period header -->
                   <div class="flex items-center gap-2 mb-2">
                     <span class="text-sm sm:text-base">🏆</span>
-                    <h4 class="text-[10px] sm:text-xs font-bold text-green-700 uppercase tracking-wide">
+                    <h4 class="text-[10px] sm:text-xs font-bold text-green-700 dark:text-green-400 uppercase tracking-wide">
                       {{ period.label }}
                     </h4>
-                    <span class="text-[10px] sm:text-xs text-gray-500">({{ period.goals.length }})</span>
+                    <span class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">({{ period.goals.length }})</span>
                   </div>
 
                   <!-- Completed goals in this period -->
@@ -237,39 +207,39 @@
                     <div
                       v-for="goal in period.goals"
                       :key="goal.id"
-                      class="p-2 sm:p-3 border border-green-200 rounded-lg bg-green-50/50"
+                      class="p-2 sm:p-3 border border-green-200 dark:border-green-800 rounded-lg bg-green-50/50 dark:bg-green-900/20"
                     >
                       <div class="flex items-center justify-between mb-2">
                         <div class="flex-1 min-w-0">
-                          <h5 class="text-xs sm:text-sm font-semibold text-gray-700 line-through">
+                          <h5 class="text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 line-through">
                             {{ goal.title }}
                           </h5>
                           <div class="flex gap-1.5 mt-1">
-                            <span class="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] sm:text-xs rounded">
+                            <span class="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-[10px] sm:text-xs rounded">
                               {{ goal.life_area }}
                             </span>
-                            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 bg-green-100 text-green-700 rounded font-medium">
+                            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded font-medium">
                               ✓
                             </span>
                           </div>
                         </div>
-                        <div class="text-base sm:text-xl font-bold text-green-600 flex-shrink-0">
+                        <div class="text-base sm:text-xl font-bold text-green-600 dark:text-green-400 flex-shrink-0">
                           100%
                         </div>
                       </div>
 
-                      <div class="w-full bg-gray-200 rounded-full h-1.5">
+                      <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                         <div
                           class="h-1.5 rounded-full bg-green-500 transition-all"
                           style="width: 100%"
                         ></div>
                       </div>
 
-                      <div class="flex justify-between text-[10px] sm:text-xs text-gray-600 mt-1">
+                      <div class="flex justify-between text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 mt-1">
                         <span v-if="goal.tracking_type === 'milestone'">
                           {{ goal.milestones_total }}/{{ goal.milestones_total }} milestones
                         </span>
-                        <span class="text-green-600 font-medium">Completed</span>
+                        <span class="text-green-600 dark:text-green-400 font-medium">Completed</span>
                       </div>
                     </div>
                   </div>
@@ -280,15 +250,15 @@
         </div>
 
         <!-- Vision Section -->
-        <div v-if="visionSnippet && visionSnippet.length > 0" class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-3 sm:p-4 border border-indigo-200">
+        <div v-if="visionSnippet && visionSnippet.length > 0" class="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950 dark:to-purple-950 rounded-lg p-3 sm:p-4 border border-indigo-200 dark:border-indigo-800 transition-colors">
           <div class="flex items-center justify-between mb-3">
-            <h2 class="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-2">
+            <h2 class="text-sm sm:text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <span>🎯</span>
               My Vision
             </h2>
             <button
               @click="visionExpanded = !visionExpanded"
-              class="text-[10px] sm:text-xs font-medium text-indigo-600 hover:text-indigo-700 active:text-indigo-800 transition-colors"
+              class="text-[10px] sm:text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 active:text-indigo-800 dark:active:text-indigo-500 transition-colors"
             >
               {{ visionExpanded ? 'Show less' : 'Show more' }}
             </button>
@@ -300,15 +270,15 @@
             <div
               v-for="(section, index) in visionSnippet"
               :key="section.label"
-              class="bg-white/60 rounded-lg p-2 sm:p-3 border border-indigo-100"
+              class="bg-white/60 dark:bg-gray-800/60 rounded-lg p-2 sm:p-3 border border-indigo-100 dark:border-indigo-900"
             >
-              <h3 class="text-[10px] sm:text-xs font-bold text-indigo-700 uppercase tracking-wide mb-2 flex items-center gap-1">
+              <h3 class="text-[10px] sm:text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wide mb-2 flex items-center gap-1">
                 <span>{{ getSectionIcon(section.label) }}</span>
                 {{ section.label }}
               </h3>
-              <div class="text-xs sm:text-sm text-gray-700 leading-relaxed">
+              <div class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                 <!-- Handle string content (mission, eulogy) -->
-                <p v-if="typeof section.content === 'string'" class="whitespace-pre-line text-gray-800">
+                <p v-if="typeof section.content === 'string'" class="whitespace-pre-line text-gray-800 dark:text-gray-200">
                   {{ section.content }}
                 </p>
 
@@ -326,8 +296,8 @@
                       {{ item.completed ? '✅' : '⬜' }}
                     </span>
                     <span
-                      class="text-xs sm:text-sm text-gray-800"
-                      :class="item.completed ? 'line-through text-gray-500' : ''"
+                      class="text-xs sm:text-sm text-gray-800 dark:text-gray-200"
+                      :class="item.completed ? 'line-through text-gray-500 dark:text-gray-500' : ''"
                     >
                       {{ item.text }}
                     </span>
@@ -337,36 +307,36 @@
                 <!-- Handle Odyssey Plan (object with three paths) -->
                 <div v-else-if="typeof section.content === 'object' && section.label === 'Odyssey Plan'" class="space-y-2 sm:space-y-3">
                   <div v-if="section.content.current_path" class="border-l-3 border-blue-400 pl-2 sm:pl-3">
-                    <div class="text-[10px] sm:text-xs font-semibold text-blue-700 uppercase mb-1">🎯 Current Path</div>
-                    <p class="text-xs sm:text-sm text-gray-700 whitespace-pre-line">{{ section.content.current_path }}</p>
+                    <div class="text-[10px] sm:text-xs font-semibold text-blue-700 dark:text-blue-400 uppercase mb-1">🎯 Current Path</div>
+                    <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ section.content.current_path }}</p>
                   </div>
                   <div v-if="section.content.radical_path" class="border-l-3 border-purple-400 pl-2 sm:pl-3">
-                    <div class="text-[10px] sm:text-xs font-semibold text-purple-700 uppercase mb-1">🚀 Radical Path</div>
-                    <p class="text-xs sm:text-sm text-gray-700 whitespace-pre-line">{{ section.content.radical_path }}</p>
+                    <div class="text-[10px] sm:text-xs font-semibold text-purple-700 dark:text-purple-400 uppercase mb-1">🚀 Radical Path</div>
+                    <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ section.content.radical_path }}</p>
                   </div>
                   <div v-if="section.content.alternative_path" class="border-l-3 border-amber-400 pl-2 sm:pl-3">
-                    <div class="text-[10px] sm:text-xs font-semibold text-amber-700 uppercase mb-1">🌟 Alternative Path</div>
-                    <p class="text-xs sm:text-sm text-gray-700 whitespace-pre-line">{{ section.content.alternative_path }}</p>
+                    <div class="text-[10px] sm:text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase mb-1">🌟 Alternative Path</div>
+                    <p class="text-xs sm:text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ section.content.alternative_path }}</p>
                   </div>
                 </div>
 
                 <!-- Handle Future Calendar (object with ideal days) -->
                 <div v-else-if="typeof section.content === 'object' && section.label === 'Future Calendar'" class="space-y-2 sm:space-y-3">
-                  <div v-for="(dayContent, dayKey) in section.content" :key="dayKey" class="bg-indigo-50 rounded p-2 border border-indigo-100">
-                    <div class="text-[10px] sm:text-xs font-semibold text-indigo-800 uppercase mb-1">
+                  <div v-for="(dayContent, dayKey) in section.content" :key="dayKey" class="bg-indigo-50 dark:bg-indigo-950 rounded p-2 border border-indigo-100 dark:border-indigo-900">
+                    <div class="text-[10px] sm:text-xs font-semibold text-indigo-800 dark:text-indigo-400 uppercase mb-1">
                       {{ formatCalendarDay(dayKey) }}
                     </div>
-                    <p class="text-[10px] sm:text-xs text-gray-700 whitespace-pre-line leading-relaxed">{{ dayContent }}</p>
+                    <p class="text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">{{ dayContent }}</p>
                   </div>
                 </div>
 
                 <!-- Handle Definition of Success (object with categories) -->
                 <div v-else-if="typeof section.content === 'object' && section.label === 'Definition of Success'" class="space-y-1.5 sm:space-y-2">
                   <div v-for="(value, key) in section.content" :key="key" class="flex items-start gap-2">
-                    <span class="text-[10px] sm:text-xs font-semibold text-indigo-700 uppercase tracking-wide flex-shrink-0 mt-0.5">
+                    <span class="text-[10px] sm:text-xs font-semibold text-indigo-700 dark:text-indigo-400 uppercase tracking-wide flex-shrink-0 mt-0.5">
                       {{ formatKey(key) }}:
                     </span>
-                    <span class="text-xs sm:text-sm text-gray-800">{{ value }}</span>
+                    <span class="text-xs sm:text-sm text-gray-800 dark:text-gray-200">{{ value }}</span>
                   </div>
                 </div>
 
@@ -374,13 +344,13 @@
                 <div v-else-if="Array.isArray(section.content)" class="space-y-1">
                   <div v-for="(item, idx) in section.content" :key="idx" class="flex items-start gap-2">
                     <span class="text-gray-400">•</span>
-                    <span class="text-xs sm:text-sm text-gray-800">{{ typeof item === 'string' ? item : item.text || item.title || JSON.stringify(item) }}</span>
+                    <span class="text-xs sm:text-sm text-gray-800 dark:text-gray-200">{{ typeof item === 'string' ? item : item.text || item.title || JSON.stringify(item) }}</span>
                   </div>
                 </div>
                 <div v-else-if="typeof section.content === 'object'" class="space-y-1">
                   <div v-for="(value, key) in section.content" :key="key" class="text-xs sm:text-sm">
-                    <span class="font-medium text-gray-800">{{ formatKey(key) }}:</span>
-                    <span class="text-gray-700 ml-1">{{ value }}</span>
+                    <span class="font-medium text-gray-800 dark:text-gray-200">{{ formatKey(key) }}:</span>
+                    <span class="text-gray-700 dark:text-gray-300 ml-1">{{ value }}</span>
                   </div>
                 </div>
               </div>
@@ -389,13 +359,13 @@
         </div>
 
         <!-- Visitor CTA -->
-        <div v-if="!$page.props.auth.user" class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg p-6 text-center text-white">
+        <div v-if="!$page.props.auth.user" class="bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-700 dark:to-emerald-800 rounded-lg p-6 text-center text-white transition-colors">
           <div class="text-3xl mb-2">🚀</div>
           <h2 class="text-lg font-bold mb-1">Start Your Journey on LOGGD</h2>
-          <p class="text-green-100 text-sm mb-4">Track habits • Set goals • Build consistency</p>
+          <p class="text-green-100 dark:text-green-200 text-sm mb-4">Track habits • Set goals • Build consistency</p>
           <Link
             href="/register"
-            class="inline-block px-6 py-2 bg-white text-green-600 font-semibold text-sm rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
+            class="inline-block px-6 py-2 bg-white dark:bg-gray-800 text-green-600 dark:text-green-400 font-semibold text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 active:bg-gray-200 dark:active:bg-gray-600 transition-colors"
           >
             Sign Up Free
           </Link>
@@ -410,7 +380,7 @@
         class="fixed z-50 pointer-events-none"
         :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }"
       >
-        <div class="bg-gray-900 text-white px-3 py-2 rounded-lg shadow-xl text-xs transform -translate-x-1/2 -translate-y-full -mt-2 max-w-xs">
+        <div class="bg-gray-900 dark:bg-gray-800 text-white px-3 py-2 rounded-lg shadow-xl text-xs transform -translate-x-1/2 -translate-y-full -mt-2 max-w-xs">
           <div class="font-semibold mb-1">{{ formatTooltipDate(tooltip.date) }}</div>
           <div class="flex items-center gap-2">
             <span v-if="tooltip.completed" class="text-green-400">
@@ -424,7 +394,7 @@
           </div>
           <!-- Arrow -->
           <div class="absolute left-1/2 bottom-0 transform -translate-x-1/2 translate-y-full">
-            <div class="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+            <div class="w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-800"></div>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="px-2 sm:px-4 py-3 sm:py-4">
+  <div class="px-2 sm:px-4 py-3 sm:py-4 bg-transparent dark:bg-transparent transition-colors">
     <!-- Header with year selector and legend -->
     <div class="mb-2 flex items-center justify-between flex-wrap gap-2">
       <div class="flex items-center gap-3">
@@ -137,7 +137,7 @@
                 <div
                   v-for="day in week.days"
                   :key="day.date || day.index"
-                  class="w-3 h-3 rounded-sm transition-all cursor-pointer hover:ring-1 hover:ring-gray-400"
+                  class="w-3 h-3 rounded-sm transition-all cursor-pointer hover:ring-1 hover:ring-gray-400 dark:hover:ring-gray-500"
                   :style="getDayStyle(day)"
                   @mouseenter="day.date && $emit('show-tooltip', $event, day)"
                   @mouseleave="$emit('hide-tooltip')"
@@ -186,6 +186,14 @@ const emit = defineEmits(['show-tooltip', 'hide-tooltip', 'change-year']);
 const selectedYear = ref(props.initialYear);
 const mobileScrollContainer = ref(null);
 
+// Detect dark mode
+const isDarkMode = computed(() => {
+  if (typeof document !== 'undefined') {
+    return document.documentElement.classList.contains('dark');
+  }
+  return false;
+});
+
 onMounted(() => {
   if (mobileScrollContainer.value) {
     mobileScrollContainer.value.scrollLeft = mobileScrollContainer.value.scrollWidth;
@@ -233,25 +241,49 @@ const intensityColor = (intensity) => {
   );
 
   if (isVibrantTier && rgb) {
-    // For vibrant tiers with light backgrounds: use color variety like habits grid
-    const colors = [
-      'rgba(0, 0, 0, 0.02)',                     // Empty - barely visible
-      `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`,  // Level 1: Light tint
-      `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`,  // Level 2: Medium tint
-      `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.60)`,  // Level 3: Strong color
-      `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.85)`,  // Level 4: Deep/saturated
-    ];
-    return colors[intensity] || colors[0];
+    // For vibrant tiers: use color overlays
+    if (isDarkMode.value) {
+      // Dark mode: use lighter/brighter colors for visibility
+      const colors = [
+        'rgba(255, 255, 255, 0.05)',                 // Empty - subtle
+        `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.40)`,  // Level 1: Visible tint
+        `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.60)`,  // Level 2: Medium bright
+        `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.80)`,  // Level 3: Strong color
+        `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1.00)`,  // Level 4: Full saturation
+      ];
+      return colors[intensity] || colors[0];
+    } else {
+      // Light mode: use color variety like habits grid
+      const colors = [
+        'rgba(0, 0, 0, 0.02)',                     // Empty - barely visible
+        `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`,  // Level 1: Light tint
+        `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)`,  // Level 2: Medium tint
+        `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.60)`,  // Level 3: Strong color
+        `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.85)`,  // Level 4: Deep/saturated
+      ];
+      return colors[intensity] || colors[0];
+    }
   } else {
-    // For light tier backgrounds: use dark overlays
-    const colors = [
-      'rgba(0, 0, 0, 0.03)',   // Empty
-      'rgba(0, 0, 0, 0.06)',   // Level 1: Very light
-      'rgba(0, 0, 0, 0.12)',   // Level 2: Light
-      'rgba(0, 0, 0, 0.25)',   // Level 3: Medium
-      'rgba(0, 0, 0, 0.45)',   // Level 4: Dark
-    ];
-    return colors[intensity] || colors[1];
+    // For neutral tier backgrounds: use dark overlays in light mode, light overlays in dark mode
+    if (isDarkMode.value) {
+      const colors = [
+        'rgba(255, 255, 255, 0.03)',   // Empty
+        'rgba(255, 255, 255, 0.06)',   // Level 1: Very light
+        'rgba(255, 255, 255, 0.12)',   // Level 2: Light
+        'rgba(255, 255, 255, 0.25)',   // Level 3: Medium
+        'rgba(255, 255, 255, 0.45)',   // Level 4: Bright
+      ];
+      return colors[intensity] || colors[1];
+    } else {
+      const colors = [
+        'rgba(0, 0, 0, 0.03)',   // Empty
+        'rgba(0, 0, 0, 0.06)',   // Level 1: Very light
+        'rgba(0, 0, 0, 0.12)',   // Level 2: Light
+        'rgba(0, 0, 0, 0.25)',   // Level 3: Medium
+        'rgba(0, 0, 0, 0.45)',   // Level 4: Dark
+      ];
+      return colors[intensity] || colors[1];
+    }
   }
 };
 
@@ -401,11 +433,16 @@ const getMobileDayStyle = (day) => {
   }
 
   const color = intensityColor(day.intensity);
+  const darkBorderEmpty = 'rgba(255, 255, 255, 0.06)';
+  const darkBorderActive = 'rgba(255, 255, 255, 0.12)';
+  const lightBorderEmpty = 'rgba(0, 0, 0, 0.08)';
+  const lightBorderActive = 'rgba(0, 0, 0, 0.12)';
+
   return {
     backgroundColor: color,
     border: day.intensity === 0
-      ? '1px solid rgba(0, 0, 0, 0.08)'   // Empty: very subtle border
-      : '1px solid rgba(0, 0, 0, 0.12)',  // Active: slightly stronger border
+      ? `1px solid ${isDarkMode.value ? darkBorderEmpty : lightBorderEmpty}`
+      : `1px solid ${isDarkMode.value ? darkBorderActive : lightBorderActive}`,
   };
 };
 
@@ -416,11 +453,16 @@ const getDayStyle = (day) => {
   }
 
   const color = intensityColor(day.intensity);
+  const darkBorderEmpty = 'rgba(255, 255, 255, 0.06)';
+  const darkBorderActive = 'rgba(255, 255, 255, 0.12)';
+  const lightBorderEmpty = 'rgba(0, 0, 0, 0.08)';
+  const lightBorderActive = 'rgba(0, 0, 0, 0.12)';
+
   return {
     backgroundColor: color,
     border: day.intensity === 0
-      ? '1px solid rgba(0, 0, 0, 0.08)'   // Empty: very subtle border
-      : '1px solid rgba(0, 0, 0, 0.12)',  // Active: slightly stronger border
+      ? `1px solid ${isDarkMode.value ? darkBorderEmpty : lightBorderEmpty}`
+      : `1px solid ${isDarkMode.value ? darkBorderActive : lightBorderActive}`,
   };
 };
 </script>

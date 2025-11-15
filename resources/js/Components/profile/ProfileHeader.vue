@@ -1,5 +1,10 @@
 <template>
-  <div ref="profileCardRef" class="profile-header" :class="headerClasses">
+  <div
+    ref="profileCardRef"
+    class="profile-header"
+    :class="headerClasses"
+    :style="tierStyles"
+  >
     <!-- Animated background effects -->
     <TierBackgroundEffects :tier="levelInfo.level" />
 
@@ -164,6 +169,25 @@ const {
   decorations,
 } = useTierTheme(levelInfoRef);
 
+// CSS custom properties from backend theme
+const tierStyles = computed(() => {
+  const theme = props.levelInfo.color_theme;
+  if (!theme) return {};
+
+  // Check if theme has new format
+  const isDarkMode = document.documentElement.classList.contains('dark');
+
+  return {
+    '--tier-gradient': isDarkMode ? theme.gradient_dark : theme.gradient_light,
+    '--tier-border': isDarkMode ? theme.border_dark : theme.border_light,
+    '--tier-shadow': isDarkMode ? theme.shadow_dark : theme.shadow_light,
+    '--tier-text-primary': theme.text_primary,
+    '--tier-text': isDarkMode ? theme.text_dark : theme.text_light,
+    '--avatar-gradient': theme.avatar_gradient,
+    '--avatar-shadow': theme.avatar_shadow,
+  };
+});
+
 const activeDaysCount = computed(() => props.activityGridData.filter(d => d.activity_count > 0).length);
 
 // Profile card ref for canvas effects
@@ -197,45 +221,71 @@ const handleHideTooltip = () => {
    Colorless → Vibrant Progression
    ============================================ */
 
-/* Tier 1: Awakened - Pale & Colorless */
+/* Tier 1: Awakened - Uses CSS variables from backend */
 .tier-awakened {
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-  border-color: #d1d5db;
+  background: var(--tier-gradient, linear-gradient(135deg, rgba(240, 253, 244, 0.5) 0%, rgba(220, 252, 231, 0.4) 50%, rgba(209, 250, 229, 0.3) 100%));
+  border: var(--tier-border, 1px solid rgba(34, 197, 94, 0.3));
+  box-shadow: var(--tier-shadow, 0 2px 8px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 197, 94, 0.1));
 }
 
-/* Tier 2: Committed - Light Gray */
+/* Tier 2: Committed - Cyan (slightly stronger than Awakened) */
 .tier-committed {
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 50%, #f9fafb 100%);
-  border-color: #9ca3af;
-  box-shadow: 0 2px 8px rgba(156, 163, 175, 0.15);
+  background: linear-gradient(135deg, rgba(207, 250, 254, 0.7) 0%, rgba(165, 243, 252, 0.5) 50%, rgba(103, 232, 249, 0.4) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  box-shadow: 0 2px 10px rgba(6, 182, 212, 0.15), 0 0 0 1px rgba(6, 182, 212, 0.15);
+}
+:global(.dark) .tier-committed {
+  background: linear-gradient(135deg, rgba(22, 78, 99, 0.4) 0%, rgba(14, 116, 144, 0.3) 50%, rgba(8, 145, 178, 0.2) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  box-shadow: 0 2px 10px rgba(6, 182, 212, 0.2), 0 0 0 1px rgba(6, 182, 212, 0.25);
 }
 
-/* Tier 3: Devoted - Silver */
+/* Tier 3: Devoted - Blue (medium strength with visible gradient) */
 .tier-devoted {
-  background: linear-gradient(135deg, #e4e4e7 0%, #d4d4d8 50%, #e4e4e7 100%);
-  border-color: #71717a;
-  box-shadow: 0 3px 10px rgba(113, 113, 122, 0.2);
+  background: linear-gradient(135deg, rgba(191, 219, 254, 0.8) 0%, rgba(147, 197, 253, 0.6) 40%, rgba(96, 165, 250, 0.5) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  box-shadow: 0 3px 12px rgba(59, 130, 246, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.2), 0 0 20px rgba(59, 130, 246, 0.1);
+}
+:global(.dark) .tier-devoted {
+  background: linear-gradient(135deg, rgba(30, 58, 138, 0.5) 0%, rgba(37, 99, 235, 0.4) 40%, rgba(59, 130, 246, 0.3) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.5);
+  box-shadow: 0 3px 12px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.3), 0 0 25px rgba(96, 165, 250, 0.15);
 }
 
-/* Tier 4: Relentless - Steel Blue-Gray */
+/* Tier 4: Relentless - Purple (strong with visible glow) */
 .tier-relentless {
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
-  border-color: #64748b;
-  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.25);
+  background: linear-gradient(135deg, rgba(233, 213, 255, 0.9) 0%, rgba(216, 180, 254, 0.7) 30%, rgba(168, 85, 247, 0.6) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.25), 0 0 0 1px rgba(168, 85, 247, 0.25), 0 0 30px rgba(168, 85, 247, 0.15);
+}
+:global(.dark) .tier-relentless {
+  background: linear-gradient(135deg, rgba(88, 28, 135, 0.6) 0%, rgba(126, 34, 206, 0.5) 30%, rgba(147, 51, 234, 0.4) 100%);
+  border: 1px solid rgba(168, 85, 247, 0.6);
+  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.35), 0 0 0 1px rgba(168, 85, 247, 0.35), 0 0 35px rgba(192, 132, 252, 0.2), inset 0 1px 6px rgba(192, 132, 252, 0.1);
 }
 
-/* Tier 5: Unwavering - Steel Blue */
+/* Tier 5: Unwavering - Rose/Pink (strongest low tier, bridge to mid-tier) */
 .tier-unwavering {
-  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
-  border-color: #0ea5e9;
-  box-shadow: 0 6px 16px rgba(14, 165, 233, 0.35);
+  background: linear-gradient(135deg, rgba(255, 228, 230, 0.95) 0%, rgba(254, 205, 211, 0.8) 25%, rgba(251, 113, 133, 0.7) 100%);
+  border: 1px solid rgba(244, 63, 94, 0.7);
+  box-shadow: 0 5px 16px rgba(244, 63, 94, 0.3), 0 0 0 1px rgba(244, 63, 94, 0.3), 0 0 35px rgba(244, 63, 94, 0.2);
+}
+:global(.dark) .tier-unwavering {
+  background: linear-gradient(135deg, rgba(136, 19, 55, 0.7) 0%, rgba(190, 18, 60, 0.6) 25%, rgba(225, 29, 72, 0.5) 100%);
+  border: 1px solid rgba(244, 63, 94, 0.7);
+  box-shadow: 0 5px 16px rgba(244, 63, 94, 0.4), 0 0 0 1px rgba(244, 63, 94, 0.4), 0 0 40px rgba(251, 113, 133, 0.25), inset 0 1px 8px rgba(251, 113, 133, 0.15);
 }
 
-/* Tier 6: Formidable - Bronze/Gold */
+/* Tier 6: Formidable - Bronze/Gold (first mid-tier, solid backgrounds start) */
 .tier-formidable {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 30%, #fcd34d 60%, #fbbf24 100%);
-  border-color: #d97706;
-  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.4), 0 0 40px rgba(251, 191, 36, 0.2);
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 30%, #d97706 70%, #b45309 100%);
+  border: 1px solid rgba(217, 119, 6, 0.8);
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.35), 0 0 0 1px rgba(217, 119, 6, 0.3), 0 0 45px rgba(251, 191, 36, 0.2);
+}
+:global(.dark) .tier-formidable {
+  background: linear-gradient(135deg, #92400e 0%, #b45309 30%, #d97706 70%, #f59e0b 100%);
+  border: 1px solid rgba(245, 158, 11, 0.8);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4), 0 0 0 1px rgba(245, 158, 11, 0.35), 0 0 50px rgba(251, 191, 36, 0.25), inset 0 1px 10px rgba(253, 224, 71, 0.1);
 }
 
 /* Tier 7: Indomitable - Deep Blue */
@@ -247,42 +297,38 @@ const handleHideTooltip = () => {
 
 /* Tier 8: Invincible - Electric Purple */
 .tier-invincible {
-  background: linear-gradient(135deg, #581c87 0%, #6d28d9 25%, #7c3aed 50%, #8b5cf6 75%, #a78bfa 100%);
-  border-color: #8b5cf6;
-  box-shadow: 0 12px 28px rgba(139, 92, 246, 0.6), 0 0 80px rgba(167, 139, 250, 0.4);
+  background: linear-gradient(135deg, #4c1d95 0%, #5b21b6 25%, #6d28d9 50%, #7c3aed 75%, #8b5cf6 100%);
+  border-color: #7c3aed;
+  box-shadow: 0 8px 18px rgba(139, 92, 246, 0.4), 0 0 40px rgba(167, 139, 250, 0.2);
   animation: glow-pulse-invincible 2.5s ease-in-out infinite;
 }
 
 /* Tier 9: Immortal - Diamond/Crystal */
 .tier-immortal {
-  background: linear-gradient(135deg, #164e63 0%, #0891b2 25%, #06b6d4 50%, #22d3ee 75%, #67e8f9 100%);
-  border-color: #06b6d4;
-  box-shadow: 0 14px 32px rgba(6, 182, 212, 0.7), 0 0 100px rgba(34, 211, 238, 0.5), inset 0 2px 20px rgba(103, 232, 249, 0.3);
-  animation: glow-pulse-immortal 2.3s ease-in-out infinite;
+  background: linear-gradient(135deg, #0e4a5f 0%, #155e75 25%, #0e7490 50%, #0891b2 75%, #06b6d4 100%);
+  border-color: #0891b2;
+  box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4), 0 0 40px rgba(34, 211, 238, 0.2), inset 0 1px 10px rgba(103, 232, 249, 0.15);
 }
 
 /* Tier 10: Eternal - Cosmic Gold */
 .tier-eternal {
-  background: linear-gradient(135deg, #b45309 0%, #d97706 20%, #f59e0b 40%, #fbbf24 60%, #fcd34d 80%, #fde047 100%);
-  border-color: #f59e0b;
-  box-shadow: 0 16px 36px rgba(245, 158, 11, 0.8), 0 0 120px rgba(251, 191, 36, 0.6), inset 0 2px 30px rgba(253, 224, 71, 0.4);
-  animation: glow-pulse-eternal 2.1s ease-in-out infinite;
+  background: linear-gradient(135deg, #92400e 0%, #b45309 20%, #d97706 40%, #f59e0b 60%, #fbbf24 80%, #fcd34d 100%);
+  border-color: #d97706;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(251, 191, 36, 0.25), inset 0 1px 10px rgba(253, 224, 71, 0.2);
 }
 
 /* Tier 11: Omnipotent - Royal Purple/Gold */
 .tier-omnipotent {
-  background: linear-gradient(135deg, #6b21a8 0%, #7e22ce 15%, #a855f7 30%, #c084fc 50%, #f59e0b 70%, #fbbf24 85%, #fde047 100%);
-  border-color: #a855f7;
-  box-shadow: 0 18px 40px rgba(168, 85, 247, 0.9), 0 0 140px rgba(245, 158, 11, 0.7), inset 0 2px 40px rgba(253, 224, 71, 0.5);
-  animation: glow-pulse-omnipotent 2s ease-in-out infinite;
+  background: linear-gradient(135deg, #581c87 0%, #6b21a8 15%, #7e22ce 30%, #a855f7 50%, #d97706 70%, #f59e0b 85%, #fbbf24 100%);
+  border-color: #7e22ce;
+  box-shadow: 0 10px 24px rgba(168, 85, 247, 0.45), 0 0 50px rgba(245, 158, 11, 0.3), inset 0 1px 15px rgba(253, 224, 71, 0.25);
 }
 
 /* Tier 12: Absolute - Prismatic Everything */
 .tier-absolute {
-  background: linear-gradient(135deg, #7e22ce 0%, #a855f7 12%, #c026d3 25%, #d946ef 37%, #f59e0b 50%, #fbbf24 62%, #fde047 75%, #fef08a 87%, #fef3c7 100%);
-  border-color: #d946ef;
-  box-shadow: 0 20px 48px rgba(217, 70, 239, 1), 0 0 180px rgba(251, 191, 36, 0.8), inset 0 2px 50px rgba(254, 240, 138, 0.6);
-  animation: glow-pulse-absolute 1.8s ease-in-out infinite;
+  background: linear-gradient(135deg, #6b21a8 0%, #7e22ce 12%, #a855f7 25%, #c026d3 37%, #d97706 50%, #f59e0b 62%, #fbbf24 75%, #fcd34d 87%, #fde68a 100%);
+  border-color: #a855f7;
+  box-shadow: 0 12px 28px rgba(217, 70, 239, 0.5), 0 0 60px rgba(251, 191, 36, 0.35), inset 0 1px 20px rgba(254, 240, 138, 0.3);
 }
 
 /* ============================================
@@ -310,46 +356,46 @@ const handleHideTooltip = () => {
 
 @keyframes glow-pulse-absolute {
   0%, 100% {
-    box-shadow: 0 20px 48px rgba(217, 70, 239, 1), 0 0 180px rgba(251, 191, 36, 0.8), inset 0 2px 50px rgba(254, 240, 138, 0.6);
+    box-shadow: 0 12px 28px rgba(217, 70, 239, 0.5), 0 0 60px rgba(251, 191, 36, 0.35), inset 0 1px 20px rgba(254, 240, 138, 0.3);
   }
   50% {
-    box-shadow: 0 25px 60px rgba(217, 70, 239, 1), 0 0 220px rgba(251, 191, 36, 1), inset 0 2px 60px rgba(254, 240, 138, 0.8);
+    box-shadow: 0 14px 32px rgba(217, 70, 239, 0.6), 0 0 70px rgba(251, 191, 36, 0.4), inset 0 1px 22px rgba(254, 240, 138, 0.35);
   }
 }
 
 @keyframes glow-pulse-omnipotent {
   0%, 100% {
-    box-shadow: 0 18px 40px rgba(168, 85, 247, 0.9), 0 0 140px rgba(245, 158, 11, 0.7), inset 0 2px 40px rgba(253, 224, 71, 0.5);
+    box-shadow: 0 10px 24px rgba(168, 85, 247, 0.45), 0 0 50px rgba(245, 158, 11, 0.3), inset 0 1px 15px rgba(253, 224, 71, 0.25);
   }
   50% {
-    box-shadow: 0 22px 50px rgba(168, 85, 247, 1), 0 0 180px rgba(245, 158, 11, 0.9), inset 0 2px 50px rgba(253, 224, 71, 0.7);
+    box-shadow: 0 12px 28px rgba(168, 85, 247, 0.5), 0 0 60px rgba(245, 158, 11, 0.35), inset 0 1px 18px rgba(253, 224, 71, 0.3);
   }
 }
 
 @keyframes glow-pulse-eternal {
   0%, 100% {
-    box-shadow: 0 16px 36px rgba(245, 158, 11, 0.8), 0 0 120px rgba(251, 191, 36, 0.6), inset 0 2px 30px rgba(253, 224, 71, 0.4);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(251, 191, 36, 0.25), inset 0 1px 10px rgba(253, 224, 71, 0.2);
   }
   50% {
-    box-shadow: 0 20px 45px rgba(245, 158, 11, 1), 0 0 160px rgba(251, 191, 36, 0.8), inset 0 2px 40px rgba(253, 224, 71, 0.6);
+    box-shadow: 0 10px 24px rgba(245, 158, 11, 0.45), 0 0 50px rgba(251, 191, 36, 0.3), inset 0 1px 12px rgba(253, 224, 71, 0.25);
   }
 }
 
 @keyframes glow-pulse-immortal {
   0%, 100% {
-    box-shadow: 0 14px 32px rgba(6, 182, 212, 0.7), 0 0 100px rgba(34, 211, 238, 0.5), inset 0 2px 20px rgba(103, 232, 249, 0.3);
+    box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4), 0 0 40px rgba(34, 211, 238, 0.2), inset 0 1px 10px rgba(103, 232, 249, 0.15);
   }
   50% {
-    box-shadow: 0 18px 42px rgba(6, 182, 212, 0.9), 0 0 140px rgba(34, 211, 238, 0.7), inset 0 2px 30px rgba(103, 232, 249, 0.5);
+    box-shadow: 0 10px 24px rgba(6, 182, 212, 0.45), 0 0 50px rgba(34, 211, 238, 0.25), inset 0 1px 12px rgba(103, 232, 249, 0.2);
   }
 }
 
 @keyframes glow-pulse-invincible {
   0%, 100% {
-    box-shadow: 0 12px 28px rgba(139, 92, 246, 0.6), 0 0 80px rgba(167, 139, 250, 0.4);
+    box-shadow: 0 8px 18px rgba(139, 92, 246, 0.4), 0 0 40px rgba(167, 139, 250, 0.2);
   }
   50% {
-    box-shadow: 0 16px 36px rgba(139, 92, 246, 0.8), 0 0 120px rgba(167, 139, 250, 0.6);
+    box-shadow: 0 10px 22px rgba(139, 92, 246, 0.45), 0 0 50px rgba(167, 139, 250, 0.25);
   }
 }
 

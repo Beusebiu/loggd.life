@@ -5,33 +5,33 @@
       <JourneyNav />
 
       <div class="mb-4 sm:mb-8">
-        <h1 class="text-xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Daily Check-in</h1>
-        <p class="text-xs sm:text-base text-gray-600">Start your morning with planning, end your day with reflection</p>
-        <p class="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2 italic">💡 A few minutes each day compounds into massive progress.</p>
+        <h1 class="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">Daily Check-in</h1>
+        <p class="text-xs sm:text-base text-gray-600 dark:text-gray-400">Start your morning with planning, end your day with reflection</p>
+        <p class="text-[10px] sm:text-sm text-gray-500 dark:text-gray-400 mt-1 sm:mt-2 italic">💡 A few minutes each day compounds into massive progress.</p>
       </div>
 
       <!-- Mobile History Button -->
       <button
         @click="showMobileHistory = true"
-        class="lg:hidden mb-3 w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-lg hover:border-green-300 transition text-left flex items-center justify-between"
+        class="lg:hidden mb-3 w-full px-3 py-2 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-green-300 dark:hover:border-green-600 transition text-left flex items-center justify-between"
       >
-        <span class="text-xs sm:text-sm font-medium text-gray-900">📅 Check-in History</span>
-        <span class="text-xs sm:text-sm text-gray-600">{{ recentCheckIns.length }} days</span>
+        <span class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white">📅 Check-in History</span>
+        <span class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{{ recentCheckIns.length }} days</span>
       </button>
 
       <div class="flex gap-4 sm:gap-6">
         <!-- History Sidebar (Desktop) -->
         <div class="w-64 hidden lg:block">
           <div class="sticky top-8">
-            <h3 class="text-sm font-bold text-gray-900 mb-3">📅 Check-in History</h3>
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-3">📅 Check-in History</h3>
             <div class="space-y-3 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1">
               <template v-for="(entry, index) in recentCheckIns" :key="entry.date">
                 <!-- Year separator -->
-                <div v-if="index === 0 || getYear(entry.date) !== getYear(recentCheckIns[index - 1].date)" class="sticky top-0 bg-white pt-3 pb-2 z-10 -mx-1 px-1">
+                <div v-if="index === 0 || getYear(entry.date) !== getYear(recentCheckIns[index - 1].date)" class="sticky top-0 bg-white dark:bg-gray-900 pt-3 pb-2 z-10 -mx-1 px-1">
                   <div class="flex items-center gap-2">
-                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-                    <div class="text-xs font-bold text-gray-500 uppercase tracking-wide px-2">{{ getYear(entry.date) }}</div>
-                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
+                    <div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide px-2">{{ getYear(entry.date) }}</div>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
                   </div>
                 </div>
                 <button
@@ -39,16 +39,16 @@
                   :class="[
                     'w-full text-left px-3 py-2 rounded-lg border-2 transition',
                     selectedDate === entry.date
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-green-300 bg-white'
+                      ? 'border-green-500 dark:border-green-600 bg-green-50 dark:bg-green-950/30'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 bg-white dark:bg-gray-800'
                   ]"
                 >
                   <div class="flex items-center justify-between">
                     <div>
-                      <div class="text-sm font-medium text-gray-900">
+                      <div class="text-sm font-medium text-gray-900 dark:text-white">
                         {{ formatDateShort(entry.date) }}
                       </div>
-                      <div class="text-xs text-gray-500">
+                      <div class="text-xs text-gray-500 dark:text-gray-400">
                         {{ entry.date === today ? 'Today' : formatRelative(entry.date) }}
                       </div>
                     </div>
@@ -58,7 +58,7 @@
                   </div>
                 </button>
               </template>
-              <div v-if="recentCheckIns.length === 0" class="text-sm text-gray-500 text-center py-4">
+              <div v-if="recentCheckIns.length === 0" class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
                 No check-ins yet
               </div>
             </div>
@@ -68,30 +68,30 @@
         <!-- Main Content -->
         <div class="flex-1 max-w-4xl">
           <!-- Check-in Streak -->
-          <div class="mb-4 sm:mb-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 p-3 sm:p-6">
+          <div class="mb-4 sm:mb-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-xl border-2 border-green-200 dark:border-green-800 p-3 sm:p-6">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
               <div class="flex items-center gap-3 sm:gap-4">
-                <div class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-full border-2 border-green-300">
+                <div class="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-white dark:bg-gray-800 rounded-full border-2 border-green-300 dark:border-green-700">
                   <span class="text-2xl sm:text-3xl">🔥</span>
                 </div>
                 <div>
-                  <h3 class="text-base sm:text-lg font-bold text-gray-900">Check-in Streak</h3>
-                  <p class="text-xs sm:text-sm text-gray-600 mt-0.5">
-                    <span class="text-xl sm:text-2xl font-bold text-green-600">{{ currentStreak }}</span>
-                    <span class="text-gray-600 ml-1">{{ currentStreak === 1 ? 'day' : 'days' }}</span>
+                  <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Check-in Streak</h3>
+                  <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                    <span class="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-500">{{ currentStreak }}</span>
+                    <span class="text-gray-600 dark:text-gray-400 ml-1">{{ currentStreak === 1 ? 'day' : 'days' }}</span>
                   </p>
                 </div>
               </div>
 
               <div class="text-left sm:text-right w-full sm:w-auto">
-                <div class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-0">Last 7 days</div>
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1 sm:mb-0">Last 7 days</div>
                 <div class="flex gap-1 mt-2">
                   <div
                     v-for="day in last7Days"
                     :key="day.date"
                     :class="[
                       'w-7 h-7 sm:w-8 sm:h-8 rounded-lg transition-all',
-                      day.hasCheckIn ? 'bg-green-600 border-2 border-green-700' : 'bg-white border-2 border-gray-200'
+                      day.hasCheckIn ? 'bg-green-600 dark:bg-green-700 border-2 border-green-700 dark:border-green-600' : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700'
                     ]"
                     :title="day.label"
                   >
@@ -100,7 +100,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="flex gap-1 mt-1 text-[10px] sm:text-xs text-gray-500">
+                <div class="flex gap-1 mt-1 text-[10px] sm:text-xs text-gray-500 dark:text-gray-400">
                   <div v-for="day in last7Days" :key="day.date + '-label'" class="w-7 sm:w-8 text-center">
                     {{ day.dayName }}
                   </div>
@@ -114,7 +114,7 @@
             <div class="flex gap-2 sm:gap-3">
               <button
                 @click="navigateDate(-1)"
-                class="flex-1 md:flex-none px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 text-xs sm:text-sm"
+                class="flex-1 md:flex-none px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs sm:text-sm"
               >
                 <span class="hidden sm:inline">← Previous</span>
                 <span class="sm:hidden">← Prev</span>
@@ -123,8 +123,8 @@
                 @click="navigateDate(1)"
                 :disabled="selectedDate === today"
                 :class="[
-                  'flex-1 md:flex-none px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-gray-700 text-xs sm:text-sm',
-                  selectedDate === today ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'
+                  'flex-1 md:flex-none px-2 sm:px-3 py-1.5 sm:py-2 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300 text-xs sm:text-sm',
+                  selectedDate === today ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 dark:hover:bg-gray-800'
                 ]"
               >
                 <span class="hidden sm:inline">Next →</span>
@@ -137,9 +137,9 @@
                 @change="loadCheckIn"
                 type="date"
                 :max="today"
-                class="flex-1 px-2 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 text-xs sm:text-sm"
+                class="flex-1 px-2 sm:px-4 py-1.5 sm:py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-xs sm:text-sm"
               />
-              <span class="hidden md:inline text-xs sm:text-sm text-gray-600 whitespace-nowrap">
+              <span class="hidden md:inline text-xs sm:text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                 {{ selectedDate === today ? '📝 Today' : '📅 Past' }}
               </span>
             </div>
@@ -147,30 +147,30 @@
 
           <div class="space-y-4 sm:space-y-6">
             <!-- ==================== MORNING START ==================== -->
-            <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200 p-3 sm:p-6">
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 rounded-xl border-2 border-amber-200 dark:border-amber-800 p-3 sm:p-6">
               <div class="flex items-center gap-2 mb-3 sm:mb-4">
                 <span class="text-xl sm:text-2xl">🌅</span>
-                <h2 class="text-lg sm:text-xl font-bold text-gray-900">Morning Start</h2>
+                <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Morning Start</h2>
               </div>
-              <p class="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6">Fill this when you wake up to plan your day</p>
+              <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-4 sm:mb-6">Fill this when you wake up to plan your day</p>
 
               <!-- Yesterday's Quick Review -->
               <div class="mb-6">
-                <h3 class="text-md font-bold text-gray-900 mb-3">📊 Yesterday's Quick Review</h3>
-                <div class="bg-white rounded-lg border border-amber-200 p-4 space-y-4">
+                <h3 class="text-md font-bold text-gray-900 dark:text-white mb-3">📊 Yesterday's Quick Review</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-amber-200 dark:border-amber-800 p-4 space-y-4">
                   <div class="flex items-center gap-3">
                     <label class="flex items-center cursor-pointer">
                       <input
                         type="checkbox"
                         v-model="checkIn.yesterday_priority_completed"
                         @change="saveCheckIn"
-                        class="w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                        class="w-5 h-5 text-green-600 dark:text-green-500 border-gray-300 dark:border-gray-700 rounded focus:ring-green-500 dark:focus:ring-green-600"
                       />
-                      <span class="ml-2 text-sm font-medium text-gray-700">Yesterday's priority completed</span>
+                      <span class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">Yesterday's priority completed</span>
                     </label>
                   </div>
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">What prevented it / went better than expected?</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">What prevented it / went better than expected?</label>
                     <TextareaWithEmoji
                       v-model="checkIn.yesterday_review"
                       @blur="saveCheckIn"
@@ -183,37 +183,37 @@
 
               <!-- Today's Priority & Tasks -->
               <div class="mb-6">
-                <h3 class="text-md font-bold text-gray-900 mb-3">🎯 Today's Focus</h3>
-                <div class="bg-white rounded-lg border border-amber-200 p-4 space-y-4">
+                <h3 class="text-md font-bold text-gray-900 dark:text-white mb-3">🎯 Today's Focus</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-amber-200 dark:border-amber-800 p-4 space-y-4">
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Priority (The ONE thing)</label>
-                    <div class="mb-2 text-xs text-gray-500 bg-blue-50 border border-blue-200 rounded-lg p-2">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Priority (The ONE thing)</label>
+                    <div class="mb-2 text-xs text-gray-500 dark:text-gray-400 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2">
                       💡 Be specific: "Finish user authentication" not "work on app"
                     </div>
                     <input
                       v-model="checkIn.today_priority"
                       @blur="saveCheckIn"
                       type="text"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       placeholder="Write the invoice for client X and send it by 2pm"
                     />
                   </div>
 
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Supporting Tasks (Optional)</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Supporting Tasks (Optional)</label>
                     <div class="space-y-2">
                       <div v-for="(task, index) in checkIn.today_tasks" :key="index" class="flex gap-2">
-                        <span class="text-gray-400 mt-2">•</span>
+                        <span class="text-gray-400 dark:text-gray-500 mt-2">•</span>
                         <input
                           v-model="checkIn.today_tasks[index]"
                           @blur="saveCheckIn"
                           type="text"
-                          class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                          class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 dark:focus:ring-green-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                           placeholder="Reply to 3 emails, review pull request..."
                         />
                         <button
                           @click="checkIn.today_tasks.splice(index, 1); saveCheckIn()"
-                          class="text-red-500 hover:text-red-700"
+                          class="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300"
                         >
                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
@@ -222,7 +222,7 @@
                       </div>
                       <button
                         @click="checkIn.today_tasks.push('')"
-                        class="text-sm text-gray-600 hover:text-gray-700 font-medium px-3 py-2 bg-gray-50 rounded-lg"
+                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-medium px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg"
                       >
                         + Add Task
                       </button>
@@ -233,31 +233,31 @@
 
               <!-- Active Goals Work -->
               <div>
-                <h3 class="text-md font-bold text-gray-900 mb-3">🎯 Goal Work Today</h3>
-                <div class="bg-white rounded-lg border border-amber-200 p-4 space-y-4">
-                  <div v-if="activeGoals.length === 0" class="text-sm text-gray-500 italic">
-                    No active quarterly/monthly goals. <a :href="`/@${user.username}/journey/goals`" class="text-green-600 hover:underline">Create one?</a>
+                <h3 class="text-md font-bold text-gray-900 dark:text-white mb-3">🎯 Goal Work Today</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-amber-200 dark:border-amber-800 p-4 space-y-4">
+                  <div v-if="activeGoals.length === 0" class="text-sm text-gray-500 dark:text-gray-400 italic">
+                    No active quarterly/monthly goals. <a :href="`/@${user.username}/journey/goals`" class="text-green-600 dark:text-green-500 hover:underline">Create one?</a>
                   </div>
 
                   <div v-else>
-                    <label class="block text-sm font-medium text-gray-700 mb-3">Which goals will you work on today?</label>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Which goals will you work on today?</label>
                     <div class="space-y-2">
                       <label
                         v-for="goal in activeGoals"
                         :key="goal.id"
-                        class="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:border-green-300 cursor-pointer transition"
-                        :class="selectedGoalIds.includes(goal.id) ? 'bg-green-50 border-green-400' : 'bg-white'"
+                        class="flex items-start gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-green-300 dark:hover:border-green-600 cursor-pointer transition"
+                        :class="selectedGoalIds.includes(goal.id) ? 'bg-green-50 dark:bg-green-950/30 border-green-400 dark:border-green-600' : 'bg-white dark:bg-gray-800'"
                       >
                         <input
                           type="checkbox"
                           :value="goal.id"
                           v-model="selectedGoalIds"
                           @change="saveCheckIn"
-                          class="mt-0.5 w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                          class="mt-0.5 w-5 h-5 text-green-600 dark:text-green-500 border-gray-300 dark:border-gray-700 rounded focus:ring-green-500 dark:focus:ring-green-600"
                         />
                         <div class="flex-1">
-                          <div class="font-medium text-gray-900">{{ goal.title }}</div>
-                          <div class="text-xs text-gray-500 mt-0.5">
+                          <div class="font-medium text-gray-900 dark:text-white">{{ goal.title }}</div>
+                          <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                             {{ formatTimeHorizon(goal.time_horizon) }} • {{ goal.life_area }}
                             <span v-if="goal.tracking_type === 'metric'">
                               • {{ goal.metric_progress_percentage }}% complete
@@ -271,8 +271,8 @@
                     </div>
 
                     <div v-if="selectedGoalIds.length > 0" class="mt-4">
-                      <label class="block text-sm font-medium text-gray-700 mb-2">What specific work will you do?</label>
-                      <div class="mb-2 text-xs text-gray-500 bg-blue-50 border border-blue-200 rounded-lg p-2">
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">What specific work will you do?</label>
+                      <div class="mb-2 text-xs text-gray-500 dark:text-gray-400 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2">
                         💡 Be specific about what you'll do on these goals today
                       </div>
                       <TextareaWithEmoji
@@ -288,17 +288,17 @@
             </div>
 
             <!-- ==================== TODAY'S HABITS ==================== -->
-            <div class="bg-gradient-to-r from-cyan-50 to-teal-50 rounded-xl border-2 border-cyan-200 p-6">
+            <div class="bg-gradient-to-r from-cyan-50 to-teal-50 dark:from-cyan-950/30 dark:to-teal-950/30 rounded-xl border-2 border-cyan-200 dark:border-cyan-800 p-6">
               <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                   <span class="text-2xl">⚡</span>
-                  <h2 class="text-xl font-bold text-gray-900">Today's Habits</h2>
+                  <h2 class="text-xl font-bold text-gray-900 dark:text-white">Today's Habits</h2>
                 </div>
-                <a :href="`/@${user.username}/habits`" class="text-sm text-teal-600 hover:underline font-medium">Manage Habits →</a>
+                <a :href="`/@${user.username}/habits`" class="text-sm text-teal-600 dark:text-teal-400 hover:underline font-medium">Manage Habits →</a>
               </div>
-              <p class="text-sm text-gray-600 mb-6">Check off your habits as you complete them throughout the day</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Check off your habits as you complete them throughout the day</p>
 
-              <div v-if="loadingHabits" class="text-center py-8 text-gray-500">
+              <div v-if="loadingHabits" class="text-center py-8 text-gray-500 dark:text-gray-400">
                 Loading habits...
               </div>
 
@@ -306,24 +306,24 @@
                 <div class="mb-4">
                   <span class="text-4xl">🌱</span>
                 </div>
-                <p class="text-gray-600 mb-2">No habits set up yet</p>
-                <a :href="`/@${user.username}/habits`" class="text-sm text-teal-600 hover:underline font-medium">Create your first habit →</a>
+                <p class="text-gray-600 dark:text-gray-400 mb-2">No habits set up yet</p>
+                <a :href="`/@${user.username}/habits`" class="text-sm text-teal-600 dark:text-teal-400 hover:underline font-medium">Create your first habit →</a>
               </div>
 
               <div v-else class="space-y-2">
                 <div
                   v-for="habit in todaysHabits"
                   :key="habit.id"
-                  class="bg-white rounded-lg border-2 p-4 transition"
-                  :class="habitChecks[habit.id] ? 'border-teal-400 bg-teal-50' : 'border-gray-200 hover:border-teal-300'"
+                  class="bg-white dark:bg-gray-800 rounded-lg border-2 p-4 transition"
+                  :class="habitChecks[habit.id] ? 'border-teal-400 dark:border-teal-600 bg-teal-50 dark:bg-teal-950/30' : 'border-gray-200 dark:border-gray-700 hover:border-teal-300 dark:hover:border-teal-600'"
                 >
                   <div class="flex items-center gap-3">
                     <button
                       @click="toggleHabit(habit.id)"
                       class="flex-shrink-0 w-6 h-6 rounded-full border-2 transition flex items-center justify-center"
                       :class="habitChecks[habit.id]
-                        ? 'border-teal-500 bg-teal-500'
-                        : 'border-gray-300 hover:border-teal-400'"
+                        ? 'border-teal-500 dark:border-teal-600 bg-teal-500 dark:bg-teal-600'
+                        : 'border-gray-300 dark:border-gray-700 hover:border-teal-400 dark:hover:border-teal-500'"
                     >
                       <svg
                         v-if="habitChecks[habit.id]"
@@ -340,19 +340,19 @@
                         <span v-if="habit.emoji" class="text-lg">{{ habit.emoji }}</span>
                         <span
                           class="font-semibold transition"
-                          :class="habitChecks[habit.id] ? 'text-teal-700 line-through' : 'text-gray-900'"
+                          :class="habitChecks[habit.id] ? 'text-teal-700 dark:text-teal-400 line-through' : 'text-gray-900 dark:text-white'"
                         >
                           {{ habit.name }}
                         </span>
                       </div>
-                      <div v-if="habit.description" class="text-xs text-gray-500 mt-1">
+                      <div v-if="habit.description" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {{ habit.description }}
                       </div>
                     </div>
 
                     <div v-if="habit.currentStreak > 0" class="text-right">
-                      <div class="text-xs text-gray-500">Streak</div>
-                      <div class="text-sm font-bold text-teal-600">{{ habit.currentStreak }} 🔥</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">Streak</div>
+                      <div class="text-sm font-bold text-teal-600 dark:text-teal-400">{{ habit.currentStreak }} 🔥</div>
                     </div>
                   </div>
                 </div>
@@ -360,19 +360,19 @@
             </div>
 
             <!-- ==================== EVENING REFLECTION ==================== -->
-            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-200 p-6">
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 rounded-xl border-2 border-indigo-200 dark:border-indigo-800 p-6">
               <div class="flex items-center gap-2 mb-4">
                 <span class="text-2xl">🌙</span>
-                <h2 class="text-xl font-bold text-gray-900">Evening Reflection</h2>
-                <span class="text-sm text-gray-500 ml-2">(Optional - fill at end of day)</span>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Evening Reflection</h2>
+                <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">(Optional - fill at end of day)</span>
               </div>
-              <p class="text-sm text-gray-600 mb-6">Quick reflection on your day - what went well, what was tough, what you're grateful for</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Quick reflection on your day - what went well, what was tough, what you're grateful for</p>
 
               <!-- Day Reflection -->
               <div class="mb-6">
-                <h3 class="text-md font-bold text-gray-900 mb-3">💭 Day Reflection</h3>
-                <div class="bg-white rounded-lg border border-indigo-200 p-4">
-                  <div class="mb-2 text-xs text-gray-500 bg-blue-50 border border-blue-200 rounded-lg p-2">
+                <h3 class="text-md font-bold text-gray-900 dark:text-white mb-3">💭 Day Reflection</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-indigo-200 dark:border-indigo-800 p-4">
+                  <div class="mb-2 text-xs text-gray-500 dark:text-gray-400 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-2">
                     💡 Keep it simple: Wins, challenges, learnings, gratitude - whatever feels important
                   </div>
                   <TextareaWithEmoji
@@ -386,11 +386,11 @@
 
               <!-- Mood -->
               <div>
-                <h3 class="text-md font-bold text-gray-900 mb-3">😊 How did you feel today?</h3>
-                <div class="bg-white rounded-lg border border-indigo-200 p-4">
+                <h3 class="text-md font-bold text-gray-900 dark:text-white mb-3">😊 How did you feel today?</h3>
+                <div class="bg-white dark:bg-gray-800 rounded-lg border border-indigo-200 dark:border-indigo-800 p-4">
                   <div class="flex justify-between items-center mb-2">
-                    <label class="text-sm font-medium text-gray-700">Overall Mood</label>
-                    <span class="text-lg font-bold text-purple-600">{{ checkIn.mood || 5 }}/10</span>
+                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Overall Mood</label>
+                    <span class="text-lg font-bold text-purple-600 dark:text-purple-400">{{ checkIn.mood || 5 }}/10</span>
                   </div>
                   <input
                     v-model.number="checkIn.mood"
@@ -398,9 +398,9 @@
                     type="range"
                     min="1"
                     max="10"
-                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                    class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-600"
                   />
-                  <div class="flex justify-between text-xs text-gray-500 mt-1">
+                  <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
                     <span>Low</span>
                     <span>Great</span>
                   </div>
@@ -423,7 +423,7 @@
         enter-from-class="opacity-0"
         leave-to-class="opacity-0"
       >
-        <div v-if="showMobileHistory" @click="showMobileHistory = false" class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+        <div v-if="showMobileHistory" @click="showMobileHistory = false" class="lg:hidden fixed inset-0 bg-black dark:bg-black bg-opacity-50 dark:bg-opacity-70 z-40"></div>
       </Transition>
 
       <Transition
@@ -432,11 +432,11 @@
         enter-from-class="translate-y-full"
         leave-to-class="translate-y-full"
       >
-        <div v-if="showMobileHistory" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-50 h-[85vh] flex flex-col">
+        <div v-if="showMobileHistory" class="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 rounded-t-2xl shadow-2xl z-50 h-[85vh] flex flex-col">
           <!-- Modal Header -->
-          <div class="sticky top-0 bg-white border-b border-gray-200 p-4 sm:p-6 rounded-t-2xl flex items-center justify-between flex-shrink-0">
-            <h3 class="text-base sm:text-lg font-bold text-gray-900">📅 Check-in History</h3>
-            <button @click="showMobileHistory = false" class="text-gray-500 hover:text-gray-700 p-2">
+          <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 sm:p-6 rounded-t-2xl flex items-center justify-between flex-shrink-0">
+            <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white">📅 Check-in History</h3>
+            <button @click="showMobileHistory = false" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 p-2">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
               </svg>
@@ -448,11 +448,11 @@
             <div class="overflow-y-scroll h-full p-4 sm:p-6 space-y-3" style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
               <template v-for="(entry, index) in recentCheckIns" :key="entry.date">
                 <!-- Year separator -->
-                <div v-if="index === 0 || getYear(entry.date) !== getYear(recentCheckIns[index - 1].date)" class="sticky top-0 bg-white pt-3 pb-2 z-10">
+                <div v-if="index === 0 || getYear(entry.date) !== getYear(recentCheckIns[index - 1].date)" class="sticky top-0 bg-white dark:bg-gray-800 pt-3 pb-2 z-10">
                   <div class="flex items-center gap-2">
-                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-                    <div class="text-xs font-bold text-gray-600 uppercase tracking-wide px-2 bg-white">{{ getYear(entry.date) }}</div>
-                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
+                    <div class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide px-2 bg-white dark:bg-gray-800">{{ getYear(entry.date) }}</div>
+                    <div class="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent"></div>
                   </div>
                 </div>
                 <button
@@ -460,16 +460,16 @@
                   :class="[
                     'w-full text-left px-3 py-2 rounded-lg border-2 transition',
                     selectedDate === entry.date
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-green-300 bg-white'
+                      ? 'border-green-500 dark:border-green-600 bg-green-50 dark:bg-green-950/30'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 bg-white dark:bg-gray-800'
                   ]"
                 >
                   <div class="flex items-center justify-between">
                     <div>
-                      <div class="text-sm font-medium text-gray-900">
+                      <div class="text-sm font-medium text-gray-900 dark:text-white">
                         {{ formatDateShort(entry.date) }}
                       </div>
-                      <div class="text-xs text-gray-500">
+                      <div class="text-xs text-gray-500 dark:text-gray-400">
                         {{ entry.date === today ? 'Today' : formatRelative(entry.date) }}
                       </div>
                     </div>
@@ -479,12 +479,12 @@
                   </div>
                 </button>
               </template>
-              <div v-if="recentCheckIns.length === 0" class="text-sm text-gray-500 text-center py-4">
+              <div v-if="recentCheckIns.length === 0" class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
                 No check-ins yet
               </div>
             </div>
             <!-- Scroll fade indicator -->
-            <div v-if="recentCheckIns.length > 8" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+            <div v-if="recentCheckIns.length > 8" class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
           </div>
         </div>
       </Transition>

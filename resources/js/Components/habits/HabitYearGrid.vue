@@ -1,9 +1,9 @@
 <template>
-  <div class="px-2 sm:px-4 py-3 sm:py-4 bg-gray-50">
+  <div class="px-2 sm:px-4 py-3 sm:py-4 bg-gray-50 dark:bg-gray-800/50 transition-colors">
     <!-- Header with year selector and legend -->
     <div class="mb-2 flex items-center justify-between flex-wrap gap-2">
       <div class="flex items-center gap-3">
-        <div class="text-xs font-medium text-gray-700">
+        <div class="text-xs font-medium text-gray-700 dark:text-gray-300">
           {{ habit.selected_year ? habit.selected_year : 'Last 365 days' }}
         </div>
         <!-- Year selector (if multiple years available) -->
@@ -15,8 +15,8 @@
             :class="[
               'px-2 py-0.5 text-[10px] font-medium rounded transition-colors',
               year === habit.selected_year
-                ? 'bg-gray-900 text-white'
-                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                ? 'bg-gray-900 dark:bg-gray-700 text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             ]"
           >
             {{ year }}
@@ -25,9 +25,9 @@
       </div>
 
     <!-- Legend for multiple checks (intensity) -->
-    <div v-if="habit.allow_multiple_checks" class="flex items-center gap-2 text-[10px] text-gray-500">
+    <div v-if="habit.allow_multiple_checks" class="flex items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400">
         <div class="flex items-center gap-1">
-          <div class="w-3 h-3 rounded-sm bg-gray-200"></div>
+          <div class="w-3 h-3 rounded-sm bg-gray-200 dark:bg-gray-700"></div>
           <span>Not tracked</span>
         </div>
         <div class="flex items-center gap-1">
@@ -41,13 +41,13 @@
       </div>
 
       <!-- Legend for single checks -->
-      <div v-else class="flex items-center gap-2 text-[10px] text-gray-500">
+      <div v-else class="flex items-center gap-2 text-[10px] text-gray-500 dark:text-gray-400">
         <div class="flex items-center gap-1">
-          <div class="w-3 h-3 rounded-sm bg-gray-200"></div>
+          <div class="w-3 h-3 rounded-sm bg-gray-200 dark:bg-gray-700"></div>
           <span>Not tracked</span>
         </div>
         <div class="flex items-center gap-1">
-          <div class="w-3 h-3 rounded-sm border border-gray-300" :style="{ backgroundColor: habitColor + '20' }"></div>
+          <div class="w-3 h-3 rounded-sm border border-gray-300 dark:border-gray-600" :style="{ backgroundColor: habitColor + '20' }"></div>
           <span>Not done</span>
         </div>
         <div class="flex items-center gap-1">
@@ -60,7 +60,7 @@
     <!-- Mobile Grid - FULL BLEED APPROACH (breaks out of parent constraints) -->
     <div class="block sm:hidden">
       <!-- Full viewport width container that breaks out of parent padding -->
-      <div class="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] py-3 bg-gray-50">
+      <div class="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] py-3 bg-gray-50 dark:bg-gray-800/50">
         <!-- Scrollable area with padding -->
         <div ref="mobileScrollContainer" class="overflow-x-auto overflow-y-hidden pb-2 pl-10 pr-8" style="-webkit-overflow-scrolling: touch; scrollbar-width: thin;">
           <!-- Grid wrapper - natural content width -->
@@ -72,7 +72,7 @@
               <div
                 v-for="(monthLabel, labelIndex) in mobileMonthLabels"
                 :key="labelIndex"
-                class="text-[9px] text-gray-600 font-medium"
+                class="text-[9px] text-gray-600 dark:text-gray-400 font-medium"
                 :style="{ width: monthLabel.width }"
               >
                 {{ monthLabel.name }}
@@ -84,11 +84,11 @@
               <!-- Day labels -->
               <div class="flex flex-col gap-[1px] mr-2 ml-1">
                 <div class="h-[8px]"></div>
-                <div class="h-[8px] text-[8px] text-gray-500 flex items-center leading-none w-3">M</div>
+                <div class="h-[8px] text-[8px] text-gray-500 dark:text-gray-400 flex items-center leading-none w-3">M</div>
                 <div class="h-[8px]"></div>
-                <div class="h-[8px] text-[8px] text-gray-500 flex items-center leading-none w-3">W</div>
+                <div class="h-[8px] text-[8px] text-gray-500 dark:text-gray-400 flex items-center leading-none w-3">W</div>
                 <div class="h-[8px]"></div>
-                <div class="h-[8px] text-[8px] text-gray-500 flex items-center leading-none w-3">F</div>
+                <div class="h-[8px] text-[8px] text-gray-500 dark:text-gray-400 flex items-center leading-none w-3">F</div>
                 <div class="h-[8px]"></div>
               </div>
 
@@ -103,6 +103,7 @@
                     v-for="day in week.days"
                     :key="day.date || day.index"
                     class="w-[8px] h-[8px] rounded-[2px]"
+                    :class="getMobileDayClass(day)"
                     :style="getMobileDayStyle(day)"
                   ></div>
                 </div>
@@ -110,7 +111,7 @@
             </div>
 
             <!-- Scroll hint -->
-            <div class="text-center text-[9px] text-gray-500">
+            <div class="text-center text-[9px] text-gray-500 dark:text-gray-400">
               ← Scroll to see full year →
             </div>
           </div>
@@ -129,7 +130,7 @@
             <div
               v-for="(monthLabel, labelIndex) in monthLabels"
               :key="labelIndex"
-              class="text-[9px] text-gray-500"
+              class="text-[9px] text-gray-500 dark:text-gray-400"
               :style="{ width: monthLabel.width }"
             >
               {{ monthLabel.name }}
@@ -141,11 +142,11 @@
             <!-- Day labels -->
             <div class="flex flex-col gap-0.5 mr-1">
               <div class="h-3"></div> <!-- Sunday -->
-              <div class="h-3 text-[9px] text-gray-400 flex items-center">Mon</div>
+              <div class="h-3 text-[9px] text-gray-400 dark:text-gray-500 flex items-center">Mon</div>
               <div class="h-3"></div> <!-- Tuesday -->
-              <div class="h-3 text-[9px] text-gray-400 flex items-center">Wed</div>
+              <div class="h-3 text-[9px] text-gray-400 dark:text-gray-500 flex items-center">Wed</div>
               <div class="h-3"></div> <!-- Thursday -->
-              <div class="h-3 text-[9px] text-gray-400 flex items-center">Fri</div>
+              <div class="h-3 text-[9px] text-gray-400 dark:text-gray-500 flex items-center">Fri</div>
               <div class="h-3"></div> <!-- Saturday -->
             </div>
 
@@ -160,7 +161,10 @@
                   v-for="day in week.days"
                   :key="day.date || day.index"
                   class="w-3 h-3 rounded-sm transition-all"
-                  :class="{ 'cursor-pointer hover:ring-1 hover:ring-gray-400': day.date && showTooltip }"
+                  :class="[
+                    { 'cursor-pointer hover:ring-1 hover:ring-gray-400 dark:hover:ring-gray-500': day.date && showTooltip },
+                    getDayClass(day)
+                  ]"
                   :style="getDayStyle(day)"
                   @mouseenter="day.date && showTooltip && $emit('show-tooltip', $event, day)"
                   @mouseleave="showTooltip && $emit('hide-tooltip')"
@@ -175,7 +179,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps({
   habit: {
@@ -192,6 +196,10 @@ defineEmits(['show-tooltip', 'hide-tooltip', 'change-year']);
 
 const habitColor = computed(() => props.habit.color || '#10B981');
 
+// Detect dark mode - reactive to changes
+const isDarkMode = ref(false);
+let observer = null;
+
 // Mobile scroll container ref
 const mobileScrollContainer = ref(null);
 
@@ -199,6 +207,29 @@ const mobileScrollContainer = ref(null);
 onMounted(() => {
   if (mobileScrollContainer.value) {
     mobileScrollContainer.value.scrollLeft = mobileScrollContainer.value.scrollWidth;
+  }
+
+  // Initialize dark mode
+  isDarkMode.value = document.documentElement.classList.contains('dark');
+
+  // Watch for dark mode changes
+  observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'class') {
+        isDarkMode.value = document.documentElement.classList.contains('dark');
+      }
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
+});
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect();
   }
 });
 
@@ -376,25 +407,42 @@ const yearGrid = computed(() => {
   return weeks;
 });
 
+// Get mobile day class for Tailwind-based styling
+const getMobileDayClass = (day) => {
+  if (!day || !day.date) {
+    return '';
+  }
+
+  // Future/before start - lighter/more subtle than not tracked
+  if (day.beforeStart || day.future) {
+    return 'bg-gray-100 dark:bg-gray-700/50';
+  }
+
+  // Not tracked - use Tailwind classes for dark mode support (matches legend)
+  if (!day.tracked) {
+    return 'bg-gray-200 dark:bg-gray-700';
+  }
+
+  return '';
+};
+
 // Get mobile day style - GitHub style
 const getMobileDayStyle = (day) => {
   if (!day || !day.date) {
     return { opacity: '0' }; // Empty - invisible like GitHub
   }
 
-  // Before habit start or future date - show as very faint
+  // Before habit start or future date - handled by getMobileDayClass
   if (day.beforeStart || day.future) {
     return {
-      backgroundColor: '#f0f0f0',
-      opacity: '0.3',
-      border: '1px solid rgba(27,31,35,0.04)'
+      border: isDarkMode.value ? '1px solid rgba(255,255,255,0.04)' : '1px solid rgba(27,31,35,0.04)'
     };
   }
 
+  // Not tracked - handled by getMobileDayClass using Tailwind
   if (!day.tracked) {
     return {
-      backgroundColor: '#ebedf0', // GitHub's light gray for no activity
-      border: '1px solid rgba(27,31,35,0.06)' // Subtle border like GitHub
+      border: isDarkMode.value ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(27,31,35,0.06)'
     };
   }
 
@@ -404,21 +452,40 @@ const getMobileDayStyle = (day) => {
       return {
         backgroundColor: habitColor.value,
         opacity: opacity.toString(),
-        border: '1px solid rgba(27,31,35,0.06)'
+        border: isDarkMode.value ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(27,31,35,0.06)'
       };
     }
     return {
       backgroundColor: habitColor.value,
-      border: '1px solid rgba(27,31,35,0.06)'
+      border: isDarkMode.value ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(27,31,35,0.06)'
     };
   } else {
     // Tracked but not completed - lighter with GitHub-style border
     return {
       backgroundColor: habitColor.value,
       opacity: '0.3',
-      border: '1px solid rgba(27,31,35,0.06)'
+      border: isDarkMode.value ? '1px solid rgba(255,255,255,0.06)' : '1px solid rgba(27,31,35,0.06)'
     };
   }
+};
+
+// Get day class for Tailwind-based styling (Desktop)
+const getDayClass = (day) => {
+  if (!day || !day.date) {
+    return '';
+  }
+
+  // Future/before start - lighter/more subtle than not tracked
+  if (day.beforeStart || day.future) {
+    return 'bg-gray-100 dark:bg-gray-700/50';
+  }
+
+  // Not tracked - use Tailwind classes for dark mode support (matches legend)
+  if (!day.tracked) {
+    return 'bg-gray-200 dark:bg-gray-700';
+  }
+
+  return '';
 };
 
 // Get day style based on completion status and count (Desktop)
@@ -427,16 +494,14 @@ const getDayStyle = (day) => {
     return { opacity: '0' };
   }
 
-  // Before habit start or future date - show as very faint
+  // Before habit start or future date - handled by getDayClass using Tailwind
   if (day.beforeStart || day.future) {
-    return {
-      backgroundColor: '#f0f0f0',
-      opacity: '0.3'
-    };
+    return {};
   }
 
+  // Not tracked - handled by getDayClass using Tailwind
   if (!day.tracked) {
-    return { backgroundColor: '#f3f4f6' };
+    return {};
   }
 
   if (day.completed) {
