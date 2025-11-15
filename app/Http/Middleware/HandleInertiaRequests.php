@@ -46,6 +46,12 @@ class HandleInertiaRequests extends Middleware
                     'notification_style' => $request->user()->notification_style,
                     'dark_mode' => $request->user()->dark_mode,
                     'created_at' => $request->user()->created_at,
+                    // Gamification data
+                    'total_points' => $request->user()->total_points ?? 0,
+                    'weekly_points' => $request->user()->weekly_points ?? 0,
+                    'current_level' => $request->user()->current_level ?? 1,
+                    'current_streak' => $request->user()->current_streak ?? 0,
+                    'longest_streak' => $request->user()->longest_streak ?? 0,
                 ] : null,
             ],
         ];

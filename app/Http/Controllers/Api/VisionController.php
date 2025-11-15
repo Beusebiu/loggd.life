@@ -36,12 +36,15 @@ class VisionController extends Controller
         $validated = $request->validate([
             'eulogy_method' => 'nullable|string',
             'bucket_list' => 'nullable|array',
+            'bucket_list.*.text' => 'required|string|max:500',
+            'bucket_list.*.completed' => 'required|boolean',
             'mission_prompt' => 'nullable|string',
             'definition_of_success' => 'nullable|array',
             'odyssey_plan' => 'nullable|array',
             'future_calendar' => 'nullable|array',
             'is_public' => 'boolean',
             'private_sections' => 'nullable|array',
+            'private_sections.*' => 'string|in:eulogy_method,bucket_list,mission_prompt,definition_of_success,odyssey_plan,future_calendar',
         ]);
 
         $vision = Vision::updateOrCreate(
@@ -57,12 +60,15 @@ class VisionController extends Controller
         $validated = $request->validate([
             'eulogy_method' => 'nullable|string',
             'bucket_list' => 'nullable|array',
+            'bucket_list.*.text' => 'required|string|max:500',
+            'bucket_list.*.completed' => 'required|boolean',
             'mission_prompt' => 'nullable|string',
             'definition_of_success' => 'nullable|array',
             'odyssey_plan' => 'nullable|array',
             'future_calendar' => 'nullable|array',
             'is_public' => 'boolean',
             'private_sections' => 'nullable|array',
+            'private_sections.*' => 'string|in:eulogy_method,bucket_list,mission_prompt,definition_of_success,odyssey_plan,future_calendar',
         ]);
 
         $vision = Vision::where('user_id', $request->user()->id)->firstOrFail();

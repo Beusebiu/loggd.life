@@ -126,7 +126,7 @@
                 ? 'bg-green-500 border-green-500 shadow-sm hover:scale-105'
                 : isToday(date)
                 ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400 dark:border-yellow-600 hover:border-green-400 ring-2 ring-yellow-200 dark:ring-yellow-800 hover:scale-105'
-                : 'bg-white border-gray-200 hover:border-gray-400 hover:scale-105',
+                : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:scale-105',
               animatingChecks[`${habit.id}-${date}`] && isChecked(habit.id, date) ? 'check-success' : '',
               animatingChecks[`${habit.id}-${date}`] && !isChecked(habit.id, date) ? 'check-animate' : ''
             ]"
@@ -161,7 +161,7 @@
                 ? 'bg-green-500 border-green-500 shadow-sm text-white hover:scale-105'
                 : isToday(date)
                 ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-400 dark:border-yellow-600 hover:border-green-400 ring-2 ring-yellow-200 dark:ring-yellow-800 hover:scale-105'
-                : 'bg-white border-gray-200 hover:border-gray-400 hover:scale-105'
+                : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 hover:scale-105'
             ]"
             :title="isFutureDate(date) ? 'Cannot check future dates' : `${getCheckCount(habit.id, date)} check(s) on ${formatDateFull(date)}`"
           >

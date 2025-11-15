@@ -10,12 +10,14 @@ use App\Http\Controllers\Api\WeeklyReviewController;
 use App\Http\Controllers\LeaderboardController;
 use Illuminate\Support\Facades\Route;
 
-// Public authentication routes
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+// Public authentication routes (with rate limiting)
+Route::middleware(['throttle:5,1'])->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
+});
 
 // Protected routes (require authentication - support both sanctum tokens and web session)
-Route::middleware(['auth:sanctum,web'])->group(function () {
+Route::middleware(['auth:sanctum,web', 'throttle:180,1'])->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);

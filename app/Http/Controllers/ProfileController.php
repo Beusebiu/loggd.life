@@ -118,14 +118,12 @@ class ProfileController extends Controller
         ];
 
         // Calculate current streaks for active habits
-        $activeHabits = $user->habits()->where('status', 'active')->get();
+        $activeHabits = $user->habits()->where('status', 'active')->with('checks')->get();
         $streaks = [];
 
         foreach ($activeHabits as $habit) {
-            $checks = $user->habitChecks()
-                ->where('habit_id', $habit->id)
-                ->orderBy('date', 'desc')
-                ->get();
+            $checks = $habit->checks
+                ->sortByDesc('date');
 
             $currentStreak = 0;
             $today = now();
@@ -292,21 +290,16 @@ class ProfileController extends Controller
             $query->where('is_public', true);
         }
 
-        $habits = $query->get();
+        $habits = $query->with(['checks' => function ($query) {
+            $query->where('checked', true)->orderBy('date', 'desc');
+        }])->get();
         $habitData = [];
 
         foreach ($habits as $habit) {
             // Get checks for this habit with count
-            $checksWithCount = $user->habitChecks()
-                ->where('habit_id', $habit->id)
-                ->where('checked', true)
-                ->selectRaw('date, COUNT(*) as count')
-                ->groupBy('date')
-                ->orderBy('date', 'desc')
-                ->get()
-                ->mapWithKeys(fn ($check) => [
-                    ($check->date instanceof \Carbon\Carbon ? $check->date->toDateString() : $check->date) => $check->count,
-                ])
+            $checksWithCount = $habit->checks
+                ->groupBy(fn ($check) => $check->date instanceof \Carbon\Carbon ? $check->date->toDateString() : $check->date)
+                ->map(fn ($group) => $group->count())
                 ->toArray();
 
             $checks = array_keys($checksWithCount);
@@ -458,7 +451,7 @@ class ProfileController extends Controller
             $query->where('is_public', true);
         }
 
-        $goals = $query->orderBy('created_at', 'desc')->get();
+        $goals = $query->with(['milestones', 'metrics'])->orderBy('created_at', 'desc')->get();
         $goalData = [];
 
         foreach ($goals as $goal) {
@@ -466,11 +459,11 @@ class ProfileController extends Controller
             $progressPercentage = 0;
 
             if ($goal->tracking_type === 'milestone') {
-                $totalMilestones = $goal->milestones()->count();
-                $completedMilestones = $goal->milestones()->where('completed', true)->count();
+                $totalMilestones = $goal->milestones->count();
+                $completedMilestones = $goal->milestones->where('completed', true)->count();
                 $progressPercentage = $totalMilestones > 0 ? round(($completedMilestones / $totalMilestones) * 100) : 0;
             } elseif ($goal->tracking_type === 'metric') {
-                $totalValue = $goal->metrics()->sum('current_value');
+                $totalValue = $goal->metrics->sum('current_value');
                 $progressPercentage = $goal->target_value > 0 ? round(($totalValue / $goal->target_value) * 100) : 0;
             }
 
@@ -490,8 +483,8 @@ class ProfileController extends Controller
                 'life_area' => $goal->life_area,
                 'progress_percentage' => min($progressPercentage, 100),
                 'tracking_type' => $goal->tracking_type,
-                'milestones_completed' => $goal->milestones()->where('completed', true)->count(),
-                'milestones_total' => $goal->milestones()->count(),
+                'milestones_completed' => $goal->milestones->where('completed', true)->count(),
+                'milestones_total' => $goal->milestones->count(),
                 'target_date' => $goal->target_date?->format('Y-m-d'),
                 'on_track' => $onTrack,
                 'status' => $goal->status,
@@ -509,9 +502,10 @@ class ProfileController extends Controller
         $wins = [];
 
         // Get recent completed goal milestones
-        $completedMilestones = GoalMilestone::whereHas('goal', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })
+        $completedMilestones = GoalMilestone::with('goal')
+            ->whereHas('goal', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
             ->where('completed', true)
             ->where('completed_at', '>=', now()->subDays(30))
             ->orderBy('completed_at', 'desc')

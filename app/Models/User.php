@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
+     * Note: Gamification fields are fillable for system updates but should NOT
+     * be accepted from user input. Controllers must validate requests properly.
      *
      * @var list<string>
      */
@@ -28,7 +30,13 @@ class User extends Authenticatable
         'dark_mode',
         'timezone',
         'notification_style',
+        // Gamification fields (only updated by system, not user input)
+        'total_points',
         'weekly_points',
+        'current_level',
+        'current_streak',
+        'longest_streak',
+        'last_activity_date',
         'last_activity_at',
         'comeback_multiplier_active',
         'comeback_multiplier_expires_at',
@@ -56,6 +64,9 @@ class User extends Authenticatable
             'password' => 'hashed',
             'profile_public' => 'boolean',
             'dark_mode' => 'boolean',
+            'comeback_multiplier_active' => 'boolean',
+            'last_activity_at' => 'datetime',
+            'comeback_multiplier_expires_at' => 'datetime',
         ];
     }
 

@@ -59,9 +59,6 @@ class WeeklyReview extends Model
 
         // Calculate stats
         $totalCheckIns = $dailyCheckIns->count();
-        $totalWins = $dailyCheckIns->sum(fn ($checkIn) => count($checkIn->quick_wins ?? []));
-        $avgEnergy = $dailyCheckIns->avg('energy_level');
-        $avgProductivity = $dailyCheckIns->avg('productivity');
         $avgMood = $dailyCheckIns->avg('mood');
 
         return new self([
@@ -69,9 +66,9 @@ class WeeklyReview extends Model
             'week_start_date' => $weekStart->format('Y-m-d'),
             'week_end_date' => $weekEnd->format('Y-m-d'),
             'total_check_ins' => $totalCheckIns,
-            'total_wins' => $totalWins,
-            'avg_energy' => $avgEnergy ? round($avgEnergy, 1) : null,
-            'avg_productivity' => $avgProductivity ? round($avgProductivity, 1) : null,
+            'total_wins' => 0, // Can be manually filled in by user during review
+            'avg_energy' => null, // Removed - column doesn't exist
+            'avg_productivity' => null, // Removed - column doesn't exist
             'avg_mood' => $avgMood ? round($avgMood, 1) : null,
         ]);
     }

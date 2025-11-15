@@ -19,7 +19,7 @@ class SettingsController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'bio' => 'nullable|string|max:500',
-            'timezone' => 'sometimes|string|max:50',
+            'timezone' => 'sometimes|string|timezone',
         ]);
 
         $user->update($validated);

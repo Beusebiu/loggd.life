@@ -1056,9 +1056,6 @@ const toggleCheck = async (habitId, date) => {
           animatingStreaks.value[habitId] = false;
         }, 500);
       }
-
-      // Check for any new achievements from the backend
-      await checkForAchievements();
     } else {
       // Just refresh stats
       await fetchHabitStats(habitId);

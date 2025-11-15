@@ -203,8 +203,13 @@ class LeaderboardService
      */
     public function invalidateUserCache(User $user): void
     {
+        // Clear individual user rank caches
         Cache::forget('leaderboard:user-rank:'.$user->id.':all-time');
         Cache::forget('leaderboard:user-rank:'.$user->id.':weekly');
+
+        // Clear main leaderboard list caches to ensure rankings update immediately
+        Cache::forget('leaderboard:all-time:100');
+        Cache::forget('leaderboard:weekly:100');
     }
 
     /**

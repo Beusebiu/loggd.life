@@ -169,7 +169,7 @@ class HabitController extends Controller
         $habit = auth()->user()->habits()->findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'date' => 'required|date',
+            'date' => 'required|date|before_or_equal:today',
             'note' => 'nullable|string',
             'time' => 'nullable|date_format:H:i',
         ]);
@@ -355,7 +355,7 @@ class HabitController extends Controller
     {
         $query = HabitCheck::whereHas('habit', function ($q) use ($request) {
             $q->where('user_id', $request->user()->id);
-        });
+        })->with('habit');
 
         // Filter by date range
         if ($request->has('from')) {
@@ -394,7 +394,7 @@ class HabitController extends Controller
     {
         $check = HabitCheck::whereHas('habit', function ($q) {
             $q->where('user_id', auth()->id());
-        })->findOrFail($checkId);
+        })->with('habit')->findOrFail($checkId);
 
         $check->delete();
 

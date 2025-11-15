@@ -23,8 +23,12 @@ class GamificationService
         ?string $relatedType = null,
         ?array $metadata = null
     ): UserActivityLog {
-        $activityDate = $activityDate ?? now();
-        $isSameDay = $activityDate->isToday();
+        $userTimezone = $user->timezone ?? 'UTC';
+        $activityDate = $activityDate ?? now($userTimezone);
+
+        // Check if activity date is today in user's timezone
+        $userNow = now($userTimezone);
+        $isSameDay = $activityDate->copy()->setTimezone($userTimezone)->isSameDay($userNow);
 
         // Calculate points based on timing
         $basePoints = $activityType->basePoints();
@@ -152,6 +156,9 @@ class GamificationService
 
         // Invalidate leaderboard caches for this user
         $this->leaderboardService->invalidateUserCache($user);
+
+        // Invalidate gamification caches for this user
+        $this->invalidateGamificationCache($user);
     }
 
     /**
@@ -159,6 +166,8 @@ class GamificationService
      */
     protected function calculateStreak(User $user): array
     {
+        $userTimezone = $user->timezone ?? 'UTC';
+
         $activities = UserActivityLog::query()
             ->where('user_id', $user->id)
             ->select('activity_date')
@@ -166,14 +175,15 @@ class GamificationService
             ->orderByDesc('activity_date')
             ->get()
             ->pluck('activity_date')
-            ->map(fn ($date) => Carbon::parse($date));
+            ->map(fn ($date) => Carbon::parse($date, $userTimezone));
 
         if ($activities->isEmpty()) {
             return ['current' => 0, 'last_activity_date' => null];
         }
 
         $lastActivityDate = $activities->first();
-        $daysSinceLastActivity = now()->startOfDay()->diffInDays($lastActivityDate->startOfDay());
+        $userNow = now($userTimezone);
+        $daysSinceLastActivity = $userNow->startOfDay()->diffInDays($lastActivityDate->startOfDay());
 
         // Streak is broken if more than 1 day gap
         if ($daysSinceLastActivity > 1) {
@@ -203,55 +213,59 @@ class GamificationService
     public function getActivityGridData(User $user, ?int $year = null): array
     {
         $year = $year ?? now()->year;
-        $startDate = Carbon::create($year, 1, 1);
-        $endDate = Carbon::create($year, 12, 31);
+        $cacheKey = "user.{$user->id}.activity_grid.{$year}";
 
-        // Get all activities for the year with details
-        $activities = UserActivityLog::query()
-            ->where('user_id', $user->id)
-            ->whereBetween('activity_date', [$startDate, $endDate])
-            ->get()
-            ->groupBy(fn ($activity) => Carbon::parse($activity->activity_date)->toDateString());
+        return cache()->remember($cacheKey, now()->addMinutes(15), function () use ($user, $year) {
+            $startDate = Carbon::create($year, 1, 1);
+            $endDate = Carbon::create($year, 12, 31);
 
-        // Build 365-day grid
-        $gridData = [];
-        $currentDate = $startDate->copy();
+            // Get all activities for the year with details
+            $activities = UserActivityLog::query()
+                ->where('user_id', $user->id)
+                ->whereBetween('activity_date', [$startDate, $endDate])
+                ->get()
+                ->groupBy(fn ($activity) => Carbon::parse($activity->activity_date)->toDateString());
 
-        while ($currentDate <= $endDate && $currentDate <= now()) {
-            $dateString = $currentDate->toDateString();
-            $dayActivities = $activities->get($dateString);
+            // Build 365-day grid
+            $gridData = [];
+            $currentDate = $startDate->copy();
 
-            if ($dayActivities) {
-                $totalPoints = $dayActivities->sum('points_earned');
-                $activityBreakdown = $dayActivities->groupBy('activity_type')->map(function ($group) {
-                    return [
-                        'type' => $group->first()->activity_type->label(),
-                        'count' => $group->count(),
-                        'points' => $group->sum('points_earned'),
+            while ($currentDate <= $endDate && $currentDate <= now()) {
+                $dateString = $currentDate->toDateString();
+                $dayActivities = $activities->get($dateString);
+
+                if ($dayActivities) {
+                    $totalPoints = $dayActivities->sum('points_earned');
+                    $activityBreakdown = $dayActivities->groupBy('activity_type')->map(function ($group) {
+                        return [
+                            'type' => $group->first()->activity_type->label(),
+                            'count' => $group->count(),
+                            'points' => $group->sum('points_earned'),
+                        ];
+                    })->values()->toArray();
+
+                    $gridData[] = [
+                        'date' => $dateString,
+                        'points' => $totalPoints,
+                        'activity_count' => $dayActivities->count(),
+                        'intensity' => $this->calculateIntensity($totalPoints),
+                        'activities' => $activityBreakdown,
                     ];
-                })->values()->toArray();
+                } else {
+                    $gridData[] = [
+                        'date' => $dateString,
+                        'points' => 0,
+                        'activity_count' => 0,
+                        'intensity' => 0,
+                        'activities' => [],
+                    ];
+                }
 
-                $gridData[] = [
-                    'date' => $dateString,
-                    'points' => $totalPoints,
-                    'activity_count' => $dayActivities->count(),
-                    'intensity' => $this->calculateIntensity($totalPoints),
-                    'activities' => $activityBreakdown,
-                ];
-            } else {
-                $gridData[] = [
-                    'date' => $dateString,
-                    'points' => 0,
-                    'activity_count' => 0,
-                    'intensity' => 0,
-                    'activities' => [],
-                ];
+                $currentDate->addDay();
             }
 
-            $currentDate->addDay();
-        }
-
-        return $gridData;
+            return $gridData;
+        });
     }
 
     /**
@@ -273,28 +287,32 @@ class GamificationService
      */
     public function getLevelInfo(User $user): array
     {
-        $tier = UserLevel::getTierForLevel($user->current_level);
-        $currentLevelPoints = UserLevel::pointsForLevel($user->current_level);
-        $nextLevelPoints = UserLevel::pointsForLevel($user->current_level + 1);
-        $pointsIntoCurrentLevel = $user->total_points - $currentLevelPoints;
-        $pointsNeededForNextLevel = $nextLevelPoints - $currentLevelPoints;
-        $progressPercentage = $pointsNeededForNextLevel > 0
-            ? round(($pointsIntoCurrentLevel / $pointsNeededForNextLevel) * 100)
-            : 100;
+        $cacheKey = "user.{$user->id}.level_info";
 
-        return [
-            'level' => $user->current_level,
-            'tier' => $tier,
-            'tier_name' => $tier->tierName(),
-            'emoji' => $tier->emoji(),
-            'total_points' => $user->total_points,
-            'current_level_points' => $currentLevelPoints,
-            'next_level_points' => $nextLevelPoints,
-            'points_into_level' => $pointsIntoCurrentLevel,
-            'points_needed' => $nextLevelPoints - $user->total_points,
-            'progress_percentage' => $progressPercentage,
-            'color_theme' => $tier->colorTheme(),
-        ];
+        return cache()->remember($cacheKey, now()->addMinutes(15), function () use ($user) {
+            $tier = UserLevel::getTierForLevel($user->current_level);
+            $currentLevelPoints = UserLevel::pointsForLevel($user->current_level);
+            $nextLevelPoints = UserLevel::pointsForLevel($user->current_level + 1);
+            $pointsIntoCurrentLevel = $user->total_points - $currentLevelPoints;
+            $pointsNeededForNextLevel = $nextLevelPoints - $currentLevelPoints;
+            $progressPercentage = $pointsNeededForNextLevel > 0
+                ? round(($pointsIntoCurrentLevel / $pointsNeededForNextLevel) * 100)
+                : 100;
+
+            return [
+                'level' => $user->current_level,
+                'tier' => $tier,
+                'tier_name' => $tier->tierName(),
+                'emoji' => $tier->emoji(),
+                'total_points' => $user->total_points,
+                'current_level_points' => $currentLevelPoints,
+                'next_level_points' => $nextLevelPoints,
+                'points_into_level' => $pointsIntoCurrentLevel,
+                'points_needed' => $nextLevelPoints - $user->total_points,
+                'progress_percentage' => $progressPercentage,
+                'color_theme' => $tier->colorTheme(),
+            ];
+        });
     }
 
     /**
@@ -303,5 +321,18 @@ class GamificationService
     public function canEditActivity(Carbon $activityDate): bool
     {
         return now()->diffInDays($activityDate) <= 7;
+    }
+
+    /**
+     * Invalidate gamification caches for a user
+     */
+    public function invalidateGamificationCache(User $user): void
+    {
+        cache()->forget("user.{$user->id}.level_info");
+
+        // Invalidate activity grid for current and previous year
+        $currentYear = now()->year;
+        cache()->forget("user.{$user->id}.activity_grid.{$currentYear}");
+        cache()->forget("user.{$user->id}.activity_grid.".($currentYear - 1));
     }
 }

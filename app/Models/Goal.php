@@ -47,8 +47,8 @@ class Goal extends Model
             'is_public' => 'boolean',
             'allow_comments' => 'boolean',
             'metric_decrease' => 'boolean',
-            'target_date' => 'date',
-            'started_at' => 'date',
+            'target_date' => 'date:Y-m-d',
+            'started_at' => 'date:Y-m-d',
             'completed_at' => 'datetime',
             'last_reviewed_at' => 'datetime',
         ];
@@ -174,7 +174,7 @@ class Goal extends Model
             return true; // No deadline or ongoing goal
         }
 
-        $totalDays = $this->started_at?->diffInDays($this->target_date) ?? 1;
+        $totalDays = max(1, $this->started_at?->diffInDays($this->target_date) ?? 1);
         $daysPassed = $this->started_at?->diffInDays(now()) ?? 0;
 
         $expectedProgress = ($daysPassed / $totalDays) * 100;

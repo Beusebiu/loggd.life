@@ -368,13 +368,7 @@ import { Link, router, usePage } from '@inertiajs/vue3';
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const darkMode = computed(() => {
-  const result = user.value?.dark_mode || false;
-  console.log('Dark mode computed:', {
-    user: user.value,
-    darkMode: result,
-    userDarkMode: user.value?.dark_mode
-  });
-  return result;
+  return user.value?.dark_mode || false;
 });
 
 const showUserMenu = ref(false);
